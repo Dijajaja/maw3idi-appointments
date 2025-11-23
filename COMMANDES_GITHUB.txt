@@ -1,0 +1,65 @@
+========================================
+COMMANDES POUR PUSHER SUR GITHUB
+========================================
+
+ETAPE 1: Verifier les fichiers sensibles
+------------------------------------------
+git status
+
+(Verifiez que .env et db.sqlite3 ne sont PAS dans la liste)
+
+ETAPE 2: Ajouter tous les fichiers
+------------------------------------------
+git add .
+
+ETAPE 3: Creer un commit
+------------------------------------------
+git commit -m "Amelioration du design et correction des bugs
+
+- Application du design glassmorphism sur toutes les pages
+- Correction des problemes d'autorisation et de permissions
+- Amelioration du systeme de reprogrammation
+- Ajout du rapport de projet et guides d'installation
+- Configuration pour GitHub"
+
+ETAPE 4: Pousser sur GitHub
+------------------------------------------
+
+Si le depot existe deja:
+    git push origin main
+
+Si vous devez creer un nouveau depot:
+    1. Allez sur https://github.com
+    2. Cliquez sur "New repository"
+    3. Donnez un nom (ex: "django-appointment-maw3idi")
+    4. Ne cochez PAS "Initialize with README"
+    5. Cliquez sur "Create repository"
+    6. Executez:
+       git remote add origin https://github.com/VOTRE_USERNAME/NOM_DU_REPO.git
+       git push -u origin main
+
+========================================
+FICHIERS IMPORTANTS CREES
+========================================
+
+- INSTALLATION.md : Guide d'installation complet
+- GUIDE_GITHUB.md : Guide pour partager sur GitHub
+- RAPPORT_PROJET.md : Documentation du projet
+- ENV_EXAMPLE.txt : Exemple de configuration
+- prepare_for_github.ps1 : Script de verification
+
+========================================
+POUR VOTRE AMI
+========================================
+
+1. Cloner le projet:
+   git clone https://github.com/VOTRE_USERNAME/NOM_DU_REPO.git
+
+2. Suivre INSTALLATION.md pour configurer le projet
+
+3. Creer le fichier .env:
+   Copy-Item ENV_EXAMPLE.txt .env
+   (Puis editer .env avec ses propres valeurs)
+
+========================================
+
