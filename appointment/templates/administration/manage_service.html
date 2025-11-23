@@ -5,6 +5,183 @@
 {% block customCSS %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/app_admin/btn.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/app_admin/service.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site_background.css' %}"/>
+    <style>
+        /* Supprimer le fond blanc */
+        .wrapper, .main-panel, .content, .content-wrapper {
+            background: transparent !important;
+        }
+        
+        /* Styles pour Black Dashboard - design professionnel compact */
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        .service-form-wrapper {
+            width: 100%;
+            max-width: 800px;
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            backdrop-filter: blur(10px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+            border-radius: 20px;
+            padding: 18px;
+            border: none !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Effet de brillance au hover */
+        .service-form-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            transition: left 0.5s;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .service-form-wrapper:hover::before {
+            left: 100%;
+        }
+        
+        .service-form-wrapper:hover {
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(160, 70, 255, 0.2);
+            border: none !important;
+        }
+        
+        .service-form-content h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.92);
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: none !important;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .service-form-content form p {
+            margin-bottom: 15px;
+        }
+        
+        .service-form-content label {
+            display: block;
+            margin-bottom: 6px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .service-form-content input[type="text"],
+        .service-form-content input[type="number"],
+        .service-form-content input[type="file"],
+        .service-form-content textarea,
+        .service-form-content select {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        
+        .service-form-content input:focus,
+        .service-form-content textarea:focus,
+        .service-form-content select:focus {
+            outline: none;
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 0 0 3px rgba(160, 70, 255, 0.2) !important;
+        }
+        
+        .service-form-content input::placeholder,
+        .service-form-content textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .service-btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .service-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .alert {
+            background: rgba(244, 67, 54, 0.12) !important;
+            border-color: rgba(244, 67, 54, 0.5) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 12px 18px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+        
+        /* Navbar visible */
+        .navbar, .navbar-brand, .navbar-nav .dropdown, .navbar-nav .photo {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .footer {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}

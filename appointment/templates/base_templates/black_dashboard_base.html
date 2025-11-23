@@ -1,0 +1,964 @@
+{% load i18n %}
+{% load static %}
+<!--
+=========================================================
+* Black Dashboard - v1.0.1
+=========================================================
+* Product Page: https://www.creative-tim.com/product/black-dashboard
+* Copyright 2019 Creative Tim (https://www.creative-tim.com)
+* Coded by Creative Tim
+=========================================================
+-->
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-icon.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'assets/img/favicon.png' %}">
+  <title>
+    {% block title %}{% trans "Black Dashboard" %} - {{ website_name|default:"Appointment" }}{% endblock %}
+  </title>
+  
+  <!-- Fonts and icons -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  
+  <!-- Nucleo Icons -->
+  <link href="{% static 'assets/css/nucleo-icons.css' %}" rel="stylesheet" />
+  
+  <!-- CSS Files -->
+  <link href="{% static 'assets/css/black-dashboard.css' %}?v=1.0.0" rel="stylesheet" />
+  
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="{% static 'assets/demo/demo.css' %}" rel="stylesheet" />
+  <!-- Global site background -->
+  <link href="{% static 'css/site_background.css' %}" rel="stylesheet" />
+  <!-- Accessibility CSS -->
+  <link href="{% static 'css/accessibility.css' %}" rel="stylesheet" />
+  
+  <!-- Custom CSS Block -->
+  {% block customCSS %}{% endblock %}
+  
+  <style>
+    /* Navbar réduite */
+    .navbar {
+      min-height: 50px !important;
+      padding: 8px 0 !important;
+    }
+    
+    .navbar-wrapper {
+      padding: 0 !important;
+    }
+    
+    .navbar-brand {
+      font-size: 1.3rem !important;
+      font-weight: 700 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      padding: 5px 15px !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      text-decoration: none !important;
+      transition: all 0.3s ease !important;
+    }
+    
+    .navbar-brand:hover {
+      color: rgba(255, 255, 255, 1) !important;
+      transform: scale(1.05) !important;
+    }
+    
+    .navbar-logo-icon {
+      font-size: 1.5rem !important;
+      color: rgba(102, 126, 234, 0.9) !important;
+      filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.5)) !important;
+    }
+    
+    .navbar-brand-text {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .navbar-nav .nav-link {
+      padding: 8px 15px !important;
+      font-size: 0.95rem !important;
+      font-weight: 500 !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      transition: all 0.3s ease !important;
+      margin: 0 5px !important;
+    }
+    
+    .navbar-nav .nav-link:hover {
+      color: rgba(255, 255, 255, 1) !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+      border-radius: 8px !important;
+    }
+    
+    .navbar-nav .nav-item.active .nav-link {
+      color: rgba(102, 126, 234, 1) !important;
+      background: rgba(102, 126, 234, 0.15) !important;
+    }
+    
+    /* Amélioration de la sidebar */
+    .sidebar .nav li {
+      margin-bottom: 5px;
+    }
+    
+    .sidebar .nav li a {
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar .nav li a p {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    .sidebar .nav li a i {
+      font-size: 1.2rem;
+      margin-right: 10px;
+      width: 24px;
+      text-align: center;
+    }
+    
+    /* Séparateurs dans la sidebar */
+    .sidebar-separator {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 15px 20px;
+      border: none;
+    }
+    
+    .sidebar-section-title {
+      padding: 15px 20px 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    /* Badge pour nouveaux rendez-vous */
+    .sidebar-badge {
+      background: linear-gradient(135deg, #f44336, #e91e63);
+      color: white;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: auto;
+      min-width: 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
+    
+    /* Alignement du contenu avec la sidebar - même hauteur */
+    .wrapper {
+      display: flex !important;
+      height: 100vh !important;
+      overflow: hidden !important;
+    }
+    
+    .sidebar {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      height: 100vh !important;
+      z-index: 1030 !important;
+      overflow-y: auto !important;
+    }
+    
+    .sidebar-wrapper {
+      height: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .main-panel {
+      margin-left: 260px !important;
+      width: calc(100% - 260px) !important;
+      height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
+    
+    .navbar {
+      position: relative !important;
+      flex-shrink: 0 !important;
+      z-index: 1000 !important;
+      height: 50px !important;
+      min-height: 50px !important;
+    }
+    
+    .content {
+      flex: 1 !important;
+      overflow-y: auto !important;
+      padding: 70px 20px 20px 20px !important;
+      margin-top: 0 !important;
+      height: 100vh !important; /* Même hauteur que la sidebar */
+      position: relative !important;
+    }
+    
+    /* Navbar absolue pour ne pas prendre d'espace */
+    .navbar-absolute {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 1001 !important;
+    }
+    
+    /* Responsive sidebar */
+    @media (max-width: 991px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-panel {
+        width: 100% !important;
+        margin-left: 0 !important;
+      }
+      
+      .content {
+        margin-top: 0 !important;
+        height: 100vh !important;
+      }
+    }
+    
+    /* Amélioration de la lisibilité */
+    .sidebar .nav li.active > a,
+    .sidebar .nav li.active > a:hover,
+    .sidebar .nav li.active > a:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar .nav li > a:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      transform: translateX(5px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Animations pour la sidebar */
+    .sidebar .nav li {
+      animation: fadeInLeft 0.5s ease-out both;
+    }
+
+    .sidebar .nav li:nth-child(1) { animation-delay: 0.1s; }
+    .sidebar .nav li:nth-child(2) { animation-delay: 0.2s; }
+    .sidebar .nav li:nth-child(3) { animation-delay: 0.3s; }
+    .sidebar .nav li:nth-child(4) { animation-delay: 0.4s; }
+    .sidebar .nav li:nth-child(5) { animation-delay: 0.5s; }
+    .sidebar .nav li:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Animation pour les cartes */
+    .card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Animation pour les boutons */
+    .btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn span,
+    .btn i {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Footer centré - règles très fortes */
+    .footer {
+      text-align: center !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      width: 100% !important;
+    }
+    .footer .container-fluid {
+      text-align: center !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      width: 100% !important;
+      padding: 0 !important;
+    }
+    .footer .copyright {
+      text-align: center !important;
+      width: 100% !important;
+      display: block !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+    }
+    
+    /* Floating CTA Button avec animations */
+    .floating-cta {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(60deg, #ffa726, #fb8c00);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 50px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(255, 167, 38, 0.4);
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 600;
+      font-size: 1rem;
+      animation: slideInFromBottom 0.6s ease-out 1s both, float 3s ease-in-out 2s infinite;
+    }
+    .floating-cta:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 8px 30px rgba(255, 167, 38, 0.7);
+      color: white;
+      text-decoration: none;
+      animation: pulse 0.6s ease-in-out;
+    }
+    .floating-cta:active {
+      transform: translateY(-5px) scale(0.98);
+    }
+
+    @keyframes slideInFromBottom {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: translateY(-8px) scale(1.05);
+      }
+      50% {
+        transform: translateY(-8px) scale(1.1);
+      }
+    }
+    .floating-cta i {
+      font-size: 1.2rem;
+    }
+    .floating-cta span {
+      display: inline-block;
+    }
+    @media (max-width: 768px) {
+      .floating-cta {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+      }
+      .floating-cta span {
+        display: none;
+      }
+      .floating-cta i {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+  
+  {% block scriptHead %}{% endblock %}
+</head>
+
+<body class="">
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar" data-color="{% block sidebar_color %}black{% endblock %}">
+      <div class="sidebar-wrapper">
+        <div class="logo">
+          <a href="{% url 'appointment:index' %}" class="simple-text logo-mini">
+            {% block logo_mini %}AD{% endblock %}
+          </a>
+          <a href="{% url 'appointment:index' %}" class="simple-text logo-normal">
+            {% block logo_text %}{{ website_name|default:"Appointment" }}{% endblock %}
+          </a>
+        </div>
+        <ul class="nav">
+          {% block sidebar_menu %}
+          {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+              <!-- Menu Admin avec sections -->
+              <p class="sidebar-section-title">{% trans "Administration" %}</p>
+              <li class="{% if 'admin_dashboard' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:admin_dashboard' %}">
+                  <i class="tim-icons icon-chart-pie-36"></i>
+                  <p>{% trans "Dashboard" %}</p>
+                </a>
+              </li>
+              <li class="{% if 'get_user_appointments' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:get_user_appointments' %}">
+                  <i class="tim-icons icon-calendar-60"></i>
+                  <p>{% trans "Rendez-vous" %}</p>
+                  {% if confirmed_appointments and confirmed_appointments > 0 %}
+                  <span class="sidebar-badge">{{ confirmed_appointments }}</span>
+                  {% endif %}
+                </a>
+              </li>
+              <hr class="sidebar-separator">
+              <p class="sidebar-section-title">{% trans "Gestion" %}</p>
+              <li class="{% if 'add_service' in request.resolver_match.url_name or 'get_service_list' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:get_service_list' %}">
+                  <i class="tim-icons icon-briefcase-24"></i>
+                  <p>{% trans "Services" %}</p>
+                </a>
+              </li>
+              <li class="{% if 'add_staff_other_info' in request.resolver_match.url_name or 'user_profile' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:add_staff_other_info' %}">
+                  <i class="tim-icons icon-single-02"></i>
+                  <p>{% trans "Personnel" %}</p>
+                </a>
+              </li>
+            {% elif user.is_staff %}
+              <!-- Menu Staff avec sections -->
+              <p class="sidebar-section-title">{% trans "Gestion" %}</p>
+              <li class="{% if 'get_user_appointments' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:get_user_appointments' %}">
+                  <i class="tim-icons icon-calendar-60"></i>
+                  <p>{% trans "Rendez-vous" %}</p>
+                </a>
+              </li>
+              <hr class="sidebar-separator">
+              <p class="sidebar-section-title">{% trans "Compte" %}</p>
+              <li class="{% if 'user_profile' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:user_profile' %}">
+                  <i class="tim-icons icon-single-02"></i>
+                  <p>{% trans "Profil" %}</p>
+                </a>
+              </li>
+            {% else %}
+              <!-- Menu Utilisateur avec sections -->
+              <p class="sidebar-section-title">{% trans "Navigation" %}</p>
+              <li class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                <a href="{% url 'appointment:index' %}">
+                  <i class="tim-icons icon-chart-pie-36"></i>
+                  <p>{% trans "Tableau de bord" %}</p>
+                </a>
+              </li>
+              <li class="{% if 'my_appointments' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:my_appointments' %}">
+                  <i class="tim-icons icon-calendar-60"></i>
+                  <p>{% trans "Mes rendez-vous" %}</p>
+                </a>
+              </li>
+              <li class="{% if 'new_appointment' in request.resolver_match.url_name or 'appointment_request' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:new_appointment' %}">
+                  <i class="tim-icons icon-simple-add"></i>
+                  <p>{% trans "Nouveau rendez-vous" %}</p>
+                </a>
+              </li>
+              <hr class="sidebar-separator">
+              <p class="sidebar-section-title">{% trans "Compte" %}</p>
+              <li class="{% if 'user_profile' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'appointment:user_profile' %}">
+                  <i class="tim-icons icon-single-02"></i>
+                  <p>{% trans "Profil" %}</p>
+                </a>
+              </li>
+            {% endif %}
+            
+            <!-- Déconnexion -->
+            <hr class="sidebar-separator">
+            <li>
+              <a href="{% url 'appointment:logout' %}">
+                <i class="tim-icons icon-button-power"></i>
+                <p>{% trans "Déconnexion" %}</p>
+              </a>
+            </li>
+          {% else %}
+            <!-- Menu pour utilisateurs non connectés -->
+            <li class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+              <a href="{% url 'appointment:index' %}">
+                <i class="tim-icons icon-chart-pie-36"></i>
+                <p>{% trans "Accueil" %}</p>
+              </a>
+            </li>
+            <hr class="sidebar-separator">
+            <li>
+              <a href="{% url 'appointment:user_login' %}">
+                <i class="tim-icons icon-single-02"></i>
+                <p>{% trans "Connexion" %}</p>
+              </a>
+            </li>
+          {% endif %}
+          {% endblock %}
+        </ul>
+      </div>
+    </div>
+    <!-- End Sidebar -->
+    
+    <!-- Main Panel -->
+    <div class="main-panel">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+        <div class="container-fluid">
+          <div class="navbar-wrapper">
+            <div class="navbar-toggle d-inline">
+              <button type="button" class="navbar-toggler">
+                <span class="navbar-toggler-bar bar1"></span>
+                <span class="navbar-toggler-bar bar2"></span>
+                <span class="navbar-toggler-bar bar3"></span>
+              </button>
+            </div>
+            <a class="navbar-brand" href="{% url 'appointment:index' %}">
+              <i class="tim-icons icon-calendar-60 navbar-logo-icon"></i>
+              <span class="navbar-brand-text">Maw3idi</span>
+            </a>
+          </div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+            <span class="navbar-toggler-bar navbar-kebab"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navigation">
+            <ul class="navbar-nav ml-auto">
+              {% block navbar_menu %}
+              {% if request.resolver_match.url_name == 'index' %}
+              <!-- Navigation Links - Uniquement sur la page d'accueil -->
+              <li class="nav-item">
+                <a href="{% url 'appointment:index' %}" class="nav-link">{% trans "Accueil" %}</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'appointment:index' %}#services" class="nav-link">{% trans "Services" %}</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'appointment:index' %}#how-it-works" class="nav-link">{% trans "Comment ça marche" %}</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'appointment:index' %}#testimonials" class="nav-link">{% trans "Témoignages" %}</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'appointment:index' %}#contact" class="nav-link">{% trans "Contact" %}</a>
+              </li>
+              {% endif %}
+              <!-- Dark Mode Toggle -->
+              <li class="nav-item">
+                <button class="btn btn-link nav-link" id="theme-toggle" title="{% trans 'Basculer le thème' %}">
+                  <i class="tim-icons icon-bulb-63" id="theme-icon"></i>
+                  <span class="d-lg-none d-md-block">{% trans "Thème" %}</span>
+                </button>
+              </li>
+              {% if user.is_authenticated %}
+              <li class="dropdown nav-item">
+                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                  <div class="photo">
+                    <img src="{% static 'assets/img/anime3.png' %}" alt="Profile Photo">
+                  </div>
+                  <b class="caret d-none d-lg-block d-xl-block"></b>
+                  <p class="d-lg-none">
+                    {% trans "Log out" %}
+                  </p>
+                </a>
+                <ul class="dropdown-menu dropdown-navbar">
+                  <li class="nav-link"><a href="{% url 'appointment:user_profile' %}" class="nav-item dropdown-item">{% trans "Profile" %}</a></li>
+                  <li class="nav-link"><a href="javascript:void(0)" class="nav-item dropdown-item">{% trans "Settings" %}</a></li>
+                  <li class="dropdown-divider"></li>
+                  <li class="nav-link"><a href="{% url 'appointment:logout' %}" class="nav-item dropdown-item">{% trans "Log out" %}</a></li>
+                </ul>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a href="{% url 'appointment:user_login' %}" class="nav-link">{% trans "Connexion" %}</a>
+              </li>
+              {% endif %}
+              {% endblock %}
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+      <!-- Search Modal -->
+      <div class="modal modal-search fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="{% trans 'SEARCH' %}">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Navbar -->
+      
+      <!-- Content -->
+      <div class="content">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+        
+        {% block body %}
+        {% endblock %}
+      </div>
+      <!-- End Content -->
+      
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="container-fluid">
+          <div class="copyright text-center">
+            © {% now "Y" %} {{ website_name|default:"Maw3idi" }}. {% trans "Tous droits réservés" %}.
+          </div>
+        </div>
+      </footer>
+      <!-- End Footer -->
+    </div>
+    <!-- End Main Panel -->
+  </div>
+  
+  <!-- Floating CTA Button - Uniquement sur la page d'accueil -->
+  {% if request.resolver_match.url_name == 'index' %}
+            <a href="{% if user.is_authenticated %}{% url 'appointment:index' %}{% else %}{% url 'appointment:user_login' %}?next={% url 'appointment:index' %}{% endif %}" class="floating-cta" title="{% trans 'Réserver un rendez-vous' %}">
+    <i class="tim-icons icon-calendar-60"></i>
+    <span>{% trans "Réserver maintenant" %}</span>
+  </a>
+  {% endif %}
+  
+  <!--   Core JS Files   -->
+  <script src="{% static 'assets/js/core/jquery.min.js' %}"></script>
+  <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
+  <script src="{% static 'assets/js/core/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/plugins/perfect-scrollbar.jquery.min.js' %}"></script>
+  
+  <!-- Chart JS -->
+  <script src="{% static 'assets/js/plugins/chartjs.min.js' %}"></script>
+  
+  <!--  Notifications Plugin    -->
+  <script src="{% static 'assets/js/plugins/bootstrap-notify.js' %}"></script>
+  
+  <!-- Control Center for Black Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="{% static 'assets/js/black-dashboard.min.js' %}?v=1.0.0"></script>
+  
+  <!-- Black Dashboard DEMO methods, don't include it in your project! -->
+  <!-- Note: demo.js est optionnel, commenté si absent -->
+  <!-- <script src="{% static 'assets/demo/demo.js' %}"></script> -->
+  
+  <!-- Custom JS Block -->
+  {% block customJS %}{% endblock %}
+  
+  <script>
+    // Restaurer le thème AVANT le chargement complet du DOM pour éviter le flash
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+          document.documentElement.classList.add('white-content');
+          if (document.body) {
+            document.body.classList.add('white-content');
+          }
+        } else {
+          document.documentElement.classList.remove('white-content');
+          if (document.body) {
+            document.body.classList.remove('white-content');
+          }
+        }
+      } catch(e) {
+        console.warn('Erreur lors de la restauration du thème:', e);
+      }
+    })();
+    
+    $(document).ready(function() {
+      // Variables globales pour Black Dashboard
+      var $sidebar = $('.sidebar');
+      var $navbar = $('.navbar');
+      var $main_panel = $('.main-panel');
+      var sidebar_mini_active = true;
+      var white_color = false;
+      
+      // Black Dashboard initialization
+      if (typeof blackDashboard !== 'undefined' && typeof blackDashboard.initDashboardPageCharts === 'function') {
+        try {
+          blackDashboard.initDashboardPageCharts();
+        } catch (e) {
+          console.warn('Erreur lors de l\'initialisation des graphiques:', e);
+        }
+      } else {
+        console.log('blackDashboard.initDashboardPageCharts n\'est pas disponible (normal sur certaines pages)');
+      }
+      
+      // Animations globales au chargement
+      // Animation pour les éléments qui apparaissent au scroll
+      const animateOnScroll = function() {
+        const elements = document.querySelectorAll('.animate-on-scroll');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animated');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        elements.forEach(el => observer.observe(el));
+      };
+      animateOnScroll();
+
+      // Animation pour les cartes au survol
+      $('.card').hover(
+        function() {
+          $(this).css('transform', 'translateY(-5px)');
+        },
+        function() {
+          $(this).css('transform', 'translateY(0)');
+        }
+      );
+
+      // Animation pour les boutons au clic
+      $('.btn').on('click', function() {
+        const $btn = $(this);
+        $btn.css('transform', 'scale(0.95)');
+        setTimeout(() => {
+          $btn.css('transform', 'scale(1)');
+        }, 150);
+      });
+
+      // Animation pour les inputs au focus
+      $('.form-control').on('focus', function() {
+        $(this).css('transform', 'scale(1.02)');
+      }).on('blur', function() {
+        $(this).css('transform', 'scale(1)');
+      });
+      
+      // Sidebar toggle
+      $('.navbar-toggler').click(function() {
+        $sidebar.toggleClass('active');
+      });
+      
+      // Fixed plugin toggle
+      $('.fixed-plugin').click(function() {
+        $('.fixed-plugin .dropdown-menu').toggle();
+      });
+      
+      // Background color change
+      $('.fixed-plugin .background-color span').click(function() {
+        $(this).siblings().removeClass('active');
+        $(this).addClass('active');
+        
+        var new_color = $(this).data('color');
+        
+        if ($sidebar.length != 0) {
+          $sidebar.attr('data-color', new_color);
+        }
+        
+        if ($main_panel.length != 0) {
+          $main_panel.attr('data-color', new_color);
+        }
+      });
+      
+      // Sidebar mini toggle
+      $('.switch-sidebar-mini input').on("switchChange.bootstrapSwitch", function() {
+        if (sidebar_mini_active == true) {
+          $('body').removeClass('sidebar-mini');
+          sidebar_mini_active = false;
+          if (typeof blackDashboard !== 'undefined') {
+            blackDashboard.showSidebarMessage('Sidebar mini deactivated...');
+          }
+        } else {
+          $('body').addClass('sidebar-mini');
+          sidebar_mini_active = true;
+          if (typeof blackDashboard !== 'undefined') {
+            blackDashboard.showSidebarMessage('Sidebar mini activated...');
+          }
+        }
+      });
+      
+      // White/Dark mode toggle
+      $('.switch-change-color input').on("switchChange.bootstrapSwitch", function() {
+        if (white_color == true) {
+          $('body').addClass('change-background');
+          setTimeout(function() {
+            $('body').removeClass('change-background');
+            $('body').removeClass('white-content');
+          }, 900);
+          white_color = false;
+        } else {
+          $('body').addClass('change-background');
+          setTimeout(function() {
+            $('body').removeClass('change-background');
+            $('body').addClass('white-content');
+          }, 900);
+          white_color = true;
+        }
+      });
+      
+      // Restaurer le thème sauvegardé au chargement de la page (synchroniser avec le script précédent)
+      var savedTheme = localStorage.getItem('theme');
+      var $body = $('body');
+      var $icon = $('#theme-icon');
+      
+      if (savedTheme === 'light') {
+        $body.addClass('white-content');
+        if ($icon.length) {
+          $icon.removeClass('icon-bulb-63').addClass('icon-sun-fog-29');
+        }
+        white_color = true;
+      } else {
+        // Par défaut, thème sombre
+        $body.removeClass('white-content');
+        if ($icon.length) {
+          $icon.removeClass('icon-sun-fog-29').addClass('icon-bulb-63');
+        }
+        if (!savedTheme) {
+          localStorage.setItem('theme', 'dark');
+        }
+        white_color = false;
+      }
+      
+      // Fonction pour basculer le thème - Accessible globalement
+      window.toggleTheme = function() {
+        var $body = $('body');
+        var $icon = $('#theme-icon');
+        var $button = $('#theme-toggle');
+        
+        if ($body.hasClass('white-content')) {
+          // Passer en mode sombre
+          $body.removeClass('white-content');
+          $icon.removeClass('icon-sun-fog-29').addClass('icon-bulb-63');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          // Passer en mode clair
+          $body.addClass('white-content');
+          $icon.removeClass('icon-bulb-63').addClass('icon-sun-fog-29');
+          localStorage.setItem('theme', 'light');
+        }
+        
+        // Effet visuel
+        $button.addClass('active');
+        setTimeout(function() {
+          $button.removeClass('active');
+        }, 200);
+      };
+      
+      // Attacher l'événement au bouton de thème
+      $('#theme-toggle').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof window.toggleTheme === 'function') {
+          window.toggleTheme();
+        }
+        return false;
+      });
+      
+      // Également avec délégation d'événements
+      $(document).on('click', '#theme-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof window.toggleTheme === 'function') {
+          window.toggleTheme();
+        }
+        return false;
+      });
+    });
+  </script>
+  
+  <!-- Accessibility JavaScript -->
+  <script src="{% static 'js/accessibility.js' %}"></script>
+  
+  <!-- Auto-dismiss messages after 5 seconds -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Sélectionner tous les messages d'alerte
+      const alerts = document.querySelectorAll('.alert');
+      
+      alerts.forEach(function(alert) {
+        // Créer un timer pour chaque message
+        setTimeout(function() {
+          // Ajouter une classe pour l'animation de disparition
+          alert.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+          alert.style.opacity = '0';
+          alert.style.transform = 'translateY(-10px)';
+          
+          // Supprimer l'élément après l'animation
+          setTimeout(function() {
+            alert.remove();
+          }, 500); // Attendre la fin de l'animation (0.5s)
+        }, 5000); // Disparaître après 5 secondes
+      });
+    });
+  </script>
+</body>
+
+</html>
+

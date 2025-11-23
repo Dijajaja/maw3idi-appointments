@@ -1,0 +1,638 @@
+{% extends BASE_TEMPLATE %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Mes rendez-vous" %}{% endblock %}
+
+{% block customCSS %}
+<style>
+  
+  /* S'assurer que le navbar est visible */
+  .navbar {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1000 !important;
+  }
+  
+  .navbar-brand {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-brand-text {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-logo-icon {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* S'assurer que le profil est visible */
+  .navbar-nav .dropdown {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-nav .photo {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-nav .photo img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+  }
+  
+  /* Carte principale avec glassmorphism - OPAQUE */
+  .card {
+    background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+    border-radius: 25px !important;
+    border: 3px solid rgba(160, 70, 255, 0.4) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(160, 70, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .card:hover {
+    border-color: rgba(160, 70, 255, 0.6) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(160, 70, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px);
+  }
+  
+  .card-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 15px 20px !important;
+  }
+  
+  .card-title {
+    font-size: 1.4rem !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .card-category {
+    font-size: 0.85rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .card-body {
+    background: transparent !important;
+    padding: 20px !important;
+  }
+  
+  .appointments-table-container {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 20px !important;
+    padding: 18px !important;
+    margin-top: 15px !important;
+    border: 2px solid rgba(160, 70, 255, 0.2) !important;
+    backdrop-filter: blur(10px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+  }
+  
+  .filters-section {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 20px !important;
+    padding: 18px !important;
+    margin-bottom: 20px !important;
+    border: 2px solid rgba(160, 70, 255, 0.2) !important;
+    backdrop-filter: blur(10px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+  }
+  
+  .filters-section .form-group {
+    margin-bottom: 12px !important;
+  }
+  
+  .filters-section label {
+    font-size: 0.85rem !important;
+    margin-bottom: 6px !important;
+  }
+  .table-responsive {
+    overflow-x: auto;
+  }
+  .appointments-table {
+    width: 100%;
+    color: inherit;
+  }
+  .appointments-table thead th {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 12px !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px;
+  }
+  .appointments-table tbody td {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem !important;
+  }
+  
+  .appointments-table tbody td small {
+    font-size: 0.8rem !important;
+  }
+  .appointments-table tbody tr {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.5s ease-out both;
+  }
+
+  .appointments-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+  .appointments-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+  .appointments-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+  .appointments-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+  .appointments-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+  .appointments-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: translateX(5px);
+    box-shadow: -5px 0 15px rgba(160, 70, 255, 0.3) !important;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Animation pour les filtres */
+  .filters-section {
+    animation: fadeInDown 0.6s ease-out both;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Animation pour les inputs */
+  .form-control {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .form-control:focus {
+    transform: scale(1.02);
+    border-color: rgba(160, 70, 255, 0.85) !important;
+    box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.2), 0 8px 30px rgba(160, 70, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+  
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  /* Style pour les select et leurs options */
+  select.form-control {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    padding: 8px 14px !important;
+    font-size: 0.9rem !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    background-size: 16px !important;
+    padding-right: 35px !important;
+  }
+  
+  select.form-control option {
+    background: rgba(20, 15, 35, 0.98) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    padding: 10px !important;
+  }
+  
+  select.form-control:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    background-size: 16px !important;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, rgba(160, 70, 255, 0.9) 0%, rgba(102, 126, 234, 0.9) 100%) !important;
+    border: 2px solid rgba(160, 70, 255, 0.5) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 6px 20px rgba(160, 70, 255, 0.4), 0 0 15px rgba(160, 70, 255, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(160, 70, 255, 0.6), 0 0 25px rgba(160, 70, 255, 0.3) !important;
+    background: linear-gradient(135deg, rgba(180, 90, 255, 0.95) 0%, rgba(120, 140, 250, 0.95) 100%) !important;
+    border-color: rgba(160, 70, 255, 0.7) !important;
+  }
+  .status-badge {
+    padding: 4px 10px !important;
+    border-radius: 20px;
+    font-size: 0.7rem !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .status-confirmed {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+  }
+  .status-pending {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+  }
+  .status-cancelled {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+  }
+  .status-past {
+    background: rgba(158, 158, 158, 0.2);
+    color: #9e9e9e;
+  }
+  .btn-action {
+    padding: 4px 12px !important;
+    margin: 0 2px !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .btn-sm {
+    padding: 4px 10px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(160, 70, 255, 0.4) !important;
+  }
+  
+  .btn-info {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.9) 0%, rgba(25, 118, 210, 0.9) 100%) !important;
+    border: 2px solid rgba(33, 150, 243, 0.5) !important;
+  }
+  
+  .btn-warning {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.9) 0%, rgba(255, 152, 0, 0.9) 100%) !important;
+    border: 2px solid rgba(255, 193, 7, 0.5) !important;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px !important;
+  }
+  .empty-state i {
+    font-size: 3rem !important;
+    opacity: 0.3;
+    margin-bottom: 15px !important;
+  }
+  
+  .empty-state h4 {
+    font-size: 1.2rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .empty-state p {
+    font-size: 0.9rem !important;
+    margin-bottom: 15px !important;
+  }
+  
+  /* Pagination compacte */
+  .pagination {
+    margin-top: 20px !important;
+  }
+  
+  .pagination .page-link {
+    padding: 6px 12px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Container principal */
+  .row {
+    margin: 0 !important;
+  }
+  
+  .col-12 {
+    padding: 0 10px !important;
+  }
+  
+  /* Styles pour le thème blanc */
+  body.white-content .card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 250, 255, 0.9)) !important;
+    border: 3px solid rgba(160, 70, 255, 0.3) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      0 0 30px rgba(160, 70, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  body.white-content .card:hover {
+    border-color: rgba(160, 70, 255, 0.5) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      0 0 40px rgba(160, 70, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  body.white-content .card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  body.white-content .card-title,
+  body.white-content .card-category {
+    color: #333 !important;
+  }
+  
+  body.white-content .appointments-table-container,
+  body.white-content .filters-section {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 2px solid rgba(160, 70, 255, 0.15) !important;
+  }
+  
+  body.white-content .appointments-table {
+    color: #333 !important;
+  }
+  
+  body.white-content .appointments-table thead th {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    color: #333 !important;
+    background: rgba(245, 245, 250, 0.8) !important;
+  }
+  
+  body.white-content .appointments-table tbody td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    color: #333 !important;
+  }
+  
+  body.white-content .appointments-table tbody td small {
+    color: #666 !important;
+  }
+  
+  body.white-content .appointments-table tbody tr:hover {
+    background: rgba(160, 70, 255, 0.08) !important;
+    box-shadow: -5px 0 15px rgba(160, 70, 255, 0.2) !important;
+  }
+  
+  body.white-content .form-control {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid rgba(0, 0, 0, 0.15) !important;
+    color: #333 !important;
+  }
+  
+  body.white-content .form-control:focus {
+    border-color: rgba(160, 70, 255, 0.6) !important;
+    box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.15), 0 8px 30px rgba(160, 70, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 1) !important;
+  }
+  
+  body.white-content .form-control::placeholder {
+    color: rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  body.white-content .filters-section label {
+    color: #333 !important;
+  }
+  
+  body.white-content .status-badge {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  body.white-content .status-confirmed {
+    background: rgba(76, 175, 80, 0.15) !important;
+    color: #2e7d32 !important;
+  }
+  
+  body.white-content .status-pending {
+    background: rgba(255, 193, 7, 0.15) !important;
+    color: #f57c00 !important;
+  }
+  
+  body.white-content .status-cancelled {
+    background: rgba(244, 67, 54, 0.15) !important;
+    color: #c62828 !important;
+  }
+  
+  body.white-content .status-past {
+    background: rgba(158, 158, 158, 0.15) !important;
+    color: #616161 !important;
+  }
+  
+  body.white-content .empty-state h4,
+  body.white-content .empty-state p {
+    color: #333 !important;
+  }
+  
+  body.white-content .empty-state i {
+    color: #999 !important;
+  }
+  
+  body.white-content .pagination .page-link {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(0, 0, 0, 0.15) !important;
+    color: #333 !important;
+  }
+  
+  body.white-content .pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, rgba(160, 70, 255, 0.9) 0%, rgba(102, 126, 234, 0.9) 100%) !important;
+    border-color: rgba(160, 70, 255, 0.5) !important;
+    color: white !important;
+  }
+  
+  body.white-content .pagination .page-link:hover {
+    background: rgba(160, 70, 255, 0.1) !important;
+    border-color: rgba(160, 70, 255, 0.3) !important;
+    color: rgba(160, 70, 255, 0.9) !important;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">{% trans "Mes rendez-vous" %}</h3>
+        <p class="card-category">{% trans "Gérez et consultez tous vos rendez-vous" %}</p>
+      </div>
+      <div class="card-body">
+        <!-- Filtres -->
+        <div class="filters-section">
+          <form method="get" action="{% url 'appointment:my_appointments' %}" class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>{% trans "Recherche" %}</label>
+                <input type="text" name="search" class="form-control" placeholder="{% trans 'Rechercher par nom, email, service...' %}" value="{{ search_query }}">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>{% trans "Date" %}</label>
+                <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>{% trans "Statut" %}</label>
+                <select name="status" class="form-control">
+                  <option value="">{% trans "Tous" %}</option>
+                  <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>{% trans "Confirmé" %}</option>
+                  <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>{% trans "En attente" %}</option>
+                  <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>{% trans "Annulé" %}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i class="tim-icons icon-zoom-split"></i> {% trans "Filtrer" %}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tableau des rendez-vous -->
+        <div class="appointments-table-container">
+          {% if appointments %}
+            <div class="table-responsive">
+              <table class="table appointments-table">
+                <thead>
+                  <tr>
+                    <th>{% trans "Service" %}</th>
+                    <th>{% trans "Client / Professionnel" %}</th>
+                    <th>{% trans "Date et heure" %}</th>
+                    <th>{% trans "Statut" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for appointment in appointments %}
+                    <tr>
+                      <td>
+                        <strong>{{ appointment.get_service_name }}</strong>
+                        {% if appointment.get_staff_member_name %}
+                          <br><small>{% trans "Avec" %}: {{ appointment.get_staff_member_name }}</small>
+                        {% endif %}
+                      </td>
+                      <td>
+                        {{ appointment.get_client_name }}
+                        <br><small>{{ appointment.client.email }}</small>
+                      </td>
+                      <td>
+                        <strong>{{ appointment.get_appointment_date|date:"d/m/Y" }}</strong>
+                        <br>{{ appointment.appointment_request.start_time|time:"H:i" }} - {{ appointment.appointment_request.end_time|time:"H:i" }}
+                      </td>
+                      <td>
+                        {% now "Y-m-d" as today %}
+                        {% if appointment.get_appointment_date|date:"Y-m-d" < today %}
+                          <span class="status-badge status-past">{% trans "Passé" %}</span>
+                        {% elif appointment.paid %}
+                          <span class="status-badge status-confirmed">{% trans "Confirmé" %}</span>
+                        {% else %}
+                          <span class="status-badge status-pending">{% trans "En attente" %}</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                         <a href="{% url 'appointment:display_appointment' appointment.id %}" class="btn btn-sm btn-info btn-action">
+                           <i class="tim-icons icon-zoom-split"></i> {% trans "Voir" %}
+                         </a>
+                         {% if appointment.get_appointment_date|date:"Y-m-d" >= today and appointment.appointment_request.id_request %}
+                           <a href="{% url 'appointment:prepare_reschedule_appointment' appointment.appointment_request.id_request %}" class="btn btn-sm btn-warning btn-action">
+                             <i class="tim-icons icon-refresh-02"></i> {% trans "Reporter" %}
+                           </a>
+                         {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if appointments.has_other_pages %}
+              <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                  {% if appointments.has_previous %}
+                    <li class="page-item">
+                       <a class="page-link" href="?page={{ appointments.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">{% trans "Précédent" %}</a>
+                    </li>
+                  {% endif %}
+                  
+                  {% for num in appointments.paginator.page_range %}
+                    {% if appointments.number == num %}
+                      <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                      </li>
+                    {% elif num > appointments.number|add:'-3' and num < appointments.number|add:'3' %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">{{ num }}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                  
+                  {% if appointments.has_next %}
+                    <li class="page-item">
+                       <a class="page-link" href="?page={{ appointments.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">{% trans "Suivant" %}</a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </nav>
+            {% endif %}
+          {% else %}
+            <div class="empty-state">
+              <i class="tim-icons icon-calendar-60"></i>
+              <h4>{% trans "Aucun rendez-vous trouvé" %}</h4>
+              <p>{% trans "Vous n'avez pas encore de rendez-vous." %}</p>
+              <a href="{% url 'appointment:new_appointment' %}" class="btn btn-primary mt-3">
+                <i class="tim-icons icon-simple-add"></i> {% trans "Prendre un rendez-vous" %}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

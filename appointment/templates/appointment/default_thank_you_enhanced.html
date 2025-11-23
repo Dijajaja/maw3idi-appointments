@@ -1,0 +1,270 @@
+{% extends "base_templates/black_dashboard_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Rendez-vous confirmé" %}{% endblock %}
+
+{% block customCSS %}
+<style>
+  .thank-you-container {
+    text-align: center;
+    padding: 60px 20px;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .success-animation {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    position: relative;
+  }
+  
+  .success-checkmark {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 3;
+    stroke: #4caf50;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #4caf50;
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    position: relative;
+    top: 5px;
+    right: 5px;
+    margin: 0 auto;
+  }
+  
+  .success-checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 3;
+    stroke-miterlimit: 10;
+    stroke: #4caf50;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+  
+  .success-checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+  
+  @keyframes stroke {
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  
+  @keyframes scale {
+    0%, 100% {
+      transform: none;
+    }
+    50% {
+      transform: scale3d(1.1, 1.1, 1);
+    }
+  }
+  
+  @keyframes fill {
+    100% {
+      box-shadow: inset 0px 0px 0px 30px #4caf50;
+    }
+  }
+  
+  .thank-you-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    background: linear-gradient(60deg, #ffa726, #fb8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .thank-you-message {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .appointment-details-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 30px auto;
+    max-width: 600px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .appointment-details-card h3 {
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  
+  .detail-item:last-child {
+    border-bottom: none;
+  }
+  
+  .detail-label {
+    font-weight: 600;
+    opacity: 0.8;
+  }
+  
+  .detail-value {
+    font-weight: 500;
+    color: #ffa726;
+  }
+  
+  .notification-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 4.5s forwards;
+    max-width: 400px;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      transform: translateX(400px);
+    }
+  }
+  
+  .notification-popup h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .notification-popup p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<!-- Notification Popup -->
+<div id="successNotification" class="notification-popup" style="display: none;">
+  <h4>
+    <i class="tim-icons icon-check-2"></i>
+    {% trans "Rendez-vous confirmé !" %}
+  </h4>
+  <p>{% trans "Un email de confirmation a été envoyé à votre adresse." %}</p>
+</div>
+
+<div class="thank-you-container">
+  <div class="success-animation">
+    <svg class="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+      <circle class="success-checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+      <path class="success-checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+  </div>
+  
+  <h1 class="thank-you-title">{% trans "Rendez-vous confirmé !" %}</h1>
+  <p class="thank-you-message">
+    {% trans "Votre rendez-vous a été pris avec succès. Vous recevrez un email de confirmation avec tous les détails." %}
+  </p>
+  
+  <div class="appointment-details-card">
+    <h3>{% trans "Détails du rendez-vous" %}</h3>
+    <div class="detail-item">
+      <span class="detail-label">{% trans "Service" %}:</span>
+      <span class="detail-value">{{ appointment.get_service_name }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">{% trans "Date" %}:</span>
+      <span class="detail-value">{{ appointment.get_appointment_date|date:"d/m/Y" }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">{% trans "Heure" %}:</span>
+      <span class="detail-value">{{ appointment.get_start_time|time:"H:i" }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-label">{% trans "Durée" %}:</span>
+      <span class="detail-value">{{ appointment.get_service_duration }}</span>
+    </div>
+  </div>
+  
+  <div class="action-buttons">
+    <a href="{% url 'appointment:my_appointments' %}" class="btn btn-primary btn-lg">
+      <i class="tim-icons icon-calendar-60"></i> {% trans "Voir mes rendez-vous" %}
+    </a>
+    <a href="{% url 'appointment:calendar_view' %}" class="btn btn-info btn-lg">
+      <i class="tim-icons icon-calendar-60"></i> {% trans "Voir le calendrier" %}
+    </a>
+    <a href="{% url 'appointment:index' %}" class="btn btn-secondary btn-lg">
+      <i class="tim-icons icon-chart-pie-36"></i> {% trans "Retour à l'accueil" %}
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+// Afficher la notification popup
+document.addEventListener('DOMContentLoaded', function() {
+  const notification = document.getElementById('successNotification');
+  
+  // Afficher la notification après un court délai
+  setTimeout(function() {
+    notification.style.display = 'block';
+  }, 500);
+  
+  // Masquer automatiquement après 5 secondes
+  setTimeout(function() {
+    notification.style.display = 'none';
+  }, 5000);
+  
+  // Permettre de fermer manuellement
+  notification.addEventListener('click', function() {
+    notification.style.display = 'none';
+  });
+});
+</script>
+{% endblock %}
+

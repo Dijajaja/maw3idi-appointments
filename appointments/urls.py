@@ -15,10 +15,17 @@ Including another URLconf
 """
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path, include
+from django.views.generic import RedirectView
 
-urlpatterns = i18n_patterns(
-    path("admin/", admin.site.urls),
+# Importer directement la vue index pour l'URL racine
+from appointment.views import index
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
-    path("", include("appointment.urls")),
-)
+    # Inclure les URLs de l'application appointment avec le préfixe /fr/
+    path('fr/', include('appointment.urls')),
+    # Rediriger la racine vers /fr/ pour l'interface utilisateur
+    path('', RedirectView.as_view(url='/fr/', permanent=False), name='root_redirect'),
+]

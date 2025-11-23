@@ -86,7 +86,7 @@ class Service(models.Model):
     image = models.ImageField(upload_to='services/', blank=True, null=True, verbose_name=_('Image'), )
     currency = models.CharField(
         max_length=3,
-        default='USD',
+        default='MRU',
         validators=[MaxLengthValidator(3), MinLengthValidator(3)],
         verbose_name=_("Currency")
     )
@@ -428,8 +428,14 @@ class AppointmentRequest(models.Model):
             raise ValidationError(_("Date cannot be in the past"))
 
     def save(self, *args, **kwargs):
+        # Normalise seconds to 00 to avoid off‑by‑seconds validation errors
+        if self.start_time is not None:
+            self.start_time = self.start_time.replace(second=0, microsecond=0)
+        if self.end_time is not None:
+            self.end_time = self.end_time.replace(second=0, microsecond=0)
+
         # if no id_request is provided, generate one
-        if self.id_request is None:
+        if self.id_request is None or self.id_request == "":
             self.id_request = f"{get_timestamp()}{self.service.id}{generate_random_id()}"
         # start time should not be equal to end time
         if self.start_time == self.end_time:
@@ -437,8 +443,17 @@ class AppointmentRequest(models.Model):
         # date should not be in the past
         if self.date < datetime.date.today():
             raise ValidationError(_("Date cannot be in the past"))
-        # duration should not exceed the service duration
-        if time_difference(self.start_time, self.end_time) > self.service.duration:
+        # duration should not exceed the service duration (compare at minute precision)
+        delta = time_difference(self.start_time, self.end_time)
+        # Truncate to whole minutes for comparison to a minute-based service duration
+        try:
+            import datetime as _dt
+            delta_minutes = _dt.timedelta(minutes=int(delta.total_seconds() // 60))
+            service_minutes = _dt.timedelta(minutes=int(self.service.duration.total_seconds() // 60))
+        except Exception:
+            delta_minutes = delta
+            service_minutes = self.service.duration
+        if delta_minutes > service_minutes:
             raise ValidationError(_("Duration cannot exceed the service duration"))
         return super().save(*args, **kwargs)
 

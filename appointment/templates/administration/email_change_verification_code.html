@@ -20,7 +20,7 @@
                       action="{% url 'appointment:email_change_verification_code' %}">
                     {% csrf_token %}
                     <label>{% trans 'Code' %}:
-                        <input type="text" name="code" placeholder="X1Y2Z3" required>
+                        <input type="text" name="code" placeholder="{% trans 'Code de vérification' %}" required>
                     </label>
                     <button class="btn btn-primary" type="submit">{% trans 'Submit' %}</button>
                 </form>

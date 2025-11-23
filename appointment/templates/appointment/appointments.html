@@ -1,9 +1,682 @@
 {% extends BASE_TEMPLATE %}
 {% load i18n %}
 {% load static %}
+{% load l10n %}
+{% block navbar_title %}{% trans "Réserver un rendez-vous" %}{% endblock %}
 {% block customCSS %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/appt-common.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/appointments.css' %}"/>
+    <style>
+        /* Masquer la scrollbar mais garder le défilement */
+        body, html {
+            overflow-x: hidden !important;
+        }
+        
+        body::-webkit-scrollbar,
+        html::-webkit-scrollbar,
+        .main-panel::-webkit-scrollbar,
+        .content::-webkit-scrollbar,
+        .djangoAppt_main-container::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        
+        body {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
+        
+        /* S'assurer que le navbar est visible */
+        .navbar {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1000 !important;
+        }
+        
+        .navbar-brand {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .navbar-brand-text {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .navbar-logo-icon {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* S'assurer que le profil est visible */
+        .navbar-nav .dropdown {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .navbar-nav .photo {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .navbar-nav .photo img {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 50% !important;
+        }
+        
+        /* Styles pour Black Dashboard - Design compact avec glassmorphism */
+        .container {
+            padding: 15px !important;
+            max-width: 1200px !important;
+            margin: 0 auto;
+        }
+        
+        .djangoAppt_main-container {
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            border-radius: 25px !important;
+            padding: 20px !important;
+            border: 3px solid rgba(160, 70, 255, 0.4) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(160, 70, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            max-width: 95%;
+            margin: 0 auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .djangoAppt_main-container:hover {
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(160, 70, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-2px);
+        }
+        
+        .page-title {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.5rem !important;
+            font-weight: 600;
+            margin-bottom: 8px !important;
+        }
+        
+        .page-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem !important;
+            display: block;
+            margin-bottom: 15px !important;
+        }
+        
+        hr {
+            border-color: rgba(255, 255, 255, 0.1);
+            margin: 15px 0 !important;
+        }
+        
+        /* Conteneur principal du calendrier - Design compact avec glassmorphism */
+         .djangoAppt_appointment-calendar {
+             background: rgba(255, 255, 255, 0.05) !important;
+             border-radius: 20px !important;
+             padding: 18px !important;
+            border: 2px solid rgba(160, 70, 255, 0.2) !important;
+            backdrop-filter: blur(10px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+            flex: 1 !important;
+            min-width: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-self: flex-start !important;
+            margin-top: 0 !important;
+            min-height: 400px !important;
+            flex-basis: 500px !important;
+            max-width: 500px !important;
+            width: 500px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        .djangoAppt_appointment-calendar-title-timezone {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px !important;
+        }
+        
+        .djangoAppt_title {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem !important;
+            font-weight: 600;
+        }
+        
+        .djangoAppt_timezone-details {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem !important;
+        }
+        
+        /* Conteneur du calendrier */
+        .djangoAppt_calendar-and-slot {
+            display: flex !important;
+            gap: 5px !important;
+            width: 100% !important;
+            align-items: flex-start !important;
+            justify-content: center !important;
+            flex-wrap: nowrap !important;
+        }
+        
+        /* FullCalendar styles - Style simple et propre */
+        .djangoAppt_calendar {
+            background: transparent;
+            padding: 0;
+            border: none;
+            flex: 1;
+            min-width: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            width: 100% !important;
+            box-sizing: border-box;
+        }
+        
+        /* Conteneur du calendrier */
+        #calendar {
+            width: 100%;
+            height: 100%;
+            min-height: 350px !important;
+            display: block;
+            position: relative;
+            box-sizing: border-box;
+            flex: 1;
+        }
+        
+        /* Style du calendrier FullCalendar - Fond blanc avec design propre */
+        .djangoAppt_calendar .fc {
+            background: #ffffff;
+            background-color: #ffffff;
+            border-radius: 12px !important;
+            padding: 12px !important;
+            color: #333333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100% !important;
+        }
+        /* Assurer que la vue interne suit la hauteur demandée */
+        .djangoAppt_calendar .fc-view-harness,
+        .djangoAppt_calendar .fc-scrollgrid {
+            min-height: 350px !important;
+        }
+        
+        /* Toolbar du calendrier */
+        .djangoAppt_calendar .fc-header-toolbar {
+            background: #f8f9fa;
+            padding: 10px 12px !important;
+            border-radius: 12px !important;
+            margin-bottom: 12px !important;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .djangoAppt_calendar .fc-toolbar-title {
+            font-size: 1rem !important;
+        }
+        
+        .djangoAppt_calendar .fc-button {
+            padding: 6px 12px !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .djangoAppt_calendar .fc-toolbar-title {
+            color: #333333;
+            font-weight: 600;
+        }
+        
+        /* Boutons du calendrier */
+        .djangoAppt_calendar .fc-button {
+            background: linear-gradient(135deg, rgba(160, 70, 255, 0.9), rgba(102, 126, 234, 0.9)) !important;
+            border: none;
+            color: white;
+            padding: 6px 12px !important;
+            border-radius: 20px !important;
+            font-weight: 500;
+            margin: 0 3px !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .djangoAppt_calendar .fc-button:hover {
+            background: linear-gradient(135deg, rgba(180, 90, 255, 0.95), rgba(120, 140, 250, 0.95)) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(160, 70, 255, 0.4) !important;
+        }
+        
+        /* En-têtes des colonnes */
+        .djangoAppt_calendar .fc-col-header-cell {
+            background: #f8f9fa;
+            color: #333333;
+            font-weight: 600;
+            border-color: #e0e0e0;
+        }
+        
+        /* Cellules du calendrier */
+        .djangoAppt_calendar .fc-daygrid-day {
+            background: #ffffff;
+            color: #333333;
+        }
+        
+        .djangoAppt_calendar .fc-daygrid-day:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .djangoAppt_calendar .fc-daygrid-day-number {
+            color: #333333;
+            font-weight: 500;
+        }
+        
+        /* Jour actuel */
+        .djangoAppt_calendar .fc-day-today {
+            background: rgba(102, 126, 234, 0.15);
+            border: 2px solid rgba(102, 126, 234, 0.4);
+        }
+        
+        .djangoAppt_calendar .fc-day-today .fc-daygrid-day-number {
+            color: #667eea;
+            font-weight: 700;
+        }
+        
+        /* Bordures */
+        .djangoAppt_calendar .fc-scrollgrid {
+            border-color: #e0e0e0;
+        }
+        
+        .djangoAppt_calendar .fc-scrollgrid td,
+        .djangoAppt_calendar .fc-scrollgrid th {
+            border-color: #e0e0e0;
+        }
+        
+        /* Textes généraux */
+        .djangoAppt_calendar .fc {
+            color: #333333;
+        }
+        
+        .djangoAppt_calendar .fc a {
+            color: #333333;
+            text-decoration: none;
+        }
+        
+        /* Styles pour les jours désactivés */
+        .disabled-day {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        
+        .selected-cell {
+            background: rgba(255, 167, 38, 0.3) !important;
+            border: 2px solid #ffa726 !important;
+        }
+        
+        .selected-cell .fc-daygrid-day-number {
+            color: #ffa726 !important;
+            font-weight: 700;
+        }
+        
+        /* Styles pour les créneaux horaires - Design compact */
+        .djangoAppt_slot {
+            background: transparent !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            flex: 0 0 auto !important;
+            min-width: auto !important;
+            max-width: 100% !important;
+            display: block !important;
+        }
+        
+        .djangoAppt_date_chosen {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem !important;
+            font-weight: 600;
+            margin-bottom: 12px !important;
+            padding-bottom: 8px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .djangoAppt_slot-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .djangoAppt_slot-list li {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 2px solid rgba(160, 70, 255, 0.2) !important;
+            border-radius: 20px !important;
+            padding: 10px 14px !important;
+            margin-bottom: 8px !important;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .djangoAppt_slot-list li:hover {
+            background: rgba(160, 70, 255, 0.2) !important;
+            border-color: rgba(160, 70, 255, 0.5) !important;
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(160, 70, 255, 0.3) !important;
+        }
+        
+        .djangoAppt_slot-list li.selected {
+            background: linear-gradient(135deg, #ffa726, #fb8c00) !important;
+            border-color: #ffa726 !important;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4) !important;
+        }
+        
+        /* Styles pour le formulaire - Design compact avec glassmorphism */
+         .djangoAppt_service-description {
+             background: rgba(255, 255, 255, 0.05) !important;
+             border-radius: 20px !important;
+             padding: 18px !important;
+             border: 2px solid rgba(160, 70, 255, 0.2) !important;
+             backdrop-filter: blur(10px) saturate(180%) !important;
+             -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+             flex: 0 0 420px !important;
+             min-width: 380px !important;
+             max-width: 440px !important;
+             display: flex !important;
+             flex-direction: column !important;
+             min-height: 400px !important;
+             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+             margin-left: 0 !important; /* Annuler le margin-left du CSS externe */
+         }
+        
+        /* Layout pour aligner les blocs */
+        .djangoAppt_page-body {
+            display: flex !important;
+            gap: 5px !important;
+            flex-wrap: nowrap !important; /* une seule ligne pour 2 colonnes */
+            align-items: flex-start !important;
+            width: 100% !important;
+            justify-content: center !important;
+        }
+        
+        /* Ajuster les proportions des blocs - Compact */
+        .djangoAppt_appointment-calendar {
+            flex: 0 0 500px !important;
+            max-width: 500px !important;
+            min-width: 480px !important;
+        }
+        
+        .djangoAppt_service-description {
+            flex: 0 0 420px !important;
+            min-width: 380px !important;
+            max-width: 440px !important;
+        }
+        
+        @media (max-width: 992px) {
+            .djangoAppt_calendar-and-slot {
+                flex-direction: column !important;
+            }
+            
+            .djangoAppt_appointment-calendar,
+            .djangoAppt_calendar,
+            .djangoAppt_slot,
+            .djangoAppt_service-description {
+                flex: 1 1 100% !important;
+                max-width: 100% !important;
+                min-width: 100% !important;
+            }
+        }
+        
+        .djangoAppt_item-name {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            font-size: 1rem !important;
+            margin-bottom: 8px !important;
+            display: block;
+        }
+        
+        .staff-members-list label {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 6px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .staff-members-list select {
+            width: 100%;
+            padding: 8px 14px !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 2px solid rgba(255, 255, 255, 0.12) !important;
+            border-radius: 20px !important;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem !important;
+            margin-bottom: 15px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .staff-members-list select:focus {
+            outline: none;
+            border-color: rgba(160, 70, 255, 0.85) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.2), 0 8px 30px rgba(160, 70, 255, 0.25) !important;
+        }
+        
+        .djangoAppt_service-description-content p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .btn-submit-appointment {
+            background: linear-gradient(135deg, rgba(160, 70, 255, 0.9) 0%, rgba(102, 126, 234, 0.9) 100%) !important;
+            border: 2px solid rgba(160, 70, 255, 0.5) !important;
+            color: white;
+            padding: 10px 24px !important;
+            font-weight: 600;
+            font-size: 0.9rem !important;
+            border-radius: 20px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 6px 20px rgba(160, 70, 255, 0.4), 0 0 15px rgba(160, 70, 255, 0.2) !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 15px !important;
+        }
+        
+        .btn-submit-appointment:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(160, 70, 255, 0.6), 0 0 25px rgba(160, 70, 255, 0.3) !important;
+            background: linear-gradient(135deg, rgba(180, 90, 255, 0.95) 0%, rgba(120, 140, 250, 0.95) 100%) !important;
+            border-color: rgba(160, 70, 255, 0.7) !important;
+            color: white;
+        }
+        
+        .btn-submit-appointment:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .form-control {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 2px solid rgba(255, 255, 255, 0.12) !important;
+            border-radius: 20px !important;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 8px 14px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(160, 70, 255, 0.85) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.2), 0 8px 30px rgba(160, 70, 255, 0.25) !important;
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        .form-group label {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 6px !important;
+            display: block;
+            font-size: 0.9rem !important;
+        }
+
+        /* Effet de disparition légère en haut lors du scroll (fade) */
+        .content { }
+        /* (Masque sticky annulé à la demande de l'utilisateur) */
+        
+        .error-message {
+            color: #f44336;
+            padding: 10px;
+            background: rgba(244, 67, 54, 0.1);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        
+        /* S'assurer qu'aucun élément ne bloque les clics */
+        body, html, .main-panel, .content, .container, .djangoAppt_main-container {
+            pointer-events: auto !important;
+        }
+        
+        /* Forcer pointer-events sur tous les éléments interactifs */
+        button, a, input, select, textarea, .fc-button, .fc-daygrid-day, 
+        .djangoAppt_slot-list li, .btn, .form-control, #calendar, 
+        .djangoAppt_calendar, .fc, .fc-view-harness, .fc-scrollgrid {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+        
+        /* S'assurer que les éléments du calendrier sont cliquables */
+        .fc-daygrid-day, .fc-daygrid-day-frame, .fc-daygrid-day-top,
+        .fc-daygrid-day-number, .fc-button, .fc-toolbar-chunk button {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+        
+        /* Désactiver pointer-events uniquement pour les jours désactivés */
+        .disabled-day {
+            pointer-events: none !important;
+            cursor: not-allowed !important;
+        }
+        
+        /* Exception pour les éléments qui doivent vraiment bloquer les clics */
+        .disabled-day,
+        .btn-submit-appointment:disabled {
+            pointer-events: none !important;
+        }
+        
+        /* Les éléments interactifs doivent être cliquables */
+        a, button, input, select, textarea, .fc-button, .fc-daygrid-day,
+        .djangoAppt_slot-list li, .btn, .form-control, .fc-daygrid-day-frame,
+        .fc-daygrid-day-top, .fc-daygrid-day-number {
+            pointer-events: auto !important;
+        }
+        
+        /* Forcer l'interactivité sur les éléments du formulaire */
+        form, form *, .appointment-form, .appointment-form *,
+        .djangoAppt_service-description, .djangoAppt_service-description *,
+        .staff-members-list, .staff-members-list * {
+            pointer-events: auto !important;
+        }
+        
+        /* S'assurer que le conteneur principal n'a pas d'overlay */
+        .djangoAppt_main-container::before,
+        .djangoAppt_main-container::after,
+        .container::before,
+        .container::after,
+        .main-panel::before,
+        .main-panel::after {
+            display: none !important;
+            pointer-events: none !important;
+        }
+        
+        /* Styles pour le thème blanc */
+        body.white-content .djangoAppt_main-container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 250, 255, 0.9)) !important;
+            border: 3px solid rgba(160, 70, 255, 0.3) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 0 30px rgba(160, 70, 255, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+        }
+        
+        body.white-content .djangoAppt_main-container:hover {
+            border-color: rgba(160, 70, 255, 0.5) !important;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                0 0 40px rgba(160, 70, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        body.white-content .page-title,
+        body.white-content .page-description,
+        body.white-content .djangoAppt_title,
+        body.white-content .djangoAppt_timezone-details,
+        body.white-content .djangoAppt_date_chosen,
+        body.white-content .djangoAppt_item-name,
+        body.white-content .djangoAppt_service-description-content p {
+            color: #333 !important;
+        }
+        
+        body.white-content .djangoAppt_appointment-calendar,
+        body.white-content .djangoAppt_service-description {
+            background: rgba(255, 255, 255, 0.7) !important;
+            border: 2px solid rgba(160, 70, 255, 0.15) !important;
+        }
+        
+        body.white-content .djangoAppt_slot-list li {
+            background: rgba(255, 255, 255, 0.8) !important;
+            border: 2px solid rgba(160, 70, 255, 0.15) !important;
+            color: #333 !important;
+        }
+        
+        body.white-content .djangoAppt_slot-list li:hover {
+            background: rgba(160, 70, 255, 0.15) !important;
+            border-color: rgba(160, 70, 255, 0.4) !important;
+        }
+        
+        body.white-content .staff-members-list select,
+        body.white-content .form-control {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 2px solid rgba(0, 0, 0, 0.15) !important;
+            color: #333 !important;
+        }
+        
+        body.white-content .staff-members-list select:focus,
+        body.white-content .form-control:focus {
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            background: rgba(255, 255, 255, 1) !important;
+            box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.15), 0 8px 30px rgba(160, 70, 255, 0.2) !important;
+        }
+        
+        body.white-content .staff-members-list label,
+        body.white-content .form-group label {
+            color: #333 !important;
+        }
+        
+        body.white-content hr {
+            border-color: rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        body.white-content .djangoAppt_date_chosen {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+
+
+    </style>
 {% endblock %}
 {% block title %}
     {{ page_title }}
@@ -15,6 +688,7 @@
     <div class="container">
         <div class="djangoAppt_main-container">
             <div class="djangoAppt_body-container">
+                {% if service %}
                 <h1 class="page-title">
                     {% if page_header %}{{ page_header }}{% else %}{{ service.name }}{% endif %} </h1>
                 <small class="page-description">
@@ -29,22 +703,21 @@
                                 {% trans "Select a date and time" %}
                             </div>
                             <div class="djangoAppt_timezone-details">
-                                {% trans "Timezone" %}:&nbsp;{{ timezoneTxt }}
+                                {% trans "Timezone" %}:&nbsp;GMT
                             </div>
                         </div>
                         <hr class="djangoAppt_second-part">
                         <div class="djangoAppt_calendar-and-slot">
-                            <div class="djangoAppt_calendar" id="calendar">
-                            </div>
-                            <div class="djangoAppt_slot">
-                                <div class="djangoAppt_date_chosen">{{ date_chosen }}</div>
-                                <div class="slot-container">
-                                    <div class="error-message"></div>
+                            <div class="djangoAppt_calendar">
+                                <div id="calendar" style="width: 100%; height: 100%; min-height: 350px; display: block; visibility: visible; opacity: 1;">
+                                </div>
+                                <!-- Déplacer la liste des créneaux sous le calendrier -->
+                                <div class="djangoAppt_date_chosen">{{ date_chosen|default:"" }}</div>
+                                <div class="slot-container" style="margin-top: 12px;">
                                     <ul id="slot-list" class="djangoAppt_slot-list">
                                         <!-- Slot list will be updated dynamically by the AJAX request -->
                                     </ul>
                                 </div>
-
                             </div>
                         </div>
                         {% if rescheduled_date %}
@@ -71,13 +744,14 @@
                                                 {% if staff_member and staff_member.id == sf.id %}selected{% endif %}>{{ sf.get_staff_member_name }}</option>
                                     {% endfor %}
                                 </select>
+                                <div class="error-message"></div>
                             </div>
 
                             <div>{% trans "Service Details" %}</div>
                             <hr class="djangoAppt_second-part">
                             <div class="djangoAppt_service-description-content">
                                 <p class="djangoAppt_item-name">{{ service.name }}</p>
-                                <p id="service-datetime-chosen" class="service-datetime-chosen">{{ date_chosen }}</p>
+                                <p id="service-datetime-chosen" class="service-datetime-chosen">{{ date_chosen|default:"" }}</p>
                                 <p>{{ service.get_duration }}</p>
                                 <p>{{ service.get_price_text }}</p>
                                 <button type="submit"
@@ -87,6 +761,13 @@
                         </form>
                     </div>
                 </div>
+                {% else %}
+                <div class="alert alert-danger" style="background: rgba(244, 67, 54, 0.1); border: 1px solid #f44336; border-radius: 8px; padding: 20px; color: #f44336;">
+                    <h2 style="color: #f44336; margin-bottom: 15px;">{% trans "Service non trouvé" %}</h2>
+                    <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;">{% trans "Le service demandé n'existe pas ou n'est plus disponible." %}</p>
+                    <a href="{% url 'appointment:index' %}" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 10px 20px; border-radius: 6px; color: white; text-decoration: none; display: inline-block;">{% trans "Retour aux services" %}</a>
+                </div>
+                {% endif %}
                 {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-dismissible {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
@@ -109,29 +790,75 @@
             integrity="sha512-VjS1thnR7k73t4wDPXADrXrEBf2ET2QmzfpOvd3vjznxChj+PXuMRpgyV8AY4xkVYtSNBx7aGMazsYBY0QH9FQ=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        const timezone = "{{ timezoneTxt }}";
-        const locale = "{{ locale }}";
-        const availableSlotsAjaxURL = "{% url 'appointment:available_slots_ajax' %}";
-        const requestNextAvailableSlotURLTemplate = "{% url 'appointment:request_next_available_slot' service_id=0 %}";
-        const getNonWorkingDaysURL = "{% url 'appointment:get_non_working_days_ajax' %}";
-        const serviceId = "{{ service.id }}";
-        const serviceDuration = parseInt("{{ service.duration.total_seconds }}") / 60;
-        const rescheduledDate = "{{ rescheduled_date }}";
-        const appointmentRequestId = "{{ ar_id_request }}";
-        const appointmentRequestSubmitURL = "{% url 'appointment:appointment_request_submit' %}";
-        const appointmentRescheduleURL = "{% url 'appointment:reschedule_appointment_submit' %}";
+        // Variables globales pour le calendrier
+        // Utiliser var au lieu de const pour permettre la redéfinition dans appointments.js si nécessaire
+        // Forcer le fuseau horaire à GMT
+        var timezone = 'GMT';
+        var locale = "{{ locale|default:'fr' }}";
+        var availableSlotsAjaxURL = "{% url 'appointment:available_slots_ajax' %}";
+        var requestNextAvailableSlotURLTemplate = "{% url 'appointment:request_next_available_slot' service_id=0 %}";
+        var getNonWorkingDaysURL = "{% url 'appointment:get_non_working_days_ajax' %}";
+        var serviceId = "{{ service.id|default:'' }}";
+        console.log('=== INITIALISATION DES VARIABLES ===');
+        console.log('serviceId initial:', serviceId);
+        console.log('service existe:', {% if service %}true{% else %}false{% endif %});
+        {% if service %}
+        console.log('Service ID:', {{ service.id }});
+        console.log('Service name:', "{{ service.name|escapejs }}");
+        {% else %}
+        console.error('⚠️ Service non défini dans le contexte!');
+        {% endif %}
+        
+        {% if service and service.duration %}
+        var serviceDurationSecondsRaw = "{{ service.duration.total_seconds|floatformat:0|unlocalize|default:'1800' }}";
+        var serviceDurationSeconds = parseInt(serviceDurationSecondsRaw, 10);
+        {% else %}
+        var serviceDurationSeconds = 1800;
+        {% endif %}
+        if (isNaN(serviceDurationSeconds) || serviceDurationSeconds <= 0 || !isFinite(serviceDurationSeconds)) {
+            serviceDurationSeconds = 1800;
+        }
+        var serviceDuration = serviceDurationSeconds / 60;
+        var rescheduledDate = "{{ rescheduled_date|default:'' }}";
+        if (rescheduledDate === '') {
+            rescheduledDate = null;
+        }
+        var appointmentRequestId = "{{ ar_id_request|default:'' }}";
+        var appointmentRequestSubmitURL = "{% url 'appointment:appointment_request_submit' %}";
+        var appointmentRescheduleURL = "{% url 'appointment:reschedule_appointment_submit' %}";
+        if (typeof locale === 'undefined' || !locale) {
+            console.warn('Locale non défini, utilisation de fr par défaut');
+            locale = 'fr';
+        }
+        if (!serviceId || serviceId === '' || serviceId === 'undefined') {
+            console.error('❌ Service ID non défini ou vide!');
+            console.error('serviceId value:', serviceId);
+            console.error('serviceId type:', typeof serviceId);
+        } else {
+            console.log('✓ Service ID défini:', serviceId);
+        }
     </script>
     <script>
-        const requestNonAvailableSlotBtnTxt = "{% trans 'Request next available slot' %}";
-        const noStaffMemberSelectedTxt = "{% trans 'No staff member selected.' %}";
-        const selectTimeSlotWarningTxt = "{% trans 'Please select a time slot before submitting the appointment request.' %}";
-        const dateInPastErrorTxt = "{% trans 'Date is in the past.' %}";
-        const selectDateAndTimeAlertTxt = "{% trans 'Please select a date and time' %}";
-        const todayBtnText = "{% trans 'Today' %}";
-        const nextMonthBtnText = "{% trans 'Next month' %}";
-        const previousMonthBtnText = "{% trans 'Previous month' %}";
-        const nextAvailableDateTxt = "{% trans 'Next available date' %}";
+        var requestNonAvailableSlotBtnTxt = "{% trans 'Request next available slot' %}";
+        var noStaffMemberSelectedTxt = "{% trans 'No staff member selected.' %}";
+        var selectTimeSlotWarningTxt = "{% trans 'Please select a time slot before submitting the appointment request.' %}";
+        var dateInPastErrorTxt = "{% trans 'Date is in the past.' %}";
+        var selectDateAndTimeAlertTxt = "{% trans 'Please select a date and time' %}";
+        var todayBtnText = "{% trans 'Today' %}";
+        var nextMonthBtnText = "{% trans 'Next month' %}";
+        var previousMonthBtnText = "{% trans 'Previous month' %}";
+        var nextAvailableDateTxt = "{% trans 'Next available date' %}";
+    </script>
+    <script src="{% static 'js/js-utils.js' %}"></script>
+    <script>
+        // Diagnostic dans la console uniquement (sans affichage visuel)
+        window.addEventListener('load', function() {
+            console.log('=== DIAGNOSTIC CALENDRIER ===');
+            console.log('FullCalendar disponible:', typeof FullCalendar !== 'undefined');
+            console.log('Moment disponible:', typeof moment !== 'undefined');
+            console.log('jQuery disponible:', typeof jQuery !== 'undefined' && typeof $ !== 'undefined');
+            console.log('Élément #calendar existe:', document.getElementById('calendar') !== null);
+        });
     </script>
     <script src="{% static 'js/appointments.js' %}"></script>
-    <script src="{% static 'js/js-utils.js' %}"></script>
 {% endblock %}

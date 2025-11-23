@@ -68,7 +68,12 @@ def prepare_appointment_display_data(user, appointment_id):
         return None, None, _("Appointment does not exist."), 404
 
     # Check if the user is authorized to view the appointment
-    if not check_entity_ownership(user, appointment):
+    # Allow if: user is the client, user is staff/superuser, or user owns the appointment (staff member)
+    is_client = appointment.client and appointment.client.id == user.id
+    is_staff_or_superuser = user.is_staff or user.is_superuser
+    is_owner = check_entity_ownership(user, appointment)
+    
+    if not (is_client or is_staff_or_superuser or is_owner):
         return None, None, _("You are not authorized to view this appointment."), 403
 
     # Prepare the data for display
@@ -113,7 +118,17 @@ def prepare_user_profile_data(user, staff_user_id):
         }
     staff_member = get_staff_member_from_user_id_or_logged_in(user, staff_user_id)
 
-    if not staff_member:
+    # Si l'utilisateur n'est pas staff et n'est pas superuser, afficher le profil simplifié
+    if not staff_member and not user.is_staff and not user.is_superuser:
+        return {
+            'error': False,
+            'template': 'appointment/user_profile_simple.html',
+            'extra_context': {
+                'user': user,
+            }
+        }
+    
+    if not staff_member and (user.is_staff or user.is_superuser):
         return {
             'error': True,
             'extra_context': {'message': _("Not authorized."), 'back_url': reverse('appointment:user_profile')},

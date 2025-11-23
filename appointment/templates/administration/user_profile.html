@@ -4,9 +4,347 @@
 {% block customCSS %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/app_admin/btn.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/app_admin/user_profile.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site_background.css' %}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
           integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <style>
+        /* Supprimer le grand fond blanc et laisser le fond violet global */
+        .wrapper,
+        .main-panel,
+        .content,
+        .content .container,
+        .content .container-fluid,
+        .content-wrapper,
+        .responsive-table-container,
+        .messages,
+        .messages *,
+        section.content {
+            background: transparent !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+        
+        /* Forcer la suppression de tout fond blanc */
+        body,
+        html {
+            background-color: var(--bg-deep-2, #0e0a1a) !important;
+        }
+        
+        /* Messages d'alerte - fond sombre */
+        .messages .alert {
+            background: rgba(244, 67, 54, 0.12) !important;
+            background-color: rgba(244, 67, 54, 0.12) !important;
+            border-color: rgba(244, 67, 54, 0.5) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        /* Wrapper et bloc principal, design proche de la page rendez-vous */
+        .content.content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            background: transparent !important; /* laisser voir le fond violet global */
+        }
+
+        .profile-container {
+            width: 100%;
+            max-width: 900px; /* largeur réduite */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* gap réduit */
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        /* Cartes avec glassmorphism identique aux autres pages */
+        .profile-section {
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            border-radius: 25px !important;
+            border: 3px solid rgba(160, 70, 255, 0.4) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(160, 70, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            padding: 25px 30px !important;
+            margin-bottom: 0 !important;
+            flex: 1 1 calc(50% - 10px); /* deux colonnes sur desktop avec gap réduit */
+            min-width: 280px; /* largeur minimale réduite */
+            max-width: 440px; /* largeur maximale pour chaque carte */
+            position: relative;
+            overflow: hidden;
+            /* Animations */
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease-out forwards;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Effet de brillance subtil au hover */
+        .profile-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            transition: left 0.5s;
+        }
+        
+        .profile-section:hover::before {
+            left: 100%;
+        }
+        
+        /* Animation d'apparition */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Animation au hover avec glow effect identique aux autres pages */
+        .profile-section:hover {
+            transform: translateY(-2px) !important;
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(160, 70, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        }
+        
+        /* Délai d'animation pour chaque carte */
+        .profile-section:nth-child(1) { animation-delay: 0.1s; }
+        .profile-section:nth-child(2) { animation-delay: 0.2s; }
+        .profile-section:nth-child(3) { animation-delay: 0.3s; }
+        .profile-section:nth-child(4) { animation-delay: 0.4s; }
+        .profile-section:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Supprimer TOUT fond blanc - règles très agressives */
+        .profile-section,
+        .profile-section *,
+        .profile-section p,
+        .profile-section div,
+        .profile-section span,
+        .profile-section small,
+        .profile-section h2,
+        .profile-section h3,
+        .profile-section h4,
+        .profile-section .section-content,
+        .profile-section .section-content *,
+        .profile-section .responsive-table-container,
+        .profile-section .responsive-table-container * {
+            background: transparent !important;
+            background-color: transparent !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        /* Fond sombre sur la carte avec glassmorphism */
+        .profile-section {
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            background-color: transparent !important;
+        }
+        
+        /* Tableaux sombres */
+        .profile-section table,
+        .profile-section table * {
+            background-color: rgba(10, 10, 25, 0.9) !important;
+            background: rgba(10, 10, 25, 0.9) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .profile-section table th {
+            background-color: rgba(20, 20, 45, 0.95) !important;
+            background: rgba(20, 20, 45, 0.95) !important;
+        }
+        
+        .profile-section table td {
+            background-color: transparent !important;
+            background: transparent !important;
+        }
+        
+        /* Supprimer les styles Bootstrap qui pourraient créer du blanc */
+        .profile-section .card,
+        .profile-section .card-body,
+        .profile-section .card-header,
+        .profile-section .alert,
+        .profile-section .btn {
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        .profile-section h2 {
+            font-size: 1.4rem; /* taille réduite */
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.92);
+            margin-bottom: 12px; /* marge réduite */
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(160, 70, 255, 0.8), rgba(102, 126, 234, 0.8));
+            transition: width 0.4s ease;
+        }
+        
+        .profile-section:hover h2 {
+            color: rgba(255, 255, 255, 1);
+        }
+        
+        .profile-section:hover h2::after {
+            width: 100%;
+        }
+
+        .profile-section .section-content {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .profile-section .section-content p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            transition: all 0.2s ease;
+        }
+        
+        .profile-section .section-content p:hover {
+            color: rgba(255, 255, 255, 1);
+            padding-left: 4px;
+        }
+        
+        /* Style pour les labels (strong) */
+        .profile-section .section-content p strong {
+            color: rgba(160, 70, 255, 0.9);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-section:hover .section-content p strong {
+            color: rgba(160, 70, 255, 1);
+            text-shadow: 0 0 8px rgba(160, 70, 255, 0.4);
+        }
+        
+        /* Amélioration des tooltips */
+        .profile-section .fa-info-circle {
+            color: rgba(102, 126, 234, 0.8);
+            cursor: help;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-section .fa-info-circle:hover {
+            color: rgba(102, 126, 234, 1);
+            transform: scale(1.2);
+            text-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+
+        .modify-btn {
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modify-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Animation des tableaux avec zebra striping */
+        .profile-section table {
+            transition: all 0.3s ease;
+        }
+        
+        .profile-section table tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        /* Zebra striping pour meilleure lisibilité */
+        .profile-section table tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+        }
+        
+        .profile-section table tbody tr:hover {
+            transform: translateX(8px);
+            background: linear-gradient(90deg, 
+                rgba(160, 70, 255, 0.1), 
+                rgba(255, 255, 255, 0.05)) !important;
+            box-shadow: -4px 0 8px rgba(160, 70, 255, 0.2);
+        }
+        
+        /* Animation des icônes */
+        .profile-section .fas,
+        .profile-section .fa {
+            transition: all 0.3s ease;
+        }
+        
+        .profile-section .modify-btn:hover .fas,
+        .profile-section .modify-btn:hover .fa {
+            transform: rotate(360deg) scale(1.1);
+        }
+        
+        .profile-section .buttons-container a:hover .fas,
+        .profile-section .buttons-container a:hover .fa {
+            transform: scale(1.2);
+        }
+        
+        /* Animation des boutons d'action */
+        .profile-section .buttons-container a {
+            transition: all 0.3s ease;
+        }
+        
+        .profile-section .buttons-container a:hover {
+            transform: scale(1.15);
+        }
+
+        /*  logo + profil + footer sont visibles comme sur les autres pages */
+        .navbar {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1000 !important;
+        }
+        .navbar-brand,
+        .navbar-brand-text,
+        .navbar-logo-icon {
+            display: inline-flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .navbar-nav .dropdown,
+        .navbar-nav .photo {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        .navbar-nav .photo img {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 50% !important;
+        }
+        .footer {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+    </style>
 {% endblock %}
 {% block title %}
     {{ page_title }}
@@ -17,14 +355,6 @@
 {% block body %}
     <section class="content content-wrapper">
         <div class="profile-container">
-            <div class="messages" style="padding: 20px 0">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-dismissible {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
-                             role="alert">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            </div>
             <section class="profile-section">
                 {% translate "Confirm Deletion" as modal_title %}
                 {% translate "Delete" as delete_btn_modal %}

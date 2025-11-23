@@ -1,0 +1,249 @@
+{% extends "base_templates/black_dashboard_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Calendrier" %}{% endblock %}
+
+{% block customCSS %}
+<style>
+  .calendar-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 20px;
+  }
+  
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .calendar-nav {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .calendar-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .calendar-table th {
+    padding: 15px;
+    text-align: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .calendar-table td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: top;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    min-height: 100px;
+    position: relative;
+  }
+  
+  .calendar-day {
+    min-height: 100px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .calendar-day:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .calendar-day.empty {
+    opacity: 0.3;
+    cursor: default;
+  }
+  
+  .calendar-day.today {
+    background: rgba(255, 167, 38, 0.2);
+    border: 2px solid rgba(255, 167, 38, 0.5);
+  }
+  
+  .calendar-day.past {
+    opacity: 0.5;
+  }
+  
+  .day-number {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+  }
+  
+  .appointment-badge {
+    display: inline-block;
+    background: rgba(33, 150, 243, 0.3);
+    color: #2196f3;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .appointment-badge:hover {
+    background: rgba(33, 150, 243, 0.5);
+    transform: scale(1.05);
+  }
+  
+  .appointment-count {
+    display: inline-block;
+    background: rgba(76, 175, 80, 0.3);
+    color: #4caf50;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-top: 5px;
+  }
+  
+  .calendar-stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffa726;
+  }
+  
+  .stat-label {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="calendar-header">
+          <div class="calendar-nav">
+            <a href="{% url 'appointment:calendar_view' prev_month.year prev_month.month %}" class="btn btn-sm btn-primary">
+              <i class="tim-icons icon-minimal-left"></i> {% trans "Précédent" %}
+            </a>
+            <h2 class="calendar-title">{{ current_month_name }} {{ current_year }}</h2>
+            <a href="{% url 'appointment:calendar_view' next_month.year next_month.month %}" class="btn btn-sm btn-primary">
+              {% trans "Suivant" %} <i class="tim-icons icon-minimal-right"></i>
+            </a>
+          </div>
+          <a href="{% url 'appointment:calendar_view' today.year today.month %}" class="btn btn-sm btn-info">
+            <i class="tim-icons icon-calendar-60"></i> {% trans "Aujourd'hui" %}
+          </a>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="calendar-container">
+          <table class="calendar-table">
+            <thead>
+              <tr>
+                <th>{% trans "Lundi" %}</th>
+                <th>{% trans "Mardi" %}</th>
+                <th>{% trans "Mercredi" %}</th>
+                <th>{% trans "Jeudi" %}</th>
+                <th>{% trans "Vendredi" %}</th>
+                <th>{% trans "Samedi" %}</th>
+                <th>{% trans "Dimanche" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for week in calendar_days %}
+              <tr>
+                {% for day_data in week %}
+                  {% if day_data %}
+                  <td>
+                    <div class="calendar-day {% if day_data.is_today %}today{% elif day_data.is_past %}past{% endif %}">
+                      <div class="day-number">{{ day_data.day }}</div>
+                      {% if day_data.appointments %}
+                        {% for appointment in day_data.appointments %}
+                        <div class="appointment-badge" title="{{ appointment.service }} - {{ appointment.time }}">
+                          {{ appointment.time }}
+                        </div>
+                        {% endfor %}
+                        {% if day_data.count > 3 %}
+                        <div class="appointment-count">+{{ day_data.count|add:"-3" }} {% trans "de plus" %}</div>
+                        {% endif %}
+                      {% endif %}
+                    </div>
+                  </td>
+                  {% else %}
+                  <td class="empty"></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+          <div class="calendar-stats">
+            <div class="stat-item">
+              <div class="stat-value">{{ total_appointments }}</div>
+              <div class="stat-label">{% trans "Total rendez-vous" %}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ current_month_name }}</div>
+              <div class="stat-label">{% trans "Mois en cours" %}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+// Ajouter des interactions au calendrier
+document.addEventListener('DOMContentLoaded', function() {
+  const appointmentBadges = document.querySelectorAll('.appointment-badge');
+  
+  appointmentBadges.forEach(function(badge) {
+    badge.addEventListener('click', function() {
+      // TODO: Ouvrir un modal avec les détails du rendez-vous
+      console.log('Appointment clicked:', this.title);
+    });
+  });
+});
+</script>
+{% endblock %}
+

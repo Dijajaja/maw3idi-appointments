@@ -9,10 +9,13 @@ Since: 1.0.0
 from django.urls import include, path
 
 from appointment.views import (
-    appointment_client_information, appointment_request, appointment_request_submit, confirm_reschedule,
-    default_thank_you, enter_verification_code, get_available_slots_ajax, get_next_available_date_ajax,
-    get_non_working_days_ajax, prepare_reschedule_appointment, reschedule_appointment_submit, set_passwd
+    admin_dashboard, appointment_client_information, appointment_request, appointment_request_submit, change_password_simple,
+    confirm_reschedule, contact, custom_logout, default_thank_you, enter_verification_code, get_available_slots_ajax, get_next_available_date_ajax,
+    get_non_working_days_ajax, index, my_appointments, new_appointment, prepare_reschedule_appointment, reschedule_appointment_submit, set_passwd,
+    update_user_info_simple, user_login, user_register
+    
 )
+from appointment.views_calendar import calendar_view, get_calendar_appointments_ajax
 from appointment.views_admin import (
     add_day_off, add_or_update_service, add_or_update_staff_info, add_staff_member_info, add_working_hours,
     create_new_staff_member, delete_appointment, delete_appointment_ajax, delete_day_off, delete_service,
@@ -95,20 +98,38 @@ ajax_urlpatterns = [
     # delete appointment ajax
     path('delete_appointment/', delete_appointment_ajax, name="delete_appointment_ajax"),
     path('is_user_staff_admin/', is_user_staff_admin, name="is_user_staff_admin"),
+    # calendar ajax
+    path('calendar_appointments/', get_calendar_appointments_ajax, name="get_calendar_appointments_ajax"),
 ]
 
 urlpatterns = [
     # homepage
+    path('', index, name='index'),
+    
+    # Authentification
+    path('login/', user_login, name='user_login'),
+    path('register/', user_register, name='register'),
+    path('logout/', custom_logout, name='logout'),
+    
+    # Nouvelles pages
+    path('my-appointments/', my_appointments, name='my_appointments'),
+    path('new-appointment/', new_appointment, name='new_appointment'),
+    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('calendar/', calendar_view, name='calendar_view'),
+    path('calendar/<int:year>/<int:month>/', calendar_view, name='calendar_view'),
+    # Profil utilisateur simplifié
+    path('update-user-info-simple/', update_user_info_simple, name='update_user_info_simple'),
+    path('change-password-simple/', change_password_simple, name='change_password_simple'),
+    # Contact
+    path('contact/', contact, name='contact'),
+
     path('request/<int:service_id>/', appointment_request, name='appointment_request'),
     path('request-submit/', appointment_request_submit, name='appointment_request_submit'),
-    path('appointment/<str:id_request>/reschedule/', prepare_reschedule_appointment,
-         name='prepare_reschedule_appointment'),
+    path('appointment/<str:id_request>/reschedule/', prepare_reschedule_appointment, name='prepare_reschedule_appointment'),
     path('appointment-reschedule-submit/', reschedule_appointment_submit, name='reschedule_appointment_submit'),
     path('confirm-reschedule/<str:id_request>/', confirm_reschedule, name='confirm_reschedule'),
-    path('client-info/<int:appointment_request_id>/<str:id_request>/', appointment_client_information,
-         name='appointment_client_information'),
-    path('verification-code/<int:appointment_request_id>/<str:id_request>/', enter_verification_code,
-         name='enter_verification_code'),
+    path('client-info/<int:appointment_request_id>/<str:id_request>/', appointment_client_information, name='appointment_client_information'),
+    path('verification-code/<int:appointment_request_id>/<str:id_request>/', enter_verification_code, name='enter_verification_code'),
     path('verification-code/', email_change_verification_code, name='email_change_verification_code'),
     path('thank-you/<int:appointment_id>/', default_thank_you, name='default_thank_you'),
     path('verify/<uidb64>/<str:token>/', set_passwd, name='set_passwd'),

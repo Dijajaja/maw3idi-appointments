@@ -1,0 +1,355 @@
+{% extends "base_templates/black_dashboard_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Nouveau rendez-vous" %}{% endblock %}
+
+{% block customCSS %}
+<style>
+  /* S'assurer que le navbar est visible */
+  .navbar {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1000 !important;
+  }
+  
+  .navbar-brand {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-brand-text {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-logo-icon {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* S'assurer que le profil est visible */
+  .navbar-nav .dropdown {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-nav .photo {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .navbar-nav .photo img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+  }
+  
+  /* Carte principale avec glassmorphism - OPAQUE */
+  .card {
+    background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+    border-radius: 25px !important;
+    border: 3px solid rgba(160, 70, 255, 0.4) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(160, 70, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .card:hover {
+    border-color: rgba(160, 70, 255, 0.6) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(160, 70, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px);
+  }
+  
+  .card-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 12px 18px !important;
+  }
+  
+  .card-body {
+    background: transparent !important;
+    padding: 15px !important;
+  }
+  
+  .services-header {
+    text-align: center;
+    margin-bottom: 20px !important;
+    padding: 8px 0 !important;
+  }
+  
+  .services-header h1 {
+    font-size: 1.4rem !important;
+    margin-bottom: 6px !important;
+    font-weight: 600;
+  }
+  
+  .services-header p {
+    font-size: 0.85rem !important;
+    opacity: 0.8;
+  }
+  
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 15px !important;
+    margin-top: 15px !important;
+  }
+  
+  .service-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 20px !important;
+    padding: 15px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border: 2px solid rgba(160, 70, 255, 0.2) !important;
+    backdrop-filter: blur(10px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .service-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 30px rgba(160, 70, 255, 0.4), 0 0 20px rgba(160, 70, 255, 0.2) !important;
+    text-decoration: none;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(160, 70, 255, 0.5) !important;
+  }
+  
+  .service-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600;
+  }
+  
+  .service-card .service-description {
+    opacity: 0.8;
+    margin-bottom: 12px !important;
+    line-height: 1.4;
+    min-height: 45px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .service-card .service-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .service-card .service-detail-item {
+    text-align: center;
+    flex: 1;
+  }
+  
+  .service-card .service-detail-item strong {
+    display: block;
+    margin-bottom: 3px !important;
+    font-size: 0.75rem !important;
+    opacity: 0.9;
+  }
+  
+  .service-card .service-detail-item span {
+    opacity: 0.8;
+    font-size: 0.8rem !important;
+  }
+  
+  .service-card .btn-book {
+    width: 100%;
+    padding: 8px 12px !important;
+    background: linear-gradient(60deg, #ffa726, #fb8c00) !important;
+    color: white;
+    border: none !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4) !important;
+  }
+  
+  .service-card .btn-book:hover {
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 6px 20px rgba(255, 167, 38, 0.5) !important;
+    background: linear-gradient(60deg, #ffb74d, #ff9800) !important;
+  }
+  
+  .no-services {
+    text-align: center;
+    padding: 30px 20px !important;
+  }
+  
+  .no-services .card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(160, 70, 255, 0.2) !important;
+    padding: 25px !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(10px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+  }
+  
+  .no-services h2 {
+    margin-bottom: 12px !important;
+    font-weight: 600;
+    font-size: 1.2rem !important;
+  }
+  
+  .no-services p {
+    opacity: 0.8;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Container principal */
+  .row {
+    margin: 0 !important;
+  }
+  
+  .col-12 {
+    padding: 0 10px !important;
+  }
+  
+  /* Styles pour le thème blanc */
+  body.white-content .card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(250, 250, 255, 0.9)) !important;
+    border: 3px solid rgba(160, 70, 255, 0.3) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      0 0 30px rgba(160, 70, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  body.white-content .card:hover {
+    border-color: rgba(160, 70, 255, 0.5) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      0 0 40px rgba(160, 70, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  body.white-content .card-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  body.white-content .services-header h1,
+  body.white-content .services-header p {
+    color: #333 !important;
+  }
+  
+  body.white-content .service-card {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 2px solid rgba(160, 70, 255, 0.15) !important;
+  }
+  
+  body.white-content .service-card:hover {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(160, 70, 255, 0.4) !important;
+  }
+  
+  body.white-content .service-card h3 {
+    color: #333 !important;
+  }
+  
+  body.white-content .service-card .service-description {
+    color: #666 !important;
+  }
+  
+  body.white-content .service-card .service-detail-item strong,
+  body.white-content .service-card .service-detail-item span {
+    color: #333 !important;
+  }
+  
+  body.white-content .service-card .service-details {
+    border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  body.white-content .no-services .card {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 2px solid rgba(160, 70, 255, 0.15) !important;
+  }
+  
+  body.white-content .no-services h2,
+  body.white-content .no-services p {
+    color: #333 !important;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="services-header">
+          <h1>{% trans "Choisissez un service" %}</h1>
+          <p>{% trans "Sélectionnez le service pour lequel vous souhaitez prendre un rendez-vous" %}</p>
+        </div>
+      </div>
+      <div class="card-body">
+        {% if services %}
+          <div class="services-grid">
+            {% for service in services %}
+              <a href="{% url 'appointment:appointment_request' service_id=service.id %}" class="service-card">
+                <h3>{{ service.name }}</h3>
+                {% if service.description %}
+                  <div class="service-description">{{ service.description|truncatewords:30 }}</div>
+                {% else %}
+                  <div class="service-description">{% trans "Service professionnel" %}</div>
+                {% endif %}
+                <div class="service-details">
+                  <div class="service-detail-item">
+                    <strong>{% trans "Durée" %}</strong>
+                    <span>{{ service.get_duration }}</span>
+                  </div>
+                  <div class="service-detail-item">
+                    <strong>{% trans "Prix" %}</strong>
+                    <span>{{ service.get_price_text }}</span>
+                  </div>
+                </div>
+                <button type="button" class="btn-book">
+                  <i class="tim-icons icon-calendar-60"></i> {% trans "Réserver" %}
+                </button>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="no-services">
+            <div class="card">
+              <h2>{% trans "Aucun service disponible" %}</h2>
+              <p>{% trans "Veuillez réessayer plus tard ou nous contacter pour plus d'informations." %}</p>
+              {% if user.is_superuser %}
+                <a href="{% url 'admin:appointment_service_add' %}" class="btn btn-primary mt-3">
+                  <i class="tim-icons icon-simple-add"></i> {% trans "Créer un service" %}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

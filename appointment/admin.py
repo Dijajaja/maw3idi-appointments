@@ -7,6 +7,9 @@ Since: 1.0.0
 """
 
 from django import forms
+from django.contrib.admin.widgets import AdminTimeWidget
+from django.utils.translation import gettext_lazy as _
+import datetime
 from django.contrib import admin
 
 from .models import (
@@ -22,8 +25,48 @@ class ServiceAdmin(admin.ModelAdmin):
     list_filter = ('duration',)
 
 
+class AppointmentRequestForm(forms.ModelForm):
+    class Meta:
+        model = AppointmentRequest
+        fields = '__all__'
+        widgets = {
+            'start_time': AdminTimeWidget(attrs={'step': 60}),  # minutes only
+            'end_time': AdminTimeWidget(attrs={'step': 60}),    # minutes only
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        date = cleaned.get('date') or datetime.date.today()
+        start_time = cleaned.get('start_time')
+        end_time = cleaned.get('end_time')
+        service = cleaned.get('service')
+
+        # Normaliser secondes => 00
+        if start_time:
+            start_time = start_time.replace(second=0, microsecond=0)
+            cleaned['start_time'] = start_time
+        if end_time:
+            end_time = end_time.replace(second=0, microsecond=0)
+            cleaned['end_time'] = end_time
+
+        if start_time and end_time and service and service.duration:
+            dt_start = datetime.datetime.combine(date, start_time)
+            dt_end = datetime.datetime.combine(date, end_time)
+            if dt_end <= dt_start:
+                raise forms.ValidationError(_("End time must be after start time"))
+            # Comparer à la minute près
+            dur_minutes = int((dt_end - dt_start).total_seconds() // 60)
+            svc_minutes = int(service.duration.total_seconds() // 60)
+            if dur_minutes > svc_minutes:
+                # Ajuster automatiquement l'heure de fin pour correspondre à la durée du service
+                dt_end = dt_start + datetime.timedelta(minutes=svc_minutes)
+                cleaned['end_time'] = dt_end.time()
+        return cleaned
+
+
 @admin.register(AppointmentRequest)
 class AppointmentRequestAdmin(admin.ModelAdmin):
+    form = AppointmentRequestForm
     list_display = ('date', 'start_time', 'end_time', 'service', 'created_at', 'updated_at',)
     search_fields = ('date', 'service__name',)
     list_filter = ('date', 'service',)

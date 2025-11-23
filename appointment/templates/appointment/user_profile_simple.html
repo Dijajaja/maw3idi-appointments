@@ -1,0 +1,245 @@
+{% extends "base_templates/black_dashboard_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Mon Profil" %}{% endblock %}
+
+{% block customCSS %}
+<style>
+  .profile-simple-container {
+    padding: 30px 0;
+  }
+  .profile-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 3rem;
+    color: white;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .profile-avatar-upload {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .profile-avatar-upload:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  .profile-avatar-upload i {
+    color: white;
+    font-size: 1.2rem;
+  }
+  .profile-header h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.95);
+  }
+  .profile-header p {
+    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .info-section {
+    margin-bottom: 30px;
+  }
+  .info-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.95);
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  }
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .info-item:last-child {
+    border-bottom: none;
+  }
+  .info-label {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    min-width: 150px;
+  }
+  .info-value {
+    color: rgba(255, 255, 255, 0.85);
+    flex: 1;
+    text-align: right;
+  }
+  .btn-edit {
+    padding: 8px 20px;
+    background: linear-gradient(60deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+  .btn-change-password {
+    padding: 10px 25px;
+    background: linear-gradient(60deg, #ffa726, #fb8c00);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  .btn-change-password:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+  .messages {
+    margin-bottom: 20px;
+  }
+  .alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  .alert-success {
+    background: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #4caf50;
+  }
+  .alert-error, .alert-danger {
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    color: #f44336;
+  }
+  .alert-info {
+    background: rgba(33, 150, 243, 0.2);
+    border: 1px solid rgba(33, 150, 243, 0.3);
+    color: #2196f3;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="profile-simple-container">
+        <!-- Profile Card -->
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-avatar">
+              {% if user.profile_picture %}
+              <img src="{{ user.profile_picture.url }}" alt="{% trans 'Photo de profil' %}">
+              {% else %}
+              <i class="tim-icons icon-single-02"></i>
+              {% endif %}
+              <label for="avatar-upload" class="profile-avatar-upload">
+                <i class="tim-icons icon-camera-18"></i>
+                <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+              </label>
+            </div>
+            <h2>{{ user.get_full_name|default:user.username }}</h2>
+            <p>{{ user.email }}</p>
+          </div>
+
+          <!-- Personal Information -->
+          <div class="info-section">
+            <h3>{% trans "Informations personnelles" %}</h3>
+            <div class="info-item">
+              <span class="info-label">{% trans "Prénom" %}</span>
+              <span class="info-value">{{ user.first_name|default:"—" }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">{% trans "Nom" %}</span>
+              <span class="info-value">{{ user.last_name|default:"—" }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">{% trans "Email" %}</span>
+              <span class="info-value">{{ user.email }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label"></span>
+              <a href="{% url 'appointment:update_user_info_simple' %}" class="btn-edit">
+                <i class="tim-icons icon-pencil"></i> {% trans "Modifier" %}
+              </a>
+            </div>
+          </div>
+
+          <!-- Security -->
+          <div class="info-section">
+            <h3>{% trans "Sécurité" %}</h3>
+            <div class="info-item">
+              <span class="info-label">{% trans "Mot de passe" %}</span>
+              <span class="info-value">••••••••</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label"></span>
+              <a href="{% url 'appointment:change_password_simple' %}" class="btn-change-password">
+                <i class="tim-icons icon-lock-circle"></i> {% trans "Changer le mot de passe" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Gestion de l'upload de photo de profil
+  document.getElementById('avatar-upload')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      // TODO: Implémenter l'upload de photo
+      alert('{% trans "Fonctionnalité d\'upload de photo à venir" %}');
+    }
+  });
+</script>
+{% endblock %}
+

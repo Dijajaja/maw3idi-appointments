@@ -3,6 +3,192 @@
 {% load static %}
 {% block customCSS %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/appointments-user-details.css' %}"/>
+    <style>
+        /* Styles pour Black Dashboard - Design compact avec glassmorphism */
+        .container {
+            padding: 15px !important;
+            max-width: 1200px !important;
+            margin: 0 auto;
+        }
+        
+        .main-container, .djangoAppt_main-container {
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            border-radius: 25px !important;
+            padding: 20px !important;
+            border: 3px solid rgba(160, 70, 255, 0.4) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(160, 70, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            max-width: 95%;
+            margin: 0 auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .main-container:hover, .djangoAppt_main-container:hover {
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(160, 70, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-2px);
+        }
+        
+        .body-container {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .title, .appointment-user-info-title .title {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 1.5rem !important;
+            font-weight: 600;
+            margin-bottom: 8px !important;
+        }
+        
+        .description-title {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 1.2rem !important;
+            font-weight: 600;
+            margin-bottom: 15px !important;
+        }
+        
+        hr.second-part {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            margin: 15px 0 !important;
+        }
+        
+        .appointment-user-info, .service-description-and-pay {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-radius: 20px !important;
+            padding: 18px !important;
+            border: 2px solid rgba(160, 70, 255, 0.2) !important;
+            backdrop-filter: blur(10px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+            margin-bottom: 15px !important;
+        }
+        
+        /* Styles pour tous les champs de formulaire */
+        .form-control, input[type="text"], input[type="email"], input[type="tel"], textarea {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 2px solid rgba(160, 70, 255, 0.3) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-radius: 8px !important;
+            padding: 10px 15px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        /* Styles pour tous les selects (y compris le menu téléphone) */
+        select {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 2px solid rgba(160, 70, 255, 0.3) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-radius: 8px !important;
+            padding: 10px 15px !important;
+            transition: all 0.3s ease !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            cursor: pointer !important;
+        }
+        
+        /* Styles spécifiques pour le select du code pays téléphone */
+        .phone-number select, .phone-input-container select, select[name*="phone"], select[id*="phone"] {
+            margin-right: 10px !important;
+        }
+        
+        /* Styles pour les options des selects */
+        select option {
+            background: rgba(10, 10, 25, 0.95) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 10px !important;
+        }
+        
+        /* Pour les navigateurs qui supportent ::-ms-expand (IE/Edge) */
+        select::-ms-expand {
+            display: none;
+        }
+        
+        /* Styles pour les champs en focus */
+        .form-control:focus, input:focus, textarea:focus, select:focus {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.15), 0 8px 30px rgba(160, 70, 255, 0.2) !important;
+            outline: none !important;
+        }
+        
+        label {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            margin-bottom: 8px !important;
+        }
+        
+        .btn, .btn-dark, .btn-pay-full, .btn-pay-down-payment, .btn-submit-appointment {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            border: none !important;
+            color: white !important;
+            padding: 12px 24px !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer !important;
+        }
+        
+        .btn:hover:not(:disabled), .btn-dark:hover:not(:disabled) {
+            background: linear-gradient(135deg, #764ba2, #667eea) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px rgba(160, 70, 255, 0.4) !important;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+        }
+        
+        .service-details-title, .payment-details-title {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 1.1rem !important;
+            font-weight: 600;
+            margin-bottom: 10px !important;
+        }
+        
+        .service-description-content, .item-name {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .service-datetime-chosen {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        
+        .total {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 1.2rem !important;
+            font-weight: 600;
+            margin: 15px 0 !important;
+        }
+        
+        .alert {
+            border-radius: 10px !important;
+            padding: 12px 20px !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .already-have-account {
+            color: rgba(255, 255, 255, 0.7) !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .already-have-account a {
+            color: rgba(160, 70, 255, 0.9) !important;
+            text-decoration: none !important;
+        }
+        
+        .already-have-account a:hover {
+            color: rgba(160, 70, 255, 1) !important;
+            text-decoration: underline !important;
+        }
+    </style>
 {% endblock %}
 {% block title %}
     {% translate 'Client Information' %} - {{ ar.get_service_name }}

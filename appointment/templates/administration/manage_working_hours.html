@@ -4,6 +4,7 @@
 
 {% block customCSS %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/app_admin/working_hours.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site_background.css' %}"/>
     <!-- additional CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
           integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
@@ -15,13 +16,140 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css"
           integrity="sha512-3JRrEUwaCkFUBLK1N8HehwQgu8e23jTH4np5NHOmQOobuC4ROQxFwFgBLTnhcnQRMs84muMh0PnnwXlPq5MGjg=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <style>
+        /* Supprimer le fond blanc */
+        .wrapper, .main-panel, .content, .content-wrapper {
+            background: transparent !important;
+        }
+        
+        /* Styles pour Black Dashboard - design proche de la page rendez-vous */
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+        
+        .working-hours-form-wrapper {
+            width: 100%;
+            max-width: 800px;
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            backdrop-filter: blur(10px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+            border-radius: 20px;
+            padding: 30px;
+            border: none !important; /* Supprimer la bordure blanche */
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .wh-form-content h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.92);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: none !important; /* Supprimer la bordure sous le titre */
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea,
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus,
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 0 0 3px rgba(160, 70, 255, 0.2) !important;
+        }
+        
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .alert {
+            background: rgba(244, 67, 54, 0.12) !important;
+            border-color: rgba(244, 67, 54, 0.5) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        /* Navbar visible */
+        .navbar, .navbar-brand, .navbar-nav .dropdown, .navbar-nav .photo {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .footer {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
     <section class="content content-wrapper">
         <div class="working-hours-form-wrapper">
             <div class="wh-form-content">
-                <h2>{% trans "Manage Working Hours" %}</h2>
+                <h2>{% trans "Gérer les heures de travail" %}</h2>
                 <form method="post" action="" id="workingHoursForm"
                       data-action="{% if working_hours_instance %}update{% else %}create{% endif %}"
                       data-working-hours-id="
@@ -31,18 +159,18 @@
 
                     {% if working_hours_form.staff_member %}
                         <div class="form-group">
-                            <label for="{{ working_hours_form.staff_member.id_for_label }}">{% trans 'Staff Member' %}:</label>
+                            <label for="{{ working_hours_form.staff_member.id_for_label }}">{% trans 'Membre du personnel' %}:</label>
                             {{ working_hours_form.staff_member }}
                         </div>
                     {% endif %}
 
                     <div class="form-group">
-                        <label for="{{ working_hours_form.day_of_week.id_for_label }}">{% trans 'Day of Week' %}:</label>
+                        <label for="{{ working_hours_form.day_of_week.id_for_label }}">{% trans 'Jour de la semaine' %}:</label>
                         {{ working_hours_form.day_of_week }}
                     </div>
 
                     <div class="form-group">
-                        <label for="{{ working_hours_form.start_time.id_for_label }}">{% trans 'Start time' %}:</label>
+                        <label for="{{ working_hours_form.start_time.id_for_label }}">{% trans 'Heure de début' %}:</label>
                         <div class="input-group date" id="start-timepicker" data-target-input="nearest">
                             <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker"
                                    data-target="#start-timepicker" name="{{ working_hours_form.start_time.name }}"
@@ -56,7 +184,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="{{ working_hours_form.end_time.id_for_label }}">{% trans 'End time' %}:</label>
+                        <label for="{{ working_hours_form.end_time.id_for_label }}">{% trans 'Heure de fin' %}:</label>
                         <div class="input-group date" id="end-timepicker" data-target-input="nearest">
                             <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker"
                                    data-target="#end-timepicker" name="{{ working_hours_form.end_time.name }}"

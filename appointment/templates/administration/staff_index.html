@@ -1,6 +1,7 @@
 {% extends BASE_TEMPLATE %}
 {% load i18n %}
 {% load static %}
+{% block navbar_title %}{% trans "Rendez-vous" %}{% endblock %}
 {% block customMetaTag %}
     <meta name="csrf-token" content="{{ csrf_token }}">
 {% endblock %}
@@ -35,18 +36,216 @@
             }
         }
 
+        /* Styles pour Black Dashboard - Design professionnel */
+        .content-wrapper {
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: transparent !important;
+        }
+        
+        .container {
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            backdrop-filter: blur(10px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+            border-radius: 12px;
+            padding: 20px;
+            border: none !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            max-width: 1000px;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Effet de brillance au hover */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            transition: left 0.5s;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .container:hover::before {
+            left: 100%;
+        }
+        
+        .container:hover {
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(160, 70, 255, 0.2);
+        }
+        
         .calendar-wrapper {
             display: flex;
             transition: all 0.3s; /* smooth transition for resizing */
             width: 100%;
             flex-direction: column;
-            margin-top: 25px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* FullCalendar styles pour Black Dashboard */
+        .fc {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 10px;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        /* Tous les textes du calendrier en blanc */
+        .fc * {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .fc-header-toolbar {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .fc-toolbar-chunk {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .fc-toolbar-title {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 600;
+            margin: 0 15px;
+        }
+        
+        .fc-button {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            border: none !important;
+            color: white !important;
+            padding: 8px 16px !important;
+            border-radius: 6px !important;
+            font-weight: 500 !important;
+            margin: 0 4px !important;
+        }
+        
+        .fc-button:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            color: white !important;
+        }
+        
+        .fc-button-active {
+            background: linear-gradient(135deg, #ffa726, #fb8c00) !important;
+            color: white !important;
+        }
+        
+        .fc-daygrid-day {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .fc-daygrid-day:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .fc-daygrid-day-number {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .fc-day-today {
+            background: rgba(255, 167, 38, 0.1) !important;
+        }
+        
+        .fc-day-today .fc-daygrid-day-number {
+            color: #ffa726 !important;
+            font-weight: 700;
+        }
+        
+        .fc-col-header-cell {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 600;
+            padding: 10px;
+        }
+        
+        .fc-col-header-cell-cushion {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .fc-event {
+            border-radius: 4px;
+            padding: 2px 5px;
+            border: none !important;
+        }
+        
+        .fc-event-title {
+            font-weight: 500;
+            color: white !important;
+        }
+        
+        .fc-event-title-container {
+            color: white !important;
+        }
+        
+        .fc-daygrid-event {
+            color: white !important;
+        }
+        
+        .fc-daygrid-more-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+        
+        .fc-scrollgrid {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .fc-scrollgrid-section-header td {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .fc-scrollgrid td, .fc-scrollgrid th {
+            border-color: rgba(255, 255, 255, 0.1) !important;
         }
 
         #calendar {
             flex-grow: 1; /* Makes the calendar grow to occupy all available space */
             transition: all 0.3s; /* smooth transition for resizing */
             width: 100%;
+            max-height: 600px; /* Limiter la hauteur du calendrier */
+        }
+        
+        .fc-view-harness {
+            max-height: 550px !important;
+            overflow-y: auto;
         }
 
         #event-details {
@@ -58,11 +257,13 @@
         }
 
         .modal-content {
-            background-color: #fff;
+            background: rgba(30, 30, 30, 0.98);
             margin: 10% auto; /* Centering the modal vertically */
             width: 100%;
             position: relative; /* For positioning the close button */
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* A little shadow for depth */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* A little shadow for depth */
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .modal-footer {
@@ -84,31 +285,43 @@
         }
 
         #eventDetailsModal .modal-content {
-            background-color: #f4f4f4;
-            border-radius: 10px;
+            background: rgba(30, 30, 30, 0.98);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         #eventDetailsModal .modal-header,
         #eventDetailsModal .modal-footer {
-            background-color: #2c3e50;
-            color: #ecf0f1;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
+        
         #eventDetailsModal .modal-title {
+            color: rgba(255, 255, 255, 0.9);
             font-weight: bold;
         }
 
         #eventDetailsModal label {
             display: block;
             margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         #eventDetailsModal input {
             width: 100%;
-            padding: 5px;
+            padding: 10px 15px;
             margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        #eventDetailsModal input:focus {
+            outline: none;
+            border-color: rgba(255, 167, 38, 0.5);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         #eventDetailsModal .btn {
@@ -117,16 +330,24 @@
 
         #serviceSelect, #staffSelect {
             width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9f9f9;
+            padding: 10px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+        }
+        
+        #serviceSelect:focus, #staffSelect:focus {
+            outline: none;
+            border-color: rgba(255, 167, 38, 0.5);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         #serviceSelect:disabled, #staffSelect:disabled {
-            background-color: #e9ecef;
+            background: rgba(255, 255, 255, 0.05);
+            opacity: 0.6;
         }
 
         #customContextMenu ul {
@@ -147,13 +368,22 @@
         }
 
         #customContextMenu {
-            border: 1px solid #ccc;
-            background-color: #fff;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(30, 30, 30, 0.98);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             padding: 5px 0;
             position: absolute;
             z-index: 1000;
             display: none;
+            border-radius: 8px;
+        }
+        
+        #customContextMenu ul li a {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        #customContextMenu ul li a:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
 
@@ -367,20 +597,20 @@
                 ${servicesDropdown.outerHTML}
                 </div>
                 <label for="clientName">{% trans 'Client Name' %}:</label>
-                <input type="text" name="clientName" value="${appointment.client_name || ''}" ${disabledAttribute} id="clientName" placeholder="John Doe">
+                <input type="text" name="clientName" value="${appointment.client_name || ''}" ${disabledAttribute} id="clientName" placeholder="{% trans 'Prénom Nom' %}">
                 <label for="clientEmail">{% trans 'Client Email' %}:</label>
-                <input type="email" name="clientEmail" value="${appointment.client_email || ''}" ${disabledAttribute} id="clientEmail" placeholder="john.doe@example.com">
+                <input type="email" name="clientEmail" value="${appointment.client_email || ''}" ${disabledAttribute} id="clientEmail" placeholder="{% trans 'votre.email@exemple.com' %}">
                 <span id="emailError" style="display:none;"></span>
                 <label for="clientPhone">{% trans 'Phone Number' %}:</label>
-                <input type="tel" name="clientPhone" value="${appointment.client_phone || ''}" ${disabledAttribute} id="clientPhone" placeholder="+12392350799">
+                <input type="tel" name="clientPhone" value="${appointment.client_phone || ''}" ${disabledAttribute} id="clientPhone" placeholder="{% trans '+222 XX XXX XX XX' %}">
                 <label for="clientAddress">{% trans 'Client address' %}:</label>
-                <input type="text" name="clientAddress" value="${appointment.client_address || ''}" ${disabledAttribute} id="clientAddress" placeholder="Naples, Florida">
+                <input type="text" name="clientAddress" value="${appointment.client_address || ''}" ${disabledAttribute} id="clientAddress" placeholder="{% trans 'Adresse complète : rue, ville, code postal' %}">
                 <div class="flex-container-appt">
                 <label for="want_reminder">{% trans 'Wants reminder' %}:</label>
                 <input type="checkbox" name="want_reminder" id="want_reminder" value="true" ${appointment.want_reminder ? 'checked' : ''}  ${disabledAttribute}>
                 </div>
                 <label for="additional_info">{% trans 'Additional Information' %}:</label>
-                <input type="text" name="additional_info" value="${appointment.additional_info || ''}" ${disabledAttribute} placeholder="{% trans 'Client wants this and that' %}" id="additional_info">
+                <input type="text" name="additional_info" value="${appointment.additional_info || ''}" ${disabledAttribute} placeholder="{% trans 'Informations supplémentaires (optionnel)' %}" id="additional_info">
                 <div class="flex-container-appt">
                 <label for="startTime">{% trans 'Start time' %}:</label>
                 <input type="time" name="startTime" value="${startTimeValue}" ${disabledAttribute}>

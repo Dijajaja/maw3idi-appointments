@@ -130,6 +130,12 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "appointment/static")]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 APPOINTMENT_BUFFER_TIME = 0
+APPOINTMENT_WEBSITE_NAME = 'Maw3idi'
+
+# Social Media URLs - Configurez vos URLs de réseaux sociaux ici
+SOCIAL_MEDIA_FACEBOOK_URL = os.getenv('SOCIAL_MEDIA_FACEBOOK_URL', 'https://www.facebook.com/')
+SOCIAL_MEDIA_INSTAGRAM_URL = os.getenv('SOCIAL_MEDIA_INSTAGRAM_URL', 'https://www.instagram.com/')
+SOCIAL_MEDIA_LINKEDIN_URL = os.getenv('SOCIAL_MEDIA_LINKEDIN_URL', 'https://www.linkedin.com/')
 
 LANGUAGES = (
     ('en', _('English')),
@@ -186,13 +192,14 @@ if 'django_q' in INSTALLED_APPS:
         'name': 'django-appointment',
         'workers': 4,
         'timeout': 90,
-        'retry': 120,
+        'retry': 150,  # retry must be larger than timeout
         'queue_limit': 50,
         'bulk': 10,
         'orm': 'default',
-        'redis': {
-            'host': 'redis',
-            'port': 6379,
-            'db': 0,
-        }
+        # Redis configuration (optional, comment out if not using Redis)
+        # 'redis': {
+        #     'host': 'redis',
+        #     'port': 6379,
+        #     'db': 0,
+        # }
     }

@@ -15,6 +15,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.exceptions import FieldDoesNotExist
+from django.db import OperationalError
 from django.urls import reverse
 from django.utils import timezone
 
@@ -30,17 +31,21 @@ logger = get_logger(__name__)
 # Check if django-q is installed in settings
 DJANGO_Q_AVAILABLE = 'django_q' in settings.INSTALLED_APPS
 
-# Check if django-q is installed as a dependency
-try:
-    from django_q.models import Schedule
-    from django_q.tasks import schedule
-
-    DJANGO_Q_AVAILABLE = True
-except ImportError:
-    DJANGO_Q_AVAILABLE = False
+# Check if django-q is installed as a dependency and can be imported
+# Only set DJANGO_Q_AVAILABLE to True if it's in INSTALLED_APPS AND can be imported
+if DJANGO_Q_AVAILABLE:
+    try:
+        from django_q.models import Schedule
+        from django_q.tasks import schedule
+    except ImportError:
+        DJANGO_Q_AVAILABLE = False
+        Schedule = None
+        schedule = None
+        logger.warning("django-q is in INSTALLED_APPS but cannot be imported. Email reminders will not be scheduled.")
+else:
+    # If not in INSTALLED_APPS, set to None even if module exists
     Schedule = None
     schedule = None
-    logger.warning("django-q is not installed. Email reminders will not be scheduled.")
 
 Appointment = apps.get_model('appointment', 'Appointment')
 AppointmentRequest = apps.get_model('appointment', 'AppointmentRequest')
@@ -155,14 +160,31 @@ def schedule_email_reminder(appointment, request, appointment_datetime=None):
     logger.info(f"Scheduling email reminder for appointment {appointment.id} at {reminder_datetime}")
 
     # Schedule the email reminder task with Django-Q
-    schedule('appointment.tasks.send_email_reminder',
-             to_email=appointment.client.email,
-             name=f"reminder_{appointment.id_request}",
-             first_name=appointment.client.first_name,
-             reschedule_link=reschedule_link,
-             appointment_id=appointment.id,
-             schedule_type=Schedule.ONCE,
-             next_run=reminder_datetime)
+    try:
+        schedule('appointment.tasks.send_email_reminder',
+                 to_email=appointment.client.email,
+                 name=f"reminder_{appointment.id_request}",
+                 first_name=appointment.client.first_name,
+                 reschedule_link=reschedule_link,
+                 appointment_id=appointment.id,
+                 schedule_type=Schedule.ONCE,
+                 next_run=reminder_datetime)
+    except OperationalError as e:
+        # Handle case where django-q tables don't exist (migrations not run)
+        if 'django_q_schedule' in str(e) or 'no such table' in str(e).lower():
+            logger.warning(
+                f"Django-Q tables not found. Please run migrations: python manage.py migrate django_q. "
+                f"Email reminder for appointment {appointment.id} will not be scheduled."
+            )
+        else:
+            # Re-raise if it's a different OperationalError
+            raise
+    except Exception as e:
+        # Catch any other errors that might occur during scheduling
+        logger.error(
+            f"Error scheduling email reminder for appointment {appointment.id}: {str(e)}. "
+            f"Email reminder will not be scheduled."
+        )
 
 
 def update_appointment_reminder(appointment, new_date, new_start_time, request, want_reminder=None):
@@ -217,7 +239,23 @@ def cancel_existing_reminder(appointment_id_request):
         logger.warning("Django-Q is not available. Appointment reminder cannot be updated.")
         return
     task_name = f"reminder_{appointment_id_request}"
-    Schedule.objects.filter(name=task_name).delete()
+    try:
+        Schedule.objects.filter(name=task_name).delete()
+    except OperationalError as e:
+        # Handle case where django-q tables don't exist (migrations not run)
+        if 'django_q_schedule' in str(e) or 'no such table' in str(e).lower():
+            logger.warning(
+                f"Django-Q tables not found. Please run migrations: python manage.py migrate django_q. "
+                f"Existing reminder for appointment {appointment_id_request} cannot be cancelled."
+            )
+        else:
+            # Re-raise if it's a different OperationalError
+            raise
+    except Exception as e:
+        # Catch any other errors that might occur
+        logger.error(
+            f"Error cancelling reminder for appointment {appointment_id_request}: {str(e)}"
+        )
 
 
 def can_appointment_be_rescheduled(appointment_request):
@@ -543,6 +581,11 @@ def get_non_working_days_for_staff(staff_member_id):
         staff_member = StaffMember.objects.get(id=staff_member_id)
         working_days = set(WorkingHours.objects.filter(staff_member=staff_member).values_list('day_of_week', flat=True))
 
+        # If no working hours are configured, return empty list (all days are available by default)
+        # This prevents all days from being marked as non-working when no hours are set up
+        if not working_days:
+            return []
+        
         # Subtracting working_days from all_days to get non-working days
         non_working_days = list(all_days - working_days)
         return non_working_days
@@ -716,6 +759,10 @@ def get_working_hours_for_staff_and_day(staff_member, day_of_week):
 def is_working_day(staff_member: StaffMember, day: int) -> bool:
     """Check if the given day is a working day for the staff member."""
     working_days = list(WorkingHours.objects.filter(staff_member=staff_member).values_list('day_of_week', flat=True))
+    # If no working hours are configured, consider all days as working days by default
+    # This prevents all days from being marked as non-working when no hours are set up
+    if not working_days:
+        return True
     return day in working_days
 
 

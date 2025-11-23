@@ -1,0 +1,698 @@
+{% extends "base_templates/black_dashboard_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Connexion" %}{% endblock %}
+
+{% block customCSS %}
+<style>
+  /* Masquer complètement la sidebar sur la page de connexion */
+  .sidebar,
+  .sidebar-wrapper,
+  .sidebar-wrapper * {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: fixed !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  /* Le wrapper prend toute la largeur sans marge - TRANSPARENT pour voir le background */
+  .wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    position: relative !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  /* Le main-panel prend toute la largeur sans marge - TRANSPARENT */
+  .main-panel {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    position: relative !important;
+    float: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  /* Le contenu prend toute la largeur et est centré - TRANSPARENT */
+  .content {
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  .container-fluid {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Forcer la suppression de toute marge/padding liée au sidebar - Règles très agressives */
+  body .wrapper {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+  
+  body .main-panel {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    transform: translateX(0) !important;
+  }
+  
+  /* Surcharger tous les styles du template de base */
+  .wrapper .sidebar {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: fixed !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -9999 !important;
+  }
+  
+  /* S'assurer que le main-panel n'a aucune marge */
+  .wrapper > .main-panel {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  @media (min-width: 992px) {
+    .sidebar,
+    .sidebar-wrapper {
+      display: none !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .main-panel {
+      width: 100% !important;
+      margin-left: 0 !important;
+      left: 0 !important;
+    }
+    .wrapper {
+      width: 100% !important;
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+    }
+  }
+
+  /* Page de connexion - TRANSPARENT pour voir le background global */
+  .login-container {
+    min-height: 100vh;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    margin: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+
+  .login-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 25px;
+    padding: 35px 30px;
+    border: 3px solid rgba(160, 70, 255, 0.4) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(160, 70, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out both;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .login-card:hover {
+    border-color: rgba(160, 70, 255, 0.6) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(160, 70, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .login-logo {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, rgba(160, 70, 255, 0.8) 0%, rgba(102, 126, 234, 0.8) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    border: 3px solid rgba(160, 70, 255, 0.4);
+    box-shadow: 0 4px 20px rgba(160, 70, 255, 0.4);
+    animation: scaleIn 0.6s ease-out 0.2s both;
+    transition: all 0.3s ease;
+  }
+  
+  .login-logo:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(160, 70, 255, 0.6);
+    border-color: rgba(160, 70, 255, 0.6);
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .login-header h1 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.95);
+    animation: fadeInDown 0.6s ease-out 0.4s both;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .login-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    animation: fadeInUp 0.6s ease-out 0.6s both;
+  }
+
+  .login-form {
+    margin-top: 25px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+    animation: fadeInUp 0.6s ease-out both;
+    position: relative;
+  }
+
+  .form-group:nth-child(1) {
+    animation-delay: 0.8s;
+  }
+
+  .form-group:nth-child(2) {
+    animation-delay: 1s;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.98rem;
+    letter-spacing: 0.3px;
+    transition: color 0.3s ease;
+  }
+  
+  .form-group:focus-within label {
+    color: rgba(160, 70, 255, 0.9);
+  }
+
+  /* Styles pour tous les inputs dans le formulaire */
+  .login-form input[type="text"],
+  .login-form input[type="email"],
+  .login-form input[type="password"],
+  .login-form input[type="tel"],
+  .login-form .form-control,
+  .login-form input.form-control,
+  .input-icon-wrapper input[type="text"],
+  .input-icon-wrapper input[type="email"],
+  .input-icon-wrapper input[type="password"],
+  .input-icon-wrapper input[type="tel"],
+  .input-icon-wrapper input {
+    width: 100% !important;
+    padding: 16px 20px 16px 52px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-size: 0.98rem !important;
+    font-weight: 400 !important;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    position: relative;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-sizing: border-box !important;
+    letter-spacing: 0.2px;
+  }
+
+  .login-form input[type="text"]:hover,
+  .login-form input[type="email"]:hover,
+  .login-form input[type="password"]:hover,
+  .login-form input[type="tel"]:hover,
+  .login-form .form-control:hover,
+  .login-form input.form-control:hover,
+  .input-icon-wrapper input[type="text"]:hover,
+  .input-icon-wrapper input[type="email"]:hover,
+  .input-icon-wrapper input[type="password"]:hover,
+  .input-icon-wrapper input[type="tel"]:hover,
+  .input-icon-wrapper input:hover {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .login-form input[type="text"]:focus,
+  .login-form input[type="email"]:focus,
+  .login-form input[type="password"]:focus,
+  .login-form input[type="tel"]:focus,
+  .login-form .form-control:focus,
+  .login-form input.form-control:focus,
+  .input-icon-wrapper input[type="text"]:focus,
+  .input-icon-wrapper input[type="email"]:focus,
+  .input-icon-wrapper input[type="password"]:focus,
+  .input-icon-wrapper input[type="tel"]:focus,
+  .input-icon-wrapper input:focus {
+    outline: none !important;
+    border-color: rgba(160, 70, 255, 0.85) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.2), 0 8px 30px rgba(160, 70, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px) scale(1.01) !important;
+  }
+
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+  }
+
+  /* Icônes pour les inputs */
+  .input-icon-wrapper {
+    position: relative;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 1.15rem;
+    z-index: 1;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Placeholder styles */
+  .login-form input::placeholder,
+  .input-icon-wrapper input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-weight: 400;
+  }
+
+  .input-icon-wrapper .form-control:focus + .input-icon,
+  .input-icon-wrapper .form-control:not(:placeholder-shown) + .input-icon {
+    color: rgba(160, 70, 255, 1);
+    transform: translateY(-50%) scale(1.15);
+    filter: drop-shadow(0 0 4px rgba(160, 70, 255, 0.5));
+  }
+
+  .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+  }
+
+  .errorlist li {
+    color: #ff5252;
+    font-size: 0.87rem;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 82, 82, 0.1);
+    border-left: 3px solid #ff5252;
+    border-radius: 6px;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .errorlist li::before {
+    content: '⚠';
+    font-size: 1.1rem;
+    color: #ff5252;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, rgba(160, 70, 255, 0.9) 0%, rgba(102, 126, 234, 0.9) 100%);
+    color: white;
+    border: 2px solid rgba(160, 70, 255, 0.5);
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(160, 70, 255, 0.4), 0 0 15px rgba(160, 70, 255, 0.2);
+    letter-spacing: 0.5px;
+    animation: fadeInUp 0.6s ease-out 1.2s both;
+  }
+
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-login:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .btn-login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(160, 70, 255, 0.6), 0 0 25px rgba(160, 70, 255, 0.3);
+    background: linear-gradient(135deg, rgba(180, 90, 255, 0.95) 0%, rgba(120, 140, 250, 0.95) 100%);
+    border-color: rgba(160, 70, 255, 0.7);
+  }
+
+  .btn-login:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .btn-login span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    animation: fadeInUp 0.6s ease-out 1.4s both;
+  }
+
+  .login-footer p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 15px;
+  }
+
+  .login-footer a {
+    color: rgba(160, 70, 255, 0.9);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .login-footer a:hover {
+    color: rgba(160, 70, 255, 1);
+    text-decoration: underline;
+  }
+
+  .btn-register-link {
+    display: inline-block;
+    padding: 10px 25px;
+    background: linear-gradient(60deg, #ffa726, #fb8c00);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 8px;
+    animation: fadeInUp 0.6s ease-out 1.6s both;
+  }
+
+  .btn-register-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 167, 38, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+
+  .messages {
+    margin-bottom: 25px;
+    animation: fadeInDown 0.4s ease-out;
+  }
+
+  .alert {
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeInDown 0.4s ease-out;
+  }
+
+  .alert-success {
+    background: rgba(76, 175, 80, 0.15);
+    border: 2px solid rgba(76, 175, 80, 0.4);
+    color: #66bb6a;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+  }
+
+  .alert-error, .alert-danger {
+    background: rgba(244, 67, 54, 0.15);
+    border: 2px solid rgba(244, 67, 54, 0.4);
+    color: #ef5350;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2);
+  }
+
+  .alert-info {
+    background: rgba(33, 150, 243, 0.15);
+    border: 2px solid rgba(33, 150, 243, 0.4);
+    color: #42a5f5;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .login-card {
+      padding: 40px 30px;
+    }
+
+    .login-header h1 {
+      font-size: 1.7rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Forcer la suppression de l'espace vide du sidebar au chargement
+  (function() {
+    function removeSidebarSpace() {
+      // Masquer complètement le sidebar
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+      if (sidebar) {
+        sidebar.style.display = 'none';
+        sidebar.style.width = '0';
+        sidebar.style.margin = '0';
+        sidebar.style.padding = '0';
+        sidebar.style.position = 'fixed';
+        sidebar.style.left = '-9999px';
+        sidebar.style.zIndex = '-9999';
+      }
+      if (sidebarWrapper) {
+        sidebarWrapper.style.display = 'none';
+        sidebarWrapper.style.width = '0';
+        sidebarWrapper.style.margin = '0';
+        sidebarWrapper.style.padding = '0';
+      }
+      
+      // Forcer le main-panel à prendre toute la largeur
+      const mainPanel = document.querySelector('.main-panel');
+      if (mainPanel) {
+        mainPanel.style.marginLeft = '0';
+        mainPanel.style.paddingLeft = '0';
+        mainPanel.style.width = '100%';
+        mainPanel.style.maxWidth = '100%';
+      }
+      
+      // Forcer le wrapper à prendre toute la largeur
+      const wrapper = document.querySelector('.wrapper');
+      if (wrapper) {
+        wrapper.style.marginLeft = '0';
+        wrapper.style.paddingLeft = '0';
+        wrapper.style.width = '100%';
+      }
+    }
+    
+    // Exécuter immédiatement
+    removeSidebarSpace();
+    
+    // Exécuter après le chargement du DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', removeSidebarSpace);
+    } else {
+      removeSidebarSpace();
+    }
+    
+    // Exécuter après le chargement complet
+    window.addEventListener('load', removeSidebarSpace);
+    
+    // Exécuter après un court délai pour surcharger les styles du template de base
+    setTimeout(removeSidebarSpace, 100);
+    setTimeout(removeSidebarSpace, 300);
+    setTimeout(removeSidebarSpace, 500);
+  })();
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <i class="tim-icons icon-single-02"></i>
+      </div>
+      <h1>{% trans "Connexion" %}</h1>
+      <p>{% trans "Connectez-vous à votre compte" %}</p>
+    </div>
+
+    <form method="post" class="login-form">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="{{ form.username.id_for_label }}">{% trans "Nom d'utilisateur ou Email" %}</label>
+        <div class="input-icon-wrapper">
+          {{ form.username }}
+          <i class="tim-icons icon-single-02 input-icon"></i>
+        </div>
+        {% if form.username.errors %}
+        <ul class="errorlist">
+          {% for error in form.username.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password.id_for_label }}">{% trans "Mot de passe" %}</label>
+        <div class="input-icon-wrapper">
+          {{ form.password }}
+          <i class="tim-icons icon-lock-circle input-icon"></i>
+        </div>
+        {% if form.password.errors %}
+        <ul class="errorlist">
+          {% for error in form.password.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn-login">
+        <span><i class="tim-icons icon-lock-circle"></i> {% trans "Se connecter" %}</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>{% trans "Vous n'avez pas de compte ?" %}</p>
+      <a href="{% url 'appointment:register' %}" class="btn-register-link">
+        <i class="tim-icons icon-simple-add"></i> {% trans "Créer un compte" %}
+      </a>
+      <p style="margin-top: 20px;">
+        <a href="{% url 'appointment:index' %}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">
+          <i class="tim-icons icon-minimal-left"></i> {% trans "Revenir à l'accueil" %}
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -178,3 +178,27 @@ data
 
 *.pyc
 *.pyx
+
+# Fichiers sensibles
+.env
+.env.local
+*.key
+*.pem
+
+# Fichiers de configuration locaux
+local_settings.py
+settings_local.py
+
+# Fichiers de base de données locaux
+*.db
+*.sqlite
+*.sqlite3
+
+# Fichiers de logs
+*.log
+logs/
+
+# Fichiers temporaires
+*.tmp
+*.temp
+.cache/

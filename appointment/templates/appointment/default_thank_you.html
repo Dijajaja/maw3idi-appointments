@@ -2,7 +2,196 @@
 {% load i18n %}
 {% load static %}
 {% block customCSS %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/thank_you.css' %}"/>
+<style>
+  /* Design moderne avec glassmorphism identique aux autres pages */
+  .thank-you-container {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: transparent !important;
+  }
+
+  .thank-you-card {
+    background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border-radius: 25px !important;
+    border: 3px solid rgba(160, 70, 255, 0.4) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(160, 70, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    padding: 50px 40px !important;
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .thank-you-card:hover {
+    border-color: rgba(160, 70, 255, 0.6) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(160, 70, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px);
+  }
+
+  .success-animation {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+    position: relative;
+    animation: scaleIn 0.6s ease-out;
+  }
+
+  .success-animation i {
+    font-size: 120px;
+    color: #4caf50;
+    filter: drop-shadow(0 0 20px rgba(76, 175, 80, 0.5));
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .thank-you-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .thank-you-message {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+
+  .appointment-details-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(160, 70, 255, 0.3);
+  }
+
+  .appointment-details {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid rgba(160, 70, 255, 0.2);
+  }
+
+  .appointment-details li {
+    padding: 12px 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.05rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .appointment-details li:last-child {
+    border-bottom: none;
+  }
+
+  .appointment-details li strong {
+    color: rgba(160, 70, 255, 0.9);
+    font-weight: 600;
+    margin-right: 15px;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 35px;
+    background: linear-gradient(135deg, rgba(160, 70, 255, 0.9) 0%, rgba(102, 126, 234, 0.9) 100%) !important;
+    border: 2px solid rgba(160, 70, 255, 0.5) !important;
+    border-radius: 20px !important;
+    color: white !important;
+    text-decoration: none !important;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 6px 20px rgba(160, 70, 255, 0.4), 0 0 15px rgba(160, 70, 255, 0.2) !important;
+    margin-top: 20px;
+  }
+
+  .btn-back:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(160, 70, 255, 0.6), 0 0 25px rgba(160, 70, 255, 0.3) !important;
+    background: linear-gradient(135deg, rgba(180, 90, 255, 0.95) 0%, rgba(120, 140, 250, 0.95) 100%) !important;
+    border-color: rgba(160, 70, 255, 0.7) !important;
+    color: white !important;
+    text-decoration: none !important;
+  }
+
+  .btn-back i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .btn-back:hover i {
+    transform: translateX(-5px);
+  }
+
+  /* Masquer la notification popup si elle existe */
+  .notification-popup {
+    display: none !important;
+  }
+
+  /* Background transparent pour voir le fond violet */
+  .content,
+  .content-body-apd,
+  .main-content {
+    background: transparent !important;
+  }
+</style>
 {% endblock %}
 {% block title %}
     {{ page_title }}
@@ -11,25 +200,52 @@
     {{ page_description }}
 {% endblock %}
 {% block body %}
-    <div class="container content-body-apd">
-        <div class="main-content">
-            <h1 class="thank-you-title">{% trans "See you soon" %} !</h1>
-            <p class="thank-you-message">{% trans "We've successfully scheduled your appointment! Please check your email for all the details" %}.</p>
-            <p class="appointment-details-title">{% trans "Appointment details" %}:</p>
-            <ul class="appointment-details">
-                <li>{% trans 'Service' %}: {{ appointment.get_service_name }}</li>
-                <li>{% trans 'Appointment Date' %}: {{ appointment.get_appointment_date }}</li>
-                <li>{% trans 'Appointment Time' %}: {{ appointment.get_start_time }}</li>
-                <li>{% trans 'Duration' %}: {{ appointment.get_service_duration }}</li>
-            </ul>
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-dismissible {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
-                         role="alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
+<div class="thank-you-container">
+    <div class="thank-you-card">
+        <div class="success-animation">
+            <i class="tim-icons icon-check-2"></i>
         </div>
+        
+        <h1 class="thank-you-title">{% trans "Rendez-vous confirmé !" %}</h1>
+        
+        <p class="thank-you-message">
+            {% trans "Votre rendez-vous a été pris avec succès. Un email de confirmation a été envoyé avec tous les détails." %}
+        </p>
+        
+        <p class="appointment-details-title">{% trans "Détails du rendez-vous" %}</p>
+        
+        <ul class="appointment-details">
+            <li>
+                <strong>{% trans 'Service' %}:</strong>
+                <span>{{ appointment.get_service_name }}</span>
+            </li>
+            <li>
+                <strong>{% trans 'Date du rendez-vous' %}:</strong>
+                <span>{{ appointment.get_appointment_date }}</span>
+            </li>
+            <li>
+                <strong>{% trans 'Heure du rendez-vous' %}:</strong>
+                <span>{{ appointment.get_start_time }}</span>
+            </li>
+            <li>
+                <strong>{% trans 'Durée' %}:</strong>
+                <span>{{ appointment.get_service_duration }}</span>
+            </li>
+        </ul>
+        
+        <a href="{% url 'appointment:index' %}" class="btn-back">
+            <i class="tim-icons icon-minimal-left"></i>
+            {% trans "Retour à l'accueil" %}
+        </a>
+        
+        {% if user.is_authenticated %}
+        <a href="{% url 'appointment:my_appointments' %}" class="btn-back" style="margin-left: 15px;">
+            <i class="tim-icons icon-calendar-60"></i>
+            {% trans "Voir mes rendez-vous" %}
+        </a>
+        {% endif %}
     </div>
+</div>
 {% endblock %}
 {% block customJS %}
     <script src="{% static 'js/js-utils.js' %}"></script>

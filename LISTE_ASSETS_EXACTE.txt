@@ -1,0 +1,102 @@
+═══════════════════════════════════════════════════════════════
+LISTE EXACTE DES FICHIERS ASSETS REQUIS
+═══════════════════════════════════════════════════════════════
+
+CHEMIN DESTINATION : C:\Users\PC\django-appointment\appointment\static\assets\
+
+═══════════════════════════════════════════════════════════════
+1. FICHIERS CSS (dans assets/css/)
+═══════════════════════════════════════════════════════════════
+
+✅ OBLIGATOIRE :
+   assets/css/black-dashboard.css
+   assets/css/nucleo-icons.css
+
+📝 OPTIONNEL (mais recommandé) :
+   assets/css/black-dashboard.min.css
+   assets/css/black-dashboard.css.map
+
+═══════════════════════════════════════════════════════════════
+2. FICHIERS JAVASCRIPT CORE (dans assets/js/core/)
+═══════════════════════════════════════════════════════════════
+
+✅ OBLIGATOIRE :
+   assets/js/core/jquery.min.js
+   assets/js/core/popper.min.js
+   assets/js/core/bootstrap.min.js
+
+═══════════════════════════════════════════════════════════════
+3. FICHIERS JAVASCRIPT PLUGINS (dans assets/js/plugins/)
+═══════════════════════════════════════════════════════════════
+
+✅ OBLIGATOIRE :
+   assets/js/plugins/perfect-scrollbar.jquery.min.js
+   assets/js/plugins/chartjs.min.js
+   assets/js/plugins/bootstrap-notify.js
+
+═══════════════════════════════════════════════════════════════
+4. FICHIERS JAVASCRIPT PRINCIPAUX (dans assets/js/)
+═══════════════════════════════════════════════════════════════
+
+✅ OBLIGATOIRE :
+   assets/js/black-dashboard.min.js
+   assets/js/demos.js
+
+📝 ALTERNATIVE (si .min n'existe pas) :
+   assets/js/black-dashboard.js
+
+═══════════════════════════════════════════════════════════════
+5. FICHIERS IMAGES (dans assets/img/)
+═══════════════════════════════════════════════════════════════
+
+✅ RECOMMANDÉ :
+   assets/img/favicon.png
+   assets/img/apple-icon.png
+
+📝 OPTIONNEL (pour l'avatar utilisateur) :
+   assets/img/anime3.png
+
+═══════════════════════════════════════════════════════════════
+6. FICHIERS DEMO (dans assets/demo/)
+═══════════════════════════════════════════════════════════════
+
+✅ OBLIGATOIRE :
+   assets/demo/demo.css
+   assets/demo/demo.js
+
+═══════════════════════════════════════════════════════════════
+STRUCTURE COMPLÈTE ATTENDUE
+═══════════════════════════════════════════════════════════════
+
+appointment/static/assets/
+├── css/
+│   ├── black-dashboard.css          ✅ OBLIGATOIRE
+│   └── nucleo-icons.css              ✅ OBLIGATOIRE
+├── js/
+│   ├── core/
+│   │   ├── jquery.min.js             ✅ OBLIGATOIRE
+│   │   ├── popper.min.js             ✅ OBLIGATOIRE
+│   │   └── bootstrap.min.js          ✅ OBLIGATOIRE
+│   ├── plugins/
+│   │   ├── perfect-scrollbar.jquery.min.js  ✅ OBLIGATOIRE
+│   │   ├── chartjs.min.js            ✅ OBLIGATOIRE
+│   │   └── bootstrap-notify.js       ✅ OBLIGATOIRE
+│   ├── black-dashboard.min.js        ✅ OBLIGATOIRE
+│   └── demos.js                      ✅ OBLIGATOIRE
+├── img/
+│   ├── favicon.png                   📝 RECOMMANDÉ
+│   └── apple-icon.png                📝 RECOMMANDÉ
+└── demo/
+    ├── demo.css                      ✅ OBLIGATOIRE
+    └── demo.js                       ✅ OBLIGATOIRE
+
+═══════════════════════════════════════════════════════════════
+COMMANDE DE VÉRIFICATION
+═══════════════════════════════════════════════════════════════
+
+Exécutez dans PowerShell depuis C:\Users\PC\django-appointment :
+
+.\check_black_dashboard_assets.ps1
+
+═══════════════════════════════════════════════════════════════
+

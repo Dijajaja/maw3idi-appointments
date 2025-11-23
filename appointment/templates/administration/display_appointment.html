@@ -6,6 +6,273 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
           integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <style>
+        /* Design moderne avec glassmorphism identique aux autres pages */
+        .content-wrapper {
+            background: transparent !important;
+            padding: 30px 20px !important;
+            min-height: calc(100vh - 120px);
+        }
+        
+        .appointment-display-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .app-content {
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            border-radius: 25px !important;
+            border: 3px solid rgba(160, 70, 255, 0.4) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(160, 70, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            padding: 40px !important;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .app-content:hover {
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(160, 70, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-2px);
+        }
+        
+        .appointment-header {
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid rgba(160, 70, 255, 0.3);
+        }
+        
+        .appointment-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .appointment-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .appointment-content {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .details-panel {
+            flex: 1 1 65%;
+            min-width: 300px;
+        }
+        
+        .detail-group {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 2px solid rgba(160, 70, 255, 0.2);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .detail-group:nth-child(1) { animation-delay: 0.1s; }
+        .detail-group:nth-child(2) { animation-delay: 0.2s; }
+        .detail-group:nth-child(3) { animation-delay: 0.3s; }
+        .detail-group:nth-child(4) { animation-delay: 0.4s; }
+        
+        .detail-group:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(160, 70, 255, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(160, 70, 255, 0.15);
+        }
+        
+        .detail-group h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .detail-group h3 i {
+            color: rgba(160, 70, 255, 0.8);
+            font-size: 1.4rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+            padding-left: 8px;
+            padding-right: 8px;
+            margin-left: -8px;
+            margin-right: -8px;
+            border-radius: 10px;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            min-width: 140px;
+        }
+        
+        .detail-value {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 400;
+            text-align: right;
+            flex: 1;
+            word-break: break-word;
+        }
+        
+        .status-panel {
+            flex: 1 1 30%;
+            min-width: 280px;
+        }
+        
+        .status-card {
+            background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            border-radius: 20px !important;
+            border: 3px solid rgba(160, 70, 255, 0.4) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(160, 70, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+        
+        .status-card:hover {
+            border-color: rgba(160, 70, 255, 0.6) !important;
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(160, 70, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+            transform: translateY(-5px) scale(1.02);
+        }
+        
+        .status-card.paid {
+            border-color: rgba(76, 175, 80, 0.5) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(76, 175, 80, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .status-card.unpaid {
+            border-color: rgba(255, 152, 0, 0.5) !important;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 152, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .status-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .status-card.paid .status-icon i {
+            color: #4caf50;
+            filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.5));
+        }
+        
+        .status-card.unpaid .status-icon i {
+            color: #ff9800;
+            filter: drop-shadow(0 0 15px rgba(255, 152, 0, 0.5));
+        }
+        
+        .status-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 10px;
+        }
+        
+        .status-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 5px;
+        }
+        
+        .alert {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 2px solid rgba(255, 255, 255, 0.12) !important;
+            border-radius: 15px !important;
+            color: rgba(255, 255, 255, 0.95) !important;
+            padding: 15px 20px !important;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            border-color: rgba(76, 175, 80, 0.4) !important;
+            background: rgba(76, 175, 80, 0.1) !important;
+        }
+        
+        .alert-danger {
+            border-color: rgba(244, 67, 54, 0.4) !important;
+            background: rgba(244, 67, 54, 0.1) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .appointment-content {
+                flex-direction: column;
+            }
+            
+            .details-panel,
+            .status-panel {
+                flex: 1 1 100%;
+            }
+            
+            .appointment-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 {% endblock %}
 {% block title %}
     {{ page_title }}

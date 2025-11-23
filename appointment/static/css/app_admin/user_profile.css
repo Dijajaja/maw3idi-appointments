@@ -4,8 +4,9 @@ body {
 
 .profile-container {
     margin: 5px auto;
-    background-color: #fff;
-    border-radius: 8px;
+    background-color: transparent;
+    border-radius: 12px;
+    max-width: 900px !important; /* largeur réduite */
 }
 
 .service-container {
@@ -13,21 +14,110 @@ body {
     border-radius: 8px;
 }
 
+/* La carte elle-même - fond sombre, réduite et animée avec glassmorphism */
 .profile-section {
-    border: 1px solid #e0e0e0;
-    max-width: 1000px;
-    padding: 20px;
-    margin: 0 auto 30px auto;
+    border: none !important; /* Supprimer la bordure blanche */
+    max-width: 440px !important; /* largeur maximale réduite */
+    padding: 18px 22px !important; /* padding légèrement augmenté */
+    margin: 0 auto 20px auto; /* marge réduite */
     position: relative;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    transition: all 0.3s;
+    background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+    background-color: rgba(10, 10, 25, 0.9) !important;
+    backdrop-filter: blur(10px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(180%) !important;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    border-radius: 8px !important; /* bordures légèrement augmentées */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(255, 255, 255, 0.9) !important;
+    overflow: hidden;
+    /* Animation d'apparition */
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Effet de brillance au hover */
+.profile-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent);
+    transition: left 0.5s;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.profile-section:hover::before {
+    left: 100%;
+}
+
+/* Animation d'apparition */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Délai d'animation pour chaque carte */
+.profile-section:nth-child(1) { animation-delay: 0.1s; }
+.profile-section:nth-child(2) { animation-delay: 0.2s; }
+.profile-section:nth-child(3) { animation-delay: 0.3s; }
+.profile-section:nth-child(4) { animation-delay: 0.4s; }
+.profile-section:nth-child(5) { animation-delay: 0.5s; }
+
+/* Supprimer tout fond blanc sur les éléments enfants (sauf tableaux) */
+.profile-section p,
+.profile-section div:not(table):not(.responsive-table-container),
+.profile-section span,
+.profile-section small,
+.profile-section h2,
+.profile-section h3,
+.profile-section h4,
+.profile-section .section-content,
+.profile-section .section-content p,
+.profile-section .section-content div {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Les tableaux doivent avoir un fond sombre */
+.profile-section table {
+    background: rgba(10, 10, 25, 0.9) !important;
+    background-color: rgba(10, 10, 25, 0.9) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.profile-section table th {
+    background: rgba(20, 20, 45, 0.95) !important;
+    background-color: rgba(20, 20, 45, 0.95) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.profile-section table td {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .profile-section:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 
+        0 16px 40px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(160, 70, 255, 0.2) !important;
+    border: none !important; /* Pas de bordure au hover */
 }
 
 .section-header {
@@ -41,7 +131,30 @@ body {
 }
 
 .profile-section h2 {
-    margin-bottom: 20px; /* Space between the title and content */
+    margin-bottom: 12px; /* marge réduite */
+    font-size: 1.4rem; /* taille réduite */
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+
+.profile-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(160, 70, 255, 0.8), rgba(102, 126, 234, 0.8));
+    transition: width 0.4s ease;
+}
+
+.profile-section:hover h2 {
+    color: rgba(255, 255, 255, 1);
+}
+
+.profile-section:hover h2::after {
+    width: 100%;
 }
 
 .profile-section p {
@@ -55,36 +168,44 @@ table {
     margin: 20px 0;
     font-size: 16px;
     text-align: left;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
+    box-shadow: none;
+    border-radius: 6px !important; /* bordures réduites */
     overflow: hidden; /* To respect border-radius in tables */
+    background-color: rgba(10, 10, 25, 0.9) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 table th, table td {
     padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     transition: background-color 0.3s; /* Smooth transition for hover effect */
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+    background-color: rgba(20, 20, 45, 0.95) !important;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+table tbody tr {
+    transition: all 0.2s ease;
+}
+
+/* Zebra striping pour meilleure lisibilité */
+table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02) !important;
 }
 
 table tbody tr:hover {
-    background-color: #f5f5f5;
+    background: linear-gradient(90deg, 
+        rgba(160, 70, 255, 0.1), 
+        rgba(255, 255, 255, 0.05)) !important;
+    transform: translateX(8px);
+    box-shadow: -4px 0 8px rgba(160, 70, 255, 0.2);
 }
 
-
-/* Adding gradient backgrounds for a more vibrant look */
-.profile-container {
-    /*background-image: linear-gradient(to bottom right, #fff, #f7f9fc);*/
-}
-
-/* Additional hover effect for the sections */
-.profile-section:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
 
 /* Elegant & smooth transitions for all elements */
 * {
@@ -111,41 +232,71 @@ table tbody tr:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Animate the appearance of the profile sections for a smooth load-in effect */
-@keyframes slideInFromLeft {
-    0% {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
+/* Animation des boutons */
+.modify-btn,
+.profile-section .buttons-container a {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.profile-section {
-    animation: slideInFromLeft 0.6s forwards;
+.modify-btn:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* Staggered animation delays for each section for a sequential load-in */
-.profile-section:nth-child(1) {
-    animation-delay: 0.2s;
+.profile-section .buttons-container a:hover {
+    transform: scale(1.15);
 }
 
-.profile-section:nth-child(2) {
-    animation-delay: 0.4s;
+/* Animation des icônes */
+.profile-section .fas,
+.profile-section .fa {
+    transition: all 0.3s ease;
 }
 
-.profile-section:nth-child(3) {
-    animation-delay: 0.6s;
+.profile-section .modify-btn:hover .fas,
+.profile-section .modify-btn:hover .fa {
+    transform: rotate(360deg) scale(1.1);
 }
 
-.profile-section:nth-child(4) {
-    animation-delay: 0.8s;
+.profile-section .buttons-container a:hover .fas,
+.profile-section .buttons-container a:hover .fa {
+    transform: scale(1.2);
 }
 
-.profile-section:nth-child(5) {
-    animation-delay: 1.0s;
+/* Amélioration des paragraphes */
+.profile-section .section-content p {
+    line-height: 1.6;
+    transition: all 0.2s ease;
+}
+
+.profile-section .section-content p:hover {
+    color: rgba(255, 255, 255, 1);
+    padding-left: 4px;
+}
+
+/* Style pour les labels (strong) */
+.profile-section .section-content p strong {
+    color: rgba(160, 70, 255, 0.9);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.profile-section:hover .section-content p strong {
+    color: rgba(160, 70, 255, 1);
+    text-shadow: 0 0 8px rgba(160, 70, 255, 0.4);
+}
+
+/* Amélioration des tooltips */
+.profile-section .fa-info-circle {
+    color: rgba(102, 126, 234, 0.8);
+    cursor: help;
+    transition: all 0.3s ease;
+}
+
+.profile-section .fa-info-circle:hover {
+    color: rgba(102, 126, 234, 1);
+    transform: scale(1.2);
+    text-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
 }
 
 /* Consider adding this for a smoother feel when scrolling */
@@ -162,7 +313,8 @@ body {
     }
 
     .profile-section {
-        padding: 15px;
+        padding: 12px 16px !important; /* padding réduit sur mobile */
+        min-width: 100%;
     }
 
     .section-content-button {

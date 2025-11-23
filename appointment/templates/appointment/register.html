@@ -1,0 +1,871 @@
+{% extends "base_templates/black_dashboard_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Inscription" %}{% endblock %}
+
+{% block customCSS %}
+<style>
+  /* Masquer la scrollbar mais garder le défilement */
+  body, html {
+    overflow-x: hidden !important;
+  }
+  
+  body::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  .main-panel::-webkit-scrollbar,
+  .content::-webkit-scrollbar,
+  .register-container::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  
+  body {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  
+  /* Masquer complètement la sidebar sur la page d'inscription */
+  .sidebar,
+  .sidebar-wrapper,
+  .sidebar-wrapper * {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: fixed !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  /* Le wrapper prend toute la largeur sans marge - TRANSPARENT pour voir le background */
+  .wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    position: relative !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  /* Le main-panel prend toute la largeur sans marge - TRANSPARENT */
+  .main-panel {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    position: relative !important;
+    float: none !important;
+    overflow: visible !important;
+    overflow-y: auto !important;
+    min-height: 100vh !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  /* Le contenu prend toute la largeur et est centré - TRANSPARENT */
+  .content {
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    padding-bottom: 40px !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: visible !important;
+    overflow-y: auto !important;
+    min-height: 100vh !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  .container-fluid {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Forcer la suppression de toute marge/padding liée au sidebar - Règles très agressives */
+  body .wrapper {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+  
+  body .main-panel {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    transform: translateX(0) !important;
+  }
+  
+  /* Surcharger tous les styles du template de base */
+  .wrapper .sidebar {
+    display: none !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: fixed !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -9999 !important;
+  }
+  
+  /* S'assurer que le main-panel n'a aucune marge */
+  .wrapper > .main-panel {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  @media (min-width: 992px) {
+    .sidebar,
+    .sidebar-wrapper {
+      display: none !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .main-panel {
+      width: 100% !important;
+      margin-left: 0 !important;
+      left: 0 !important;
+    }
+    .wrapper {
+      width: 100% !important;
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+    }
+  }
+
+  /* Page d'inscription - TRANSPARENT pour voir le background global */
+  .register-container {
+    min-height: 100vh;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px 60px 20px;
+    margin: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    position: relative;
+    overflow: visible !important;
+    overflow-y: auto !important;
+    box-sizing: border-box;
+  }
+
+
+  .register-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 25px;
+    padding: 40px 35px;
+    border: 3px solid rgba(160, 70, 255, 0.4) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 30px rgba(160, 70, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out both;
+    overflow: visible !important;
+    margin-bottom: 40px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .register-card:hover {
+    border-color: rgba(160, 70, 255, 0.6) !important;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(160, 70, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .register-header {
+    text-align: center;
+    margin-bottom: 35px;
+  }
+
+  .register-logo {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, rgba(160, 70, 255, 0.8) 0%, rgba(102, 126, 234, 0.8) 100%);
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    color: white !important;
+    border: 3px solid rgba(160, 70, 255, 0.4);
+    box-shadow: 0 4px 20px rgba(160, 70, 255, 0.4);
+    animation: scaleIn 0.6s ease-out 0.2s both;
+    position: relative;
+    z-index: 10;
+    overflow: visible !important;
+    min-width: 70px;
+    min-height: 70px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .register-logo:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(160, 70, 255, 0.6);
+    border-color: rgba(160, 70, 255, 0.6);
+  }
+  
+  .register-logo i,
+  .register-logo .tim-icons,
+  .register-logo .icon-single-02 {
+    color: white !important;
+    font-size: 2.2rem !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    line-height: 1 !important;
+    width: auto !important;
+    height: auto !important;
+    text-align: center !important;
+    font-family: 'Nucleo Outline', 'Nucleo Icons', sans-serif !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    position: relative;
+    z-index: 11;
+  }
+  
+  /* Forcer l'affichage de l'icône même si la police n'est pas chargée */
+  .register-logo i.icon-single-02::before {
+    content: '\e900' !important;
+    display: inline-block !important;
+    font-family: 'Nucleo Outline', 'Nucleo Icons', sans-serif !important;
+  }
+  
+  /* Si l'icône n'est toujours pas visible, utiliser un caractère Unicode */
+  .register-logo i.icon-single-02:empty::after,
+  .register-logo i.icon-single-02:not(:has-text)::after {
+    content: '👤' !important;
+    display: inline-block !important;
+    font-size: 2.2rem !important;
+    color: white !important;
+  }
+  
+  /* Fallback si l'icône n'est pas chargée */
+  .register-logo-fallback {
+    position: absolute;
+    font-size: 2.2rem;
+    color: white;
+    display: none !important;
+    line-height: 1;
+  }
+  
+  /* Si l'icône n'est pas visible, afficher le fallback */
+  .register-logo:not(:has(i:not([style*="display: none"]))) .register-logo-fallback,
+  .register-logo i:empty + .register-logo-fallback {
+    display: block !important;
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .register-header h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.95);
+    letter-spacing: -0.5px;
+    animation: fadeInDown 0.6s ease-out 0.4s both;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .register-header p {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeInUp 0.6s ease-out 0.6s both;
+  }
+
+  .register-form {
+    margin-top: 30px;
+  }
+  
+  .form-row {
+    display: block;
+    margin-bottom: 0;
+  }
+  
+  .form-row .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+    animation: fadeInUp 0.6s ease-out both;
+  }
+  
+  /* Pour les champs qui doivent être en pleine largeur */
+  .form-group.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-group:nth-child(1) {
+    animation-delay: 0.8s;
+  }
+
+  .form-group:nth-child(2) {
+    animation-delay: 1s;
+  }
+
+  .form-group:nth-child(3) {
+    animation-delay: 1.2s;
+  }
+
+  .form-group:nth-child(4) {
+    animation-delay: 1.4s;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.98rem;
+    letter-spacing: 0.3px;
+    transition: color 0.3s ease;
+  }
+  
+  .form-group:focus-within label {
+    color: rgba(160, 70, 255, 0.9);
+  }
+
+  .form-group .help-text {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 6px;
+    display: block;
+    line-height: 1.4;
+  }
+
+  .form-control,
+  input.form-control,
+  input[type="text"].form-control,
+  input[type="email"].form-control,
+  input[type="password"].form-control,
+  input[type="tel"].form-control {
+    width: 100% !important;
+    padding: 16px 20px 16px 52px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-size: 0.98rem !important;
+    font-weight: 400 !important;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    position: relative;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    letter-spacing: 0.2px;
+  }
+
+  .form-control:hover,
+  input.form-control:hover,
+  input[type="text"].form-control:hover,
+  input[type="email"].form-control:hover,
+  input[type="password"].form-control:hover,
+  input[type="tel"].form-control:hover {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .form-control:focus,
+  input.form-control:focus,
+  input[type="text"].form-control:focus,
+  input[type="email"].form-control:focus,
+  input[type="password"].form-control:focus,
+  input[type="tel"].form-control:focus {
+    outline: none !important;
+    border-color: rgba(160, 70, 255, 0.85) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 0 0 4px rgba(160, 70, 255, 0.2), 0 8px 30px rgba(160, 70, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px) scale(1.01) !important;
+  }
+
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+  }
+
+  /* Icônes pour les inputs */
+  .input-icon-wrapper {
+    position: relative;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 1.15rem;
+    z-index: 1;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .input-icon-wrapper .form-control,
+  .input-icon-wrapper input.form-control,
+  .input-icon-wrapper input[type="text"].form-control,
+  .input-icon-wrapper input[type="email"].form-control,
+  .input-icon-wrapper input[type="password"].form-control,
+  .input-icon-wrapper input[type="tel"].form-control {
+    padding-left: 52px !important;
+  }
+
+  .input-icon-wrapper .form-control:focus + .input-icon,
+  .input-icon-wrapper .form-control:not(:placeholder-shown) + .input-icon {
+    color: rgba(160, 70, 255, 1);
+    transform: translateY(-50%) scale(1.15);
+    filter: drop-shadow(0 0 4px rgba(160, 70, 255, 0.5));
+  }
+
+  .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+  }
+
+  .errorlist li {
+    color: #ff5252;
+    font-size: 0.87rem;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 82, 82, 0.1);
+    border-left: 3px solid #ff5252;
+    border-radius: 6px;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .errorlist li::before {
+    content: '⚠';
+    font-size: 1.1rem;
+    color: #ff5252;
+  }
+
+  .btn-register {
+    width: 100%;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, rgba(160, 70, 255, 0.9) 0%, rgba(102, 126, 234, 0.9) 100%);
+    color: white;
+    border: 2px solid rgba(160, 70, 255, 0.5);
+    border-radius: 20px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(160, 70, 255, 0.4), 0 0 15px rgba(160, 70, 255, 0.2);
+    letter-spacing: 0.5px;
+    animation: fadeInUp 0.6s ease-out 1.6s both;
+  }
+
+  .btn-register::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-register:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .btn-register:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 35px rgba(160, 70, 255, 0.6), 0 0 25px rgba(160, 70, 255, 0.3);
+    background: linear-gradient(135deg, rgba(180, 90, 255, 0.95) 0%, rgba(120, 140, 250, 0.95) 100%);
+    border-color: rgba(160, 70, 255, 0.7);
+  }
+
+  .btn-register:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .btn-register span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .register-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 25px;
+    padding-bottom: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeInUp 0.6s ease-out 1.8s both;
+    overflow: visible !important;
+  }
+
+  .register-footer p {
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+  }
+
+  .register-footer a {
+    color: rgba(160, 70, 255, 0.9);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .register-footer a:hover {
+    color: rgba(160, 70, 255, 1);
+    text-decoration: underline;
+  }
+
+  .messages {
+    margin-bottom: 25px;
+    animation: fadeInDown 0.4s ease-out;
+  }
+
+  .alert {
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    animation: fadeInDown 0.4s ease-out;
+  }
+
+  .alert-success {
+    background: rgba(76, 175, 80, 0.15);
+    border: 2px solid rgba(76, 175, 80, 0.4);
+    color: #66bb6a;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+  }
+
+  .alert-error, .alert-danger {
+    background: rgba(244, 67, 54, 0.15);
+    border: 2px solid rgba(244, 67, 54, 0.4);
+    color: #ef5350;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2);
+  }
+
+  .alert-info {
+    background: rgba(33, 150, 243, 0.15);
+    border: 2px solid rgba(33, 150, 243, 0.4);
+    color: #42a5f5;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .register-card {
+      padding: 40px 30px;
+    }
+
+    .register-header h1 {
+      font-size: 1.7rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Forcer la suppression de l'espace vide du sidebar au chargement
+  (function() {
+    function removeSidebarSpace() {
+      // Masquer complètement le sidebar
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+      if (sidebar) {
+        sidebar.style.display = 'none';
+        sidebar.style.width = '0';
+        sidebar.style.margin = '0';
+        sidebar.style.padding = '0';
+        sidebar.style.position = 'fixed';
+        sidebar.style.left = '-9999px';
+        sidebar.style.zIndex = '-9999';
+      }
+      if (sidebarWrapper) {
+        sidebarWrapper.style.display = 'none';
+        sidebarWrapper.style.width = '0';
+        sidebarWrapper.style.margin = '0';
+        sidebarWrapper.style.padding = '0';
+      }
+      
+      // Forcer le main-panel à prendre toute la largeur
+      const mainPanel = document.querySelector('.main-panel');
+      if (mainPanel) {
+        mainPanel.style.marginLeft = '0';
+        mainPanel.style.paddingLeft = '0';
+        mainPanel.style.width = '100%';
+        mainPanel.style.maxWidth = '100%';
+      }
+      
+      // Forcer le wrapper à prendre toute la largeur
+      const wrapper = document.querySelector('.wrapper');
+      if (wrapper) {
+        wrapper.style.marginLeft = '0';
+        wrapper.style.paddingLeft = '0';
+        wrapper.style.width = '100%';
+      }
+    }
+    
+    // Exécuter immédiatement
+    removeSidebarSpace();
+    
+    // Exécuter après le chargement du DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', removeSidebarSpace);
+    } else {
+      removeSidebarSpace();
+    }
+    
+    // Exécuter après le chargement complet
+    window.addEventListener('load', removeSidebarSpace);
+    
+    // Exécuter après un court délai pour surcharger les styles du template de base
+    setTimeout(removeSidebarSpace, 100);
+    setTimeout(removeSidebarSpace, 300);
+    setTimeout(removeSidebarSpace, 500);
+  })();
+  
+  // Vérifier et forcer l'affichage de l'icône de profil
+  (function() {
+    function checkAndShowIcon() {
+      const logo = document.querySelector('.register-logo');
+      const icon = logo ? logo.querySelector('i.icon-single-02') : null;
+      
+      if (logo && icon) {
+        // Forcer la visibilité de l'icône
+        icon.style.display = 'inline-block';
+        icon.style.visibility = 'visible';
+        icon.style.opacity = '1';
+        icon.style.color = 'white';
+        icon.style.fontSize = '2.2rem';
+        
+        // Vérifier si l'icône est vraiment visible après un court délai
+        setTimeout(function() {
+          const computedStyle = window.getComputedStyle(icon);
+          const isVisible = computedStyle.display !== 'none' && 
+                           computedStyle.visibility !== 'hidden' && 
+                           computedStyle.opacity !== '0';
+          
+          // Si l'icône n'est pas visible, afficher le fallback
+          if (!isVisible || icon.offsetWidth === 0 || icon.offsetHeight === 0) {
+            const fallback = logo.querySelector('.register-logo-fallback');
+            if (fallback) {
+              fallback.style.display = 'block';
+              icon.style.display = 'none';
+            }
+          }
+        }, 500);
+      }
+    }
+    
+    // Exécuter après le chargement
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkAndShowIcon);
+    } else {
+      checkAndShowIcon();
+    }
+    
+    // Réessayer après un délai
+    setTimeout(checkAndShowIcon, 1000);
+  })();
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <div class="register-logo">
+        <i class="tim-icons icon-single-02" aria-hidden="true"></i>
+        <span class="register-logo-fallback" style="display: none;">👤</span>
+      </div>
+      <h1>{% trans "Créer un compte" %}</h1>
+      <p>{% trans "Inscrivez-vous pour réserver vos rendez-vous" %}</p>
+    </div>
+
+    <form method="post" class="register-form">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="{{ form.email.id_for_label }}">{% trans "Email" %}</label>
+        <div class="input-icon-wrapper">
+          {{ form.email }}
+          <i class="tim-icons icon-email-85 input-icon"></i>
+        </div>
+        {% if form.email.help_text %}
+        <span class="help-text">{{ form.email.help_text }}</span>
+        {% endif %}
+        {% if form.email.errors %}
+        <ul class="errorlist">
+          {% for error in form.email.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.phone.id_for_label }}">{% trans "Numéro de téléphone" %}</label>
+        <div class="input-icon-wrapper">
+          {{ form.phone }}
+          <i class="tim-icons icon-phone input-icon"></i>
+        </div>
+        {% if form.phone.help_text %}
+        <span class="help-text">{{ form.phone.help_text }}</span>
+        {% endif %}
+        {% if form.phone.errors %}
+        <ul class="errorlist">
+          {% for error in form.phone.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password1.id_for_label }}">{% trans "Mot de passe" %}</label>
+        <div class="input-icon-wrapper">
+          {{ form.password1 }}
+          <i class="tim-icons icon-lock-circle input-icon"></i>
+        </div>
+        {% if form.password1.help_text %}
+        <span class="help-text">{{ form.password1.help_text }}</span>
+        {% endif %}
+        {% if form.password1.errors %}
+        <ul class="errorlist">
+          {% for error in form.password1.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password2.id_for_label }}">{% trans "Confirmer le mot de passe" %}</label>
+        <div class="input-icon-wrapper">
+          {{ form.password2 }}
+          <i class="tim-icons icon-lock-circle input-icon"></i>
+        </div>
+        {% if form.password2.help_text %}
+        <span class="help-text">{{ form.password2.help_text }}</span>
+        {% endif %}
+        {% if form.password2.errors %}
+        <ul class="errorlist">
+          {% for error in form.password2.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn-register">
+        <span><i class="tim-icons icon-simple-add"></i> {% trans "Créer mon compte" %}</span>
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <p>{% trans "Vous avez déjà un compte ?" %}</p>
+      <a href="{% url 'appointment:user_login' %}">
+        <i class="tim-icons icon-single-02"></i> {% trans "Se connecter" %}
+      </a>
+      <p style="margin-top: 20px;">
+        <a href="{% url 'appointment:index' %}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">
+          <i class="tim-icons icon-minimal-left"></i> {% trans "Revenir à l'accueil" %}
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

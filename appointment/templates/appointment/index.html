@@ -1,0 +1,169 @@
+{% extends BASE_TEMPLATE %}
+{% load i18n %}
+{% load static %}
+{% block customCSS %}
+    <style>
+        .services-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .services-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .services-header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .service-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+            color: inherit;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .service-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        .service-card .service-description {
+            opacity: 0.8;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .service-card .service-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .service-card .service-detail-item {
+            text-align: center;
+        }
+        .service-card .service-detail-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .service-card .service-detail-item span {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        .service-card .btn-book {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(60deg, #ffa726, #fb8c00);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .service-card .btn-book:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4);
+        }
+        .no-services {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .no-services h2 {
+            margin-bottom: 20px;
+        }
+        .admin-links {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .admin-links a {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: linear-gradient(60deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .admin-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+{% endblock %}
+{% block title %}
+    {{ page_title }}
+{% endblock %}
+{% block description %}
+    {{ page_description }}
+{% endblock %}
+{% block body %}
+    <div class="services-container">
+        <div class="services-header">
+            <h1>{% trans "Our Services" %}</h1>
+            <p>{% trans "Choose a service and book your appointment" %}</p>
+        </div>
+        
+        {% if services %}
+            <div class="services-grid">
+                {% for service in services %}
+                    <a href="{% url 'appointment:appointment_request' service_id=service.id %}" class="service-card">
+                        <h3>{{ service.name }}</h3>
+                        {% if service.description %}
+                            <div class="service-description">{{ service.description|truncatewords:30 }}</div>
+                        {% endif %}
+                        <div class="service-details">
+                            <div class="service-detail-item">
+                                <strong>{% trans "Duration" %}</strong>
+                                <span>{{ service.get_duration }}</span>
+                            </div>
+                            <div class="service-detail-item">
+                                <strong>{% trans "Price" %}</strong>
+                                <span>{{ service.get_price_text }}</span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-book">{% trans "Book Appointment" %}</button>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-services">
+                <h2>{% trans "No services available" %}</h2>
+                <p>{% trans "Please check back later or contact us for more information." %}</p>
+            </div>
+        {% endif %}
+        
+        <div class="admin-links">
+            <a href="/admin/" target="_blank">{% trans "Interface Admin Django" %}</a>
+            {% if user.is_superuser %}
+                <a href="{% url 'appointment:admin_dashboard' %}">{% trans "Dashboard Admin" %}</a>
+                <a href="{% url 'appointment:get_user_appointments' %}">{% trans "Gestion des rendez-vous" %}</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

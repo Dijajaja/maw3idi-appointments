@@ -55,6 +55,21 @@ def get_user_appointments(request, response_type='html'):
         'appointments': json.dumps(appointments_json),
     }
     context = get_generic_context_with_extra(request=request, extra=extra_context)
+    
+    # Utiliser Black Dashboard si disponible
+    import os
+    from django.conf import settings
+    base_dir = getattr(settings, 'BASE_DIR', None)
+    if base_dir:
+        assets_path = os.path.join(base_dir, 'appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    else:
+        assets_path = os.path.join('appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    
+    if use_black_dashboard:
+        context['BASE_TEMPLATE'] = 'base_templates/black_dashboard_base.html'
+    
     # if appointment is empty and user doesn't have a staff-member instance, put a message
     # TODO: Refactor this logic, it's not clean
     if not appointments and not StaffMember.objects.filter(
@@ -64,11 +79,16 @@ def get_user_appointments(request, response_type='html'):
 
 
 @require_user_authenticated
-@require_staff_or_superuser
 def display_appointment(request, appointment_id):
+    from appointment.utils.view_helpers import is_ajax
+    from appointment.utils.json_context import json_response
+    from appointment.utils.error_codes import ErrorCode
+    
     appointment, page_title, error_message, status_code = prepare_appointment_display_data(request.user, appointment_id)
 
     if error_message:
+        if is_ajax(request):
+            return json_response(error_message, status=status_code, success=False, error_code=ErrorCode.NOT_AUTHORIZED if status_code == 403 else None)
         context = get_generic_context(request=request)
         return render(request, 'error_pages/404_not_found.html', context=context, status=status_code)
     # If everything is okay, render the HTML template.
@@ -77,11 +97,25 @@ def display_appointment(request, appointment_id):
         'page_title': page_title,
     }
     context = get_generic_context_with_extra(request=request, extra=extra_context)
+    
+    # Utiliser Black Dashboard si disponible
+    import os
+    from django.conf import settings
+    base_dir = getattr(settings, 'BASE_DIR', None)
+    if base_dir:
+        assets_path = os.path.join(base_dir, 'appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    else:
+        assets_path = os.path.join('appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    
+    if use_black_dashboard:
+        context['BASE_TEMPLATE'] = 'base_templates/black_dashboard_base.html'
+    
     return render(request, 'administration/display_appointment.html', context)
 
 
 @require_user_authenticated
-@require_staff_or_superuser
 def user_profile(request, staff_user_id=None):
     data = prepare_user_profile_data(request.user, staff_user_id)
     error = data.get('error')
@@ -224,6 +258,21 @@ def add_or_update_staff_info(request, user_id=None):
         form = StaffAppointmentInformationForm(instance=staff_member)
 
     context = get_generic_context_with_extra(request=request, extra={'form': form})
+    
+    # Utiliser Black Dashboard si disponible
+    import os
+    from django.conf import settings
+    base_dir = getattr(settings, 'BASE_DIR', None)
+    if base_dir:
+        assets_path = os.path.join(base_dir, 'appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    else:
+        assets_path = os.path.join('appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    
+    if use_black_dashboard:
+        context['BASE_TEMPLATE'] = 'base_templates/black_dashboard_base.html'
+    
     return render(request, 'administration/manage_staff_member.html', context)
 
 
@@ -456,7 +505,7 @@ def add_or_update_service(request, service_id=None, view=0):
     if request.method == 'POST':
         service, is_valid, error_message = handle_service_management_request(request.POST, request.FILES, service_id)
         if is_valid:
-            messages.success(request, "Service saved successfully!")
+            messages.success(request, _("Service enregistré avec succès !"))
             return redirect('appointment:add_service')
         else:
             messages.error(request, error_message)
@@ -527,6 +576,21 @@ def get_service_list(request, response_type='html'):
             })
         return json_response("Successfully fetched services.", custom_data={'services': service_data}, safe=False)
     context = get_generic_context_with_extra(request=request, extra={'services': services})
+    
+    # Utiliser Black Dashboard si disponible
+    import os
+    from django.conf import settings
+    base_dir = getattr(settings, 'BASE_DIR', None)
+    if base_dir:
+        assets_path = os.path.join(base_dir, 'appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    else:
+        assets_path = os.path.join('appointment', 'static', 'assets', 'css', 'black-dashboard.css')
+        use_black_dashboard = os.path.exists(assets_path)
+    
+    if use_black_dashboard:
+        context['BASE_TEMPLATE'] = 'base_templates/black_dashboard_base.html'
+    
     return render(request, 'administration/service_list.html', context=context)
 
 
