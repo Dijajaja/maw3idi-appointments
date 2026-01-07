@@ -96,7 +96,15 @@ if DATABASE_URL and not SKIP_DB:
         import dj_database_url
         # Vérifier que psycopg2 est disponible avant d'utiliser PostgreSQL
         try:
-            import psycopg2
+            # Essayer d'importer psycopg2 de différentes façons
+            try:
+                import psycopg2
+            except ImportError:
+                try:
+                    import psycopg2_binary as psycopg2
+                except ImportError:
+                    raise ImportError("Neither psycopg2 nor psycopg2_binary can be imported")
+            
             # Si psycopg2 est disponible, utiliser PostgreSQL
             db_config = dj_database_url.config(
                 default=DATABASE_URL,
@@ -122,12 +130,16 @@ if DATABASE_URL and not SKIP_DB:
                 print(f"✅ Configuration PostgreSQL: {engine}", file=sys.stderr)
                 print(f"✅ Base de données: {DATABASES['default'].get('NAME')}", file=sys.stderr)
         except ImportError as e:
-            # Si psycopg2 n'est pas disponible, c'est une erreur en production
+            # Si psycopg2 n'est pas disponible, vérifier pourquoi
             import sys
-            print(f"❌ ERREUR CRITIQUE: psycopg2 non disponible: {e}", file=sys.stderr)
-            print(f"❌ DATABASE_URL est défini mais psycopg2 n'est pas installé!", file=sys.stderr)
+            import traceback
+            print(f"❌ ERREUR CRITIQUE: psycopg2 non disponible", file=sys.stderr)
+            print(f"❌ Exception: {e}", file=sys.stderr)
+            print(f"❌ Traceback:", file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+            print(f"❌ DATABASE_URL est défini mais psycopg2 n'est pas importable!", file=sys.stderr)
             # En production, on ne doit PAS utiliser SQLite si DATABASE_URL est défini
-            raise ImportError("psycopg2 is required when DATABASE_URL is set")
+            raise ImportError(f"psycopg2 is required when DATABASE_URL is set: {e}")
     except ImportError as e:
         # Fallback si dj_database_url n'est pas installé
         import sys
