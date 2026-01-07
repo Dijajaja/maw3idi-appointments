@@ -25,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-(%st!9pc%2d%*b3xt8@0o7*4rkxq-$6j3y-(b*ftz^m2^r4l$z"
+SECRET_KEY = os.getenv('SECRET_KEY', "django-insecure-(%st!9pc%2d%*b3xt8@0o7*4rkxq-$6j3y-(b*ftz^m2^r4l$z")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 
@@ -50,6 +50,7 @@ if os.environ.get('USE_DJANGO_Q', 'False').lower() == 'true':
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Pour servir les fichiers statiques en production
     "django.contrib.sessions.middleware.SessionMiddleware",
     'django.middleware.locale.LocaleMiddleware',
     "django.middleware.common.CommonMiddleware",
@@ -82,12 +83,29 @@ WSGI_APPLICATION = "appointments.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Configuration de la base de données
+# Utilise PostgreSQL en production si DATABASE_URL est défini, sinon SQLite pour le développement
+if os.getenv('DATABASE_URL'):
+    try:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+        }
+    except ImportError:
+        # Fallback si dj_database_url n'est pas installé (développement local)
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -123,6 +141,14 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "appointment/static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Configuration WhiteNoise pour servir les fichiers statiques en production
+# Utilise CompressedStaticFilesStorage si ManifestStaticFilesStorage cause des problèmes
+try:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+except:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -131,6 +157,35 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 APPOINTMENT_BUFFER_TIME = 0
 APPOINTMENT_WEBSITE_NAME = 'Maw3idi'
+
+# Payment Configuration
+APPOINTMENT_PAYMENT_URL = 'appointment:select_payment_method'
+
+# Banques et comptes bancaires en Mauritanie
+BANK_ACCOUNTS = {
+    'BAMIS': {
+        'name': 'Banque Arabe Africaine en Mauritanie (BAMIS)',
+        'account_number': os.getenv('BANK_BAMIS_ACCOUNT', '000000000000'),
+        'iban': os.getenv('BANK_BAMIS_IBAN', ''),
+        'swift': os.getenv('BANK_BAMIS_SWIFT', ''),
+    },
+    'BPM': {
+        'name': 'Banque Populaire de Mauritanie (BPM)',
+        'account_number': os.getenv('BANK_BPM_ACCOUNT', '000000000000'),
+        'iban': os.getenv('BANK_BPM_IBAN', ''),
+        'swift': os.getenv('BANK_BPM_SWIFT', ''),
+    },
+    'CHINGUITEL_CASH': {
+        'name': 'Chinguitel Cash',
+        'account_number': os.getenv('CHINGUITEL_CASH_NUMBER', ''),
+    },
+}
+
+# Configuration des cartes bancaires (pour intégration future avec Stripe ou autre)
+PAYMENT_CARD_ENABLED = os.getenv('PAYMENT_CARD_ENABLED', 'True').lower() == 'true'
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
 
 # Social Media URLs - Configurez vos URLs de réseaux sociaux ici
 SOCIAL_MEDIA_FACEBOOK_URL = os.getenv('SOCIAL_MEDIA_FACEBOOK_URL', 'https://www.facebook.com/')
@@ -192,7 +247,7 @@ if 'django_q' in INSTALLED_APPS:
         'name': 'django-appointment',
         'workers': 4,
         'timeout': 90,
-        'retry': 150,  # retry must be larger than timeout
+        'retry': 180,  # retry must be larger than timeout (increased to avoid warning)
         'queue_limit': 50,
         'bulk': 10,
         'orm': 'default',
