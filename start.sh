@@ -6,11 +6,21 @@
 set +e
 
 echo "🔄 Application des migrations..."
-python manage.py migrate --noinput
-if [ $? -ne 0 ]; then
-    echo "⚠️  Erreur lors de l'application des migrations"
+echo "📋 Liste des migrations à appliquer:"
+python manage.py showmigrations --list || echo "⚠️  Impossible de lister les migrations"
+
+echo "🔄 Application de toutes les migrations..."
+python manage.py migrate --noinput --verbosity 2
+MIGRATE_EXIT=$?
+
+if [ $MIGRATE_EXIT -ne 0 ]; then
+    echo "⚠️  Erreur lors de l'application des migrations (code: $MIGRATE_EXIT)"
     echo "ℹ️  Tentative de connexion à la base de données..."
     python -c "import django; django.setup(); from django.db import connection; connection.ensure_connection()" || echo "❌ Impossible de se connecter à la base de données"
+else
+    echo "✅ Migrations appliquées avec succès"
+    echo "📋 Vérification des migrations appliquées:"
+    python manage.py showmigrations --list | grep -E "\[X\]|\[ \]" || echo "⚠️  Impossible de vérifier les migrations"
 fi
 
 echo "👤 Création du superutilisateur (si configuré)..."
