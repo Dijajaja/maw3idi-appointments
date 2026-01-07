@@ -1,0 +1,68 @@
+@startuml Diagramme de Séquence - Processus de Paiement
+
+actor Client
+participant "Vue: select_payment_method" as VuePayment
+participant "PaymentInfo" as PaymentModel
+participant "Appointment" as ApptModel
+participant "Service" as ServiceModel
+cloud "Passerelle de Paiement" as PaymentGateway
+database "Base de Données" as DB
+
+== Sélection de la Méthode de Paiement ==
+Client -> VuePayment: Accéder à la page de paiement
+VuePayment -> PaymentModel: Récupérer PaymentInfo
+PaymentModel -> ApptModel: Récupérer Appointment
+ApptModel -> ServiceModel: Récupérer Service
+ServiceModel --> ApptModel: Service (prix, devise)
+ApptModel --> PaymentModel: Montant à payer
+PaymentModel --> VuePayment: Informations de paiement
+VuePayment --> Client: Afficher options de paiement
+
+== Choix de la Méthode ==
+Client -> VuePayment: Choisir méthode de paiement
+
+alt Paiement par Carte Bancaire
+  VuePayment -> VuePayment: Rediriger vers card_payment
+  Client -> VuePayment: Saisir informations carte
+  VuePayment -> PaymentGateway: Envoyer requête de paiement
+  PaymentGateway --> VuePayment: Confirmation paiement
+  VuePayment -> ApptModel: Marquer comme payé
+  ApptModel -> DB: Sauvegarder (paid=True)
+  
+else Paiement par Virement Bancaire
+  VuePayment -> VuePayment: Rediriger vers bank_transfer
+  VuePayment --> Client: Afficher informations bancaires
+  Client -> Client: Effectuer virement manuel
+  note right: Le paiement doit être\nvalidé manuellement\npar l'administrateur
+  
+else Paiement via Portefeuille Électronique
+  Client -> VuePayment: Choisir portefeuille (Bankily, Masrvi, etc.)
+  alt Bankily
+    VuePayment -> VuePayment: Rediriger vers bankily_payment
+    Client -> VuePayment: Saisir numéro compte et code
+    VuePayment -> PaymentGateway: Valider paiement Bankily
+    PaymentGateway --> VuePayment: Confirmation
+    VuePayment -> ApptModel: Marquer comme payé
+    ApptModel -> DB: Sauvegarder (paid=True)
+  else Autre portefeuille
+    VuePayment -> PaymentGateway: Traiter paiement
+    PaymentGateway --> VuePayment: Confirmation
+    VuePayment -> ApptModel: Marquer comme payé
+    ApptModel -> DB: Sauvegarder (paid=True)
+  end
+end
+
+== Confirmation ==
+VuePayment -> VuePayment: Envoyer email de confirmation
+VuePayment --> Client: Afficher page de succès
+
+note over PaymentGateway
+  Services de paiement supportés:
+  - Stripe (cartes bancaires)
+  - Bankily (portefeuille électronique)
+  - Masrvi, Click, Sedad, Amanty
+  - Virement bancaire
+end note
+
+@enduml
+

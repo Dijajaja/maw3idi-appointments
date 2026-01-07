@@ -15,6 +15,7 @@ from appointment.views import (
     update_user_info_simple, user_login, user_register
     
 )
+from appointment.views_payment import select_payment_method, select_digital_wallet, bankily_payment, card_payment, bank_transfer, payment_success
 from appointment.views_calendar import calendar_view, get_calendar_appointments_ajax
 from appointment.views_admin import (
     add_day_off, add_or_update_service, add_or_update_staff_info, add_staff_member_info, add_working_hours,
@@ -133,6 +134,13 @@ urlpatterns = [
     path('verification-code/', email_change_verification_code, name='email_change_verification_code'),
     path('thank-you/<int:appointment_id>/', default_thank_you, name='default_thank_you'),
     path('verify/<uidb64>/<str:token>/', set_passwd, name='set_passwd'),
+    # Payment URLs
+    path('payment/<int:object_id>/<str:id_request>/', select_payment_method, name='select_payment_method'),
+    path('payment/wallet/<int:object_id>/<str:id_request>/', select_digital_wallet, name='select_digital_wallet'),
+    path('payment/bankily/<int:object_id>/<str:id_request>/', bankily_payment, name='bankily_payment'),
+    path('payment/card/<int:object_id>/<str:id_request>/', card_payment, name='card_payment'),
+    path('payment/bank-transfer/<int:object_id>/<str:id_request>/', bank_transfer, name='bank_transfer'),
+    path('payment/success/<int:appointment_id>/', payment_success, name='payment_success'),
     path('ajax/', include(ajax_urlpatterns)),
     path('app-admin/', include(admin_urlpatterns)),
 ]

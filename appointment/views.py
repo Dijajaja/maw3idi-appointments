@@ -26,7 +26,7 @@ from appointment.forms import AppointmentForm, AppointmentRequestForm, ClientDat
 from appointment.logger_config import get_logger
 from appointment.models import (
     Appointment, AppointmentRequest, AppointmentRescheduleHistory, Config, DayOff, EmailVerificationCode,
-    PasswordResetToken, Service,
+    PasswordResetToken, PaymentInfo, Service,
     StaffMember
 )
 from appointment.settings import check_q_cluster
@@ -47,6 +47,8 @@ from .email_sender.email_sender import has_required_email_settings
 from .messages_ import passwd_error, passwd_set_successfully
 from .services import get_appointments_and_slots, get_available_slots_for_staff
 from .settings import (APPOINTMENT_PAYMENT_URL, APPOINTMENT_THANK_YOU_URL)
+from django.conf import settings as django_settings
+from django.conf import settings as django_settings
 from .utils.date_time import DATE_FORMATS, convert_str_to_date
 from .utils.error_codes import ErrorCode
 from .utils.ics_utils import generate_ics_file

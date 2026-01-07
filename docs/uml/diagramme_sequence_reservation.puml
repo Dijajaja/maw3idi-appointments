@@ -1,0 +1,76 @@
+@startuml Diagramme de Séquence - Processus de Réservation
+
+actor Client
+participant "Vue: appointment_request" as VueRequest
+participant "Service" as ServiceModel
+participant "StaffMember" as StaffModel
+participant "AppointmentRequest" as ARModel
+participant "Appointment" as ApptModel
+participant "PaymentInfo" as PaymentModel
+database "Base de Données" as DB
+
+== Sélection du Service ==
+Client -> VueRequest: Accéder à /request/<service_id>/
+VueRequest -> ServiceModel: Récupérer le service
+ServiceModel --> VueRequest: Service
+VueRequest -> StaffModel: Récupérer les membres du personnel
+StaffModel --> VueRequest: Liste des StaffMembers
+VueRequest --> Client: Afficher calendrier et formulaire
+
+== Soumission de la Demande ==
+Client -> VueRequest: Soumettre formulaire (date, heure, staff)
+VueRequest -> ARModel: Créer AppointmentRequest
+activate ARModel
+ARModel -> ARModel: Valider date et heure
+ARModel -> ARModel: Générer id_request
+ARModel -> DB: Sauvegarder
+DB --> ARModel: Confirmation
+deactivate ARModel
+ARModel --> VueRequest: AppointmentRequest créé
+VueRequest --> Client: Redirection vers formulaire client
+
+== Saisie des Informations Client ==
+Client -> VueRequest: Remplir formulaire client
+VueRequest -> Client: Vérifier si email existe
+alt Email existe
+  VueRequest -> Client: Demander code de vérification
+  Client -> VueRequest: Entrer code
+  VueRequest -> Client: Vérifier code et connecter
+else Nouvel email
+  VueRequest -> Client: Créer nouvel utilisateur
+end
+
+== Création du Rendez-vous ==
+VueRequest -> ApptModel: Créer Appointment
+activate ApptModel
+ApptModel -> ARModel: Lier à AppointmentRequest
+ApptModel -> Client: Lier au User client
+ApptModel -> ApptModel: Calculer amount_to_pay
+ApptModel -> DB: Sauvegarder
+DB --> ApptModel: Confirmation
+deactivate ApptModel
+ApptModel --> VueRequest: Appointment créé
+
+== Gestion du Paiement ==
+alt Service payant
+  VueRequest -> PaymentModel: Créer PaymentInfo
+  activate PaymentModel
+  PaymentModel -> ApptModel: Lier à Appointment
+  PaymentModel -> DB: Sauvegarder
+  DB --> PaymentModel: Confirmation
+  deactivate PaymentModel
+  PaymentModel --> VueRequest: PaymentInfo créé
+  VueRequest --> Client: Redirection vers page paiement
+  Client -> VueRequest: Choisir méthode de paiement
+  VueRequest -> PaymentModel: Traiter paiement
+  PaymentModel -> ApptModel: Marquer comme payé
+else Service gratuit
+  VueRequest --> Client: Redirection page de confirmation
+end
+
+== Confirmation ==
+VueRequest -> VueRequest: Envoyer email de confirmation
+VueRequest --> Client: Afficher page de remerciement
+
+@enduml
+

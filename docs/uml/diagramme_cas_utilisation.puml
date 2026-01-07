@@ -1,0 +1,121 @@
+@startuml Diagramme de Cas d'Utilisation - Système de Rendez-vous
+
+left to right direction
+
+package "Acteurs" {
+  actor Client
+  actor "Membre du\nPersonnel" as Staff
+  actor "Administrateur" as Admin
+}
+
+package "Fonctionnalités Client" {
+  usecase UC1 as "Consulter les services disponibles"
+  usecase UC2 as "Sélectionner un service"
+  usecase UC3 as "Choisir une date et heure"
+  usecase UC4 as "Sélectionner un membre du personnel"
+  usecase UC5 as "Remplir les informations personnelles"
+  usecase UC6 as "Réserver un rendez-vous"
+  usecase UC7 as "Effectuer le paiement"
+  usecase UC8 as "Consulter mes rendez-vous"
+  usecase UC9 as "Reprogrammer un rendez-vous"
+  usecase UC10 as "Annuler un rendez-vous"
+  usecase UC11 as "S'inscrire"
+  usecase UC12 as "Se connecter"
+  usecase UC13 as "Modifier mon profil"
+  usecase UC14 as "Recevoir des rappels"
+}
+
+package "Fonctionnalités Personnel" {
+  usecase UC15 as "Consulter mes rendez-vous"
+  usecase UC16 as "Gérer mes horaires de travail"
+  usecase UC17 as "Gérer mes jours de congé"
+  usecase UC18 as "Consulter les détails d'un rendez-vous"
+  usecase UC19 as "Modifier un rendez-vous"
+  usecase UC20 as "Supprimer un rendez-vous"
+  usecase UC21 as "Gérer mes services offerts"
+  usecase UC22 as "Modifier mon profil"
+}
+
+package "Fonctionnalités Administrateur" {
+  usecase UC23 as "Gérer les services"
+  usecase UC24 as "Gérer les membres du personnel"
+  usecase UC25 as "Consulter tous les rendez-vous"
+  usecase UC26 as "Consulter les statistiques"
+  usecase UC27 as "Configurer les paramètres globaux"
+  usecase UC28 as "Gérer les utilisateurs"
+  usecase UC29 as "Consulter le calendrier global"
+}
+
+' Relations Client
+Client --> UC1
+Client --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC5
+Client --> UC6
+Client --> UC7
+Client --> UC8
+Client --> UC9
+Client --> UC10
+Client --> UC11
+Client --> UC12
+Client --> UC13
+Client --> UC14
+
+' Relations Personnel
+Staff --> UC15
+Staff --> UC16
+Staff --> UC17
+Staff --> UC18
+Staff --> UC19
+Staff --> UC20
+Staff --> UC21
+Staff --> UC22
+
+' Relations Administrateur
+Admin --> UC23
+Admin --> UC24
+Admin --> UC25
+Admin --> UC26
+Admin --> UC27
+Admin --> UC28
+Admin --> UC29
+
+' Relations d'inclusion et d'extension
+UC2 ..> UC1 : <<include>>
+UC6 ..> UC2 : <<include>>
+UC6 ..> UC3 : <<include>>
+UC6 ..> UC4 : <<include>>
+UC6 ..> UC5 : <<include>>
+UC6 <.. UC7 : <<extend>>
+UC9 <.. UC8 : <<extend>>
+UC10 <.. UC8 : <<extend>>
+
+UC18 ..> UC15 : <<include>>
+UC19 ..> UC18 : <<extend>>
+UC20 ..> UC18 : <<extend>>
+
+UC29 ..> UC25 : <<extend>>
+
+note right of Client
+  Le client peut consulter
+  et réserver des rendez-vous
+  sans être connecté, mais
+  doit créer un compte pour
+  gérer ses rendez-vous.
+end note
+
+note right of Staff
+  Le membre du personnel peut
+  gérer ses propres rendez-vous
+  et ses horaires de travail.
+end note
+
+note right of Admin
+  L'administrateur a accès
+  à toutes les fonctionnalités
+  du système.
+end note
+
+@enduml
+

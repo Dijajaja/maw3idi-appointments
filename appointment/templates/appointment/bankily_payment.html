@@ -1,0 +1,260 @@
+{% extends BASE_TEMPLATE|default:"base_templates/black_dashboard_base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block navbar_title %}{% trans "Paiement via Bankily" %}{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/appt-common.css' %}"/>
+<style>
+    body, html {
+        overflow-x: hidden !important;
+    }
+    
+    .payment-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .payment-card {
+        background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.9)) !important;
+        border-radius: 25px !important;
+        padding: 40px !important;
+        border: 3px solid rgba(160, 70, 255, 0.4) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            0 0 30px rgba(160, 70, 255, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    .payment-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .payment-header h2 {
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .bankily-logo {
+        font-size: 3rem;
+        color: rgba(160, 70, 255, 1);
+        margin-bottom: 15px;
+    }
+    
+    .payment-summary {
+        background: rgba(20, 20, 40, 0.6);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(160, 70, 255, 0.2);
+        text-align: center;
+    }
+    
+    .payment-amount {
+        font-size: 2rem;
+        font-weight: 600;
+        color: rgba(160, 70, 255, 1);
+        margin-bottom: 10px;
+    }
+    
+    .payment-service {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        background: rgba(20, 20, 40, 0.8);
+        border: 2px solid rgba(160, 70, 255, 0.3);
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: rgba(160, 70, 255, 0.8);
+        box-shadow: 0 0 15px rgba(160, 70, 255, 0.3);
+        background: rgba(20, 20, 40, 0.9);
+    }
+    
+    .payment-code-display {
+        background: rgba(160, 70, 255, 0.1);
+        border: 2px solid rgba(160, 70, 255, 0.4);
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .payment-code-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    .payment-code-value {
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 2rem;
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 5px;
+    }
+    
+    .form-note {
+        background: rgba(20, 20, 40, 0.6);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        border: 1px solid rgba(160, 70, 255, 0.2);
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .form-note i {
+        color: rgba(160, 70, 255, 1);
+        margin-right: 8px;
+    }
+    
+    .btn-pay {
+        width: 100%;
+        background: linear-gradient(135deg, rgba(160, 70, 255, 1), rgba(120, 50, 200, 1));
+        border: none;
+        border-radius: 12px;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+    }
+    
+    .btn-pay:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(160, 70, 255, 0.4);
+    }
+    
+    .btn-back {
+        background: rgba(20, 20, 40, 0.8);
+        border: 2px solid rgba(160, 70, 255, 0.3);
+        color: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    
+    .btn-back:hover {
+        border-color: rgba(160, 70, 255, 0.6);
+        background: rgba(20, 20, 40, 1);
+        color: rgba(255, 255, 255, 1);
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="payment-container">
+    <a href="{% url 'appointment:select_digital_wallet' object_id=payment_info.id id_request=id_request %}" class="btn-back">
+        <i class="fas fa-arrow-left"></i> {% trans "Retour" %}
+    </a>
+    
+    <div class="payment-card">
+        <div class="payment-header">
+            <div class="bankily-logo">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h2>{% trans "Paiement via Bankily" %}</h2>
+        </div>
+        
+        <div class="payment-summary">
+            <div class="payment-amount">{{ amount }}{{ currency|default:" MRU" }}</div>
+            <div class="payment-service">{{ service_name }}</div>
+        </div>
+        
+        <form method="POST" id="bankily-payment-form">
+            {% csrf_token %}
+            
+            <div class="payment-code-display">
+                <div class="payment-code-label">{% trans "Code de paiement" %}</div>
+                <div class="payment-code-value" id="payment-code-display">{{ payment_code }}</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="account_number">{% trans "Numéro de compte Bankily" %}</label>
+                <input type="text" 
+                       id="account_number" 
+                       name="account_number" 
+                       class="form-control" 
+                       placeholder="{% trans 'Entrez votre numéro de compte Bankily' %}"
+                       maxlength="20"
+                       required>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment_code">{% trans "Code de paiement" %} (5 chiffres)</label>
+                <input type="text" 
+                       id="payment_code" 
+                       name="payment_code" 
+                       class="form-control" 
+                       placeholder="58463"
+                       value="{{ payment_code }}"
+                       maxlength="5"
+                       readonly
+                       style="background: rgba(160, 70, 255, 0.1); border-color: rgba(160, 70, 255, 0.5); cursor: not-allowed;"
+                       required>
+            </div>
+            
+            <div class="form-note">
+                <i class="fas fa-info-circle"></i>
+                {% trans "Utilisez le code de paiement ci-dessus lors de la confirmation dans votre application Bankily." %}
+            </div>
+            
+            <button type="submit" class="btn-pay">
+                <i class="fas fa-check-circle"></i> {% trans "Confirmer le paiement" %}
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validation du numéro de compte
+        const accountNumber = document.getElementById('account_number');
+        accountNumber.addEventListener('input', function(e) {
+            // Ne garder que les chiffres
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+        
+        // Le code est déjà pré-rempli et en lecture seule
+    });
+</script>
+{% endblock %}
+

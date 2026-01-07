@@ -1,0 +1,26 @@
+📸 LISTE COMPLÈTE DES CAPTURES D'ÉCRAN
+==========================================
+
+PAGES PUBLIQUES:
+1. 01_page_accueil.png - Page d'accueil
+2. 02_page_connexion.png - Page de connexion  
+3. 03_page_inscription.png - Page d'inscription
+4. 04_page_contact.png - Page de contact
+5. 05_nouveau_rendez_vous.png - Nouveau rendez-vous
+
+PAGES AUTHENTIFIÉES:
+6. 06_mes_rendez_vous.png - Mes rendez-vous
+7. 07_calendrier.png - Calendrier
+8. 08_modifier_profil.png - Modifier profil
+9. 09_changer_mot_de_passe.png - Changer mot de passe
+
+PAGES ADMIN:
+10. 10_admin_rendez_vous.png - Admin - Liste rendez-vous
+11. 11_admin_liste_services.png - Admin - Liste services
+12. 12_admin_ajouter_service.png - Admin - Ajouter service
+13. 13_admin_profil.png - Admin - Profil
+14. 14_admin_ajouter_staff.png - Admin - Ajouter staff
+15. 15_tableau_de_bord_admin.png - Dashboard admin
+
+TOTAL: 15 pages capturées ✅
+

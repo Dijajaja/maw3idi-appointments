@@ -85,14 +85,39 @@ WSGI_APPLICATION = "appointments.wsgi.application"
 
 # Configuration de la base de données
 # Utilise PostgreSQL en production si DATABASE_URL est défini, sinon SQLite pour le développement
-if os.getenv('DATABASE_URL'):
+# Pendant le build (collectstatic), on utilise SQLite pour éviter les erreurs de connexion
+if os.getenv('DATABASE_URL') and not os.getenv('SKIP_DB_CONNECTION'):
     try:
         import dj_database_url
-        DATABASES = {
-            'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-        }
+        # Vérifier que psycopg2 est disponible avant d'utiliser PostgreSQL
+        try:
+            import psycopg2
+            # Si psycopg2 est disponible, utiliser PostgreSQL
+            DATABASES = {
+                'default': dj_database_url.config(
+                    default=os.getenv('DATABASE_URL'),
+                    conn_max_age=600,
+                    conn_health_checks=True,
+                )
+            }
+        except ImportError:
+            # Si psycopg2 n'est pas disponible (pendant le build), utiliser SQLite temporairement
+            DATABASES = {
+                "default": {
+                    "ENGINE": "django.db.backends.sqlite3",
+                    "NAME": BASE_DIR / "db.sqlite3",
+                }
+            }
     except ImportError:
         # Fallback si dj_database_url n'est pas installé (développement local)
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
+    except Exception as e:
+        # Si erreur de connexion, utiliser SQLite temporairement (pour le build)
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",

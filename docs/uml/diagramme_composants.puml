@@ -1,0 +1,111 @@
+@startuml Diagramme de Composants - Architecture du Système
+
+package "Couche Présentation" {
+  component "Templates HTML" as Templates
+  component "Vues Django" as Views {
+    [views.py]
+    [views_admin.py]
+    [views_payment.py]
+    [views_calendar.py]
+  }
+  component "Formulaires" as Forms
+  component "Static Files\n(CSS/JS)" as Static
+}
+
+package "Couche Logique Métier" {
+  component "Services" as Services {
+    [services.py]
+  }
+  component "Utils" as Utils {
+    [date_time.py]
+    [db_helpers.py]
+    [email_ops.py]
+    [json_context.py]
+    [view_helpers.py]
+  }
+}
+
+package "Couche Données" {
+  component "Modèles Django" as Models {
+    [models.py]
+  }
+  database "Base de Données\n(SQLite/PostgreSQL)" as DB
+}
+
+package "Couche Infrastructure" {
+  component "Configuration" as Config {
+    [settings.py]
+  }
+  component "URLs" as URLs {
+    [urls.py]
+  }
+  component "Email Sender" as EmailSender {
+    [email_sender.py]
+  }
+  component "Logger" as Logger {
+    [logger_config.py]
+  }
+}
+
+package "Systèmes Externes" {
+  cloud "Service Email\n(SMTP)" as EmailService
+  cloud "Service de Paiement\n(Stripe/Bankily)" as PaymentService
+}
+
+' Relations entre composants
+Views --> Models : utilise
+Views --> Services : utilise
+Views --> Forms : utilise
+Views --> Utils : utilise
+Views --> Templates : rend
+Templates --> Static : référence
+
+Services --> Models : manipule
+Services --> Utils : utilise
+Services --> EmailSender : utilise
+
+Models --> DB : persiste
+
+Forms --> Models : valide
+
+URLs --> Views : route
+
+EmailSender --> EmailService : envoie
+
+Services --> PaymentService : communique
+
+Config --> Views : configure
+Config --> Services : configure
+Logger --> Views : log
+Logger --> Services : log
+
+note right of Views
+  Vues principales:
+  - views.py: Rendez-vous clients
+  - views_admin.py: Administration
+  - views_payment.py: Paiements
+  - views_calendar.py: Calendrier
+end note
+
+note right of Models
+  Modèles principaux:
+  - Service
+  - StaffMember
+  - AppointmentRequest
+  - Appointment
+  - PaymentInfo
+  - Config
+  - DayOff
+  - WorkingHours
+end note
+
+note right of Services
+  Services métier:
+  - Gestion des rendez-vous
+  - Calcul des créneaux
+  - Validation des dates
+  - Envoi d'emails
+end note
+
+@enduml
+

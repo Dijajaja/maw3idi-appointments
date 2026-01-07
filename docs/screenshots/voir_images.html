@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captures d'Écran du Site - Django Appointment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .screenshot-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .screenshot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .screenshot-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .screenshot-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .screenshot-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .screenshot-info {
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        /* Modal pour agrandir les images */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 50px;
+            animation: zoomIn 0.3s;
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+        
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Captures d'Écran du Site</h1>
+        <p class="subtitle">Système de Gestion de Rendez-vous Django</p>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Pages Capturées</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">HD</div>
+                <div class="stat-label">Haute Résolution</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">PNG</div>
+                <div class="stat-label">Format Image</div>
+            </div>
+        </div>
+        
+        <div class="gallery">
+            <div class="screenshot-card">
+                <div class="screenshot-title">1. Page d'Accueil</div>
+                <img src="01_page_accueil.png" alt="Page d'accueil" class="screenshot-image" onclick="openModal(this)">
+                <div class="screenshot-info">📄 Liste des services disponibles</div>
+            </div>
+            
+            <div class="screenshot-card">
+                <div class="screenshot-title">2. Page de Connexion</div>
+                <img src="02_page_connexion.png" alt="Page de connexion" class="screenshot-image" onclick="openModal(this)">
+                <div class="screenshot-info">🔐 Formulaire de connexion utilisateur</div>
+            </div>
+            
+            <div class="screenshot-card">
+                <div class="screenshot-title">3. Page d'Inscription</div>
+                <img src="03_page_inscription.png" alt="Page d'inscription" class="screenshot-image" onclick="openModal(this)">
+                <div class="screenshot-info">📝 Formulaire d'inscription</div>
+            </div>
+            
+            <div class="screenshot-card">
+                <div class="screenshot-title">4. Page de Contact</div>
+                <img src="04_page_contact.png" alt="Page de contact" class="screenshot-image" onclick="openModal(this)">
+                <div class="screenshot-info">✉️ Formulaire de contact</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour agrandir les images -->
+    <div id="modal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    
+    <script>
+        function openModal(img) {
+            const modal = document.getElementById("modal");
+            const modalImg = document.getElementById("modalImage");
+            modal.style.display = "block";
+            modalImg.src = img.src;
+        }
+        
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
+        
+        // Fermer en cliquant en dehors de l'image
+        window.onclick = function(event) {
+            const modal = document.getElementById("modal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        
+        // Fermer avec la touche ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+

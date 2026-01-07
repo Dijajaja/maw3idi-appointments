@@ -1,0 +1,91 @@
+@startuml Diagramme de Séquence - Reprogrammation d'un Rendez-vous
+
+actor Client
+participant "Vue: prepare_reschedule" as VueReschedule
+participant "AppointmentRequest" as ARModel
+participant "Appointment" as ApptModel
+participant "AppointmentRescheduleHistory" as HistoryModel
+participant "Service" as ServiceModel
+participant "StaffMember" as StaffModel
+database "Base de Données" as DB
+
+== Initiation de la Reprogrammation ==
+Client -> VueReschedule: Accéder au lien de reprogrammation
+VueReschedule -> ARModel: Récupérer AppointmentRequest
+activate ARModel
+ARModel -> ServiceModel: Vérifier reschedule_limit
+ServiceModel --> ARModel: Limite de reprogrammation
+ARModel -> ARModel: Vérifier can_be_rescheduled()
+alt Limite atteinte
+  ARModel --> VueReschedule: Erreur - Impossible de reprogrammer
+  VueReschedule --> Client: Message d'erreur
+else Reprogrammation possible
+  ARModel --> VueReschedule: AppointmentRequest valide
+  VueReschedule -> ApptModel: Vérifier autorisation client
+  ApptModel --> VueReschedule: Autorisation OK
+  VueReschedule --> Client: Afficher formulaire de reprogrammation
+end
+deactivate ARModel
+
+== Sélection Nouvelle Date/Heure ==
+Client -> VueReschedule: Sélectionner nouvelle date/heure
+VueReschedule -> StaffModel: Récupérer disponibilités
+StaffModel --> VueReschedule: Créneaux disponibles
+VueReschedule -> ARModel: Vérifier validité nouvelle date
+ARModel -> ARModel: Valider date (pas dans le passé)
+ARModel -> StaffModel: Vérifier horaires de travail
+StaffModel --> ARModel: Horaires OK
+ARModel -> ApptModel: Vérifier conflits
+ApptModel --> ARModel: Pas de conflit
+ARModel --> VueReschedule: Validation OK
+VueReschedule --> Client: Formulaire validé
+
+== Soumission de la Reprogrammation ==
+Client -> VueReschedule: Soumettre nouvelle date/heure
+VueReschedule -> HistoryModel: Créer/Modifier AppointmentRescheduleHistory
+activate HistoryModel
+HistoryModel -> HistoryModel: Sauvegarder anciennes valeurs
+HistoryModel -> HistoryModel: Sauvegarder nouvelles valeurs
+HistoryModel -> HistoryModel: Marquer status='pending'
+HistoryModel -> DB: Sauvegarder
+DB --> HistoryModel: Confirmation
+deactivate HistoryModel
+HistoryModel --> VueReschedule: History créé
+VueReschedule --> Client: Redirection vers confirmation
+
+== Confirmation de la Reprogrammation ==
+Client -> VueReschedule: Confirmer la reprogrammation
+VueReschedule -> ARModel: Récupérer AppointmentRequest
+activate ARModel
+VueReschedule -> HistoryModel: Récupérer History (pending)
+activate HistoryModel
+
+' Sauvegarder les anciennes valeurs dans l'history
+VueReschedule -> ARModel: Récupérer date, heure, staff actuels
+ARModel --> VueReschedule: Valeurs actuelles
+VueReschedule -> HistoryModel: Mettre à jour avec anciennes valeurs
+HistoryModel -> HistoryModel: status='confirmed'
+HistoryModel -> DB: Sauvegarder
+
+' Mettre à jour l'AppointmentRequest avec nouvelles valeurs
+VueReschedule -> HistoryModel: Récupérer nouvelles valeurs
+HistoryModel --> VueReschedule: Nouvelles date, heure, staff
+VueReschedule -> ARModel: Mettre à jour date, heure, staff
+ARModel -> ARModel: increment_reschedule_attempts()
+ARModel -> DB: Sauvegarder
+deactivate HistoryModel
+deactivate ARModel
+
+' Notifier l'administrateur
+VueReschedule -> VueReschedule: Envoyer email notification admin
+VueReschedule -> ApptModel: Envoyer email confirmation client
+VueReschedule --> Client: Afficher page de confirmation
+
+note over ARModel, HistoryModel
+  L'historique conserve les valeurs
+  avant et après la reprogrammation
+  pour traçabilité complète.
+end note
+
+@enduml
+

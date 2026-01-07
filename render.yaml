@@ -3,7 +3,7 @@ services:
     name: django-appointment
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt && SKIP_DB_CONNECTION=1 python manage.py collectstatic --noinput
     startCommand: gunicorn appointments.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: SECRET_KEY

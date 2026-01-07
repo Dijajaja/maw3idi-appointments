@@ -1,0 +1,220 @@
+@startuml Diagramme de Classe - Système de Rendez-vous
+
+skinparam classAttributeIconSize 0
+
+package "appointment.models" {
+  class Service {
+    - id: Integer
+    - name: CharField
+    - description: TextField
+    - duration: DurationField
+    - price: DecimalField
+    - down_payment: DecimalField
+    - image: ImageField
+    - currency: CharField
+    - background_color: CharField
+    - reschedule_limit: PositiveIntegerField
+    - allow_rescheduling: BooleanField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + get_duration() : String
+    + get_price() : Decimal
+    + get_price_text() : String
+    + is_a_paid_service() : Boolean
+    + accepts_down_payment() : Boolean
+  }
+
+  class StaffMember {
+    - id: Integer
+    - slot_duration: PositiveIntegerField
+    - lead_time: TimeField
+    - finish_time: TimeField
+    - appointment_buffer_time: FloatField
+    - work_on_saturday: BooleanField
+    - work_on_sunday: BooleanField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + get_staff_member_name() : String
+    + get_slot_duration() : Integer
+    + get_services_offered() : QuerySet
+    + get_working_hours() : QuerySet
+    + get_days_off() : QuerySet
+    + is_working_day(day: int) : Boolean
+  }
+
+  class AppointmentRequest {
+    - id: Integer
+    - date: DateField
+    - start_time: TimeField
+    - end_time: TimeField
+    - payment_type: CharField
+    - id_request: CharField
+    - reschedule_attempts: PositiveIntegerField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + get_service_name() : String
+    + get_service_price() : Decimal
+    + can_be_rescheduled() : Boolean
+    + increment_reschedule_attempts() : void
+  }
+
+  class Appointment {
+    - id: Integer
+    - phone: PhoneNumberField
+    - address: CharField
+    - want_reminder: BooleanField
+    - additional_info: TextField
+    - paid: BooleanField
+    - amount_to_pay: DecimalField
+    - id_request: CharField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + get_client_name() : String
+    + get_date() : Date
+    + get_service() : Service
+    + get_staff_member() : StaffMember
+    + is_paid() : Boolean
+    + set_appointment_paid_status(status: Boolean) : void
+  }
+
+  class Config {
+    - id: Integer
+    - slot_duration: PositiveIntegerField
+    - lead_time: TimeField
+    - finish_time: TimeField
+    - appointment_buffer_time: FloatField
+    - website_name: CharField
+    - app_offered_by_label: CharField
+    - default_reschedule_limit: PositiveIntegerField
+    - allow_staff_change_on_reschedule: BooleanField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + get_instance() : Config
+  }
+
+  class PaymentInfo {
+    - id: Integer
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + get_id_request() : String
+    + get_amount_to_pay() : Decimal
+    + get_currency() : String
+    + set_paid_status(status: Boolean) : void
+  }
+
+  class EmailVerificationCode {
+    - id: Integer
+    - code: CharField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + generate_code(user: User) : String
+    + check_code(code: String) : Boolean
+    + still_valid() : Boolean
+  }
+
+  class PasswordResetToken {
+    - id: Integer
+    - token: UUIDField
+    - expires_at: DateTimeField
+    - status: CharField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + create_token(user: User, expiration_minutes: int) : PasswordResetToken
+    + verify_token(user: User, token: UUID) : PasswordResetToken
+    + is_expired() : Boolean
+  }
+
+  class DayOff {
+    - id: Integer
+    - start_date: DateField
+    - end_date: DateField
+    - description: CharField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + is_owner(user_id: Integer) : Boolean
+  }
+
+  class WorkingHours {
+    - id: Integer
+    - day_of_week: PositiveIntegerField
+    - start_time: TimeField
+    - end_time: TimeField
+    - created_at: DateTimeField
+    - updated_at: DateTimeField
+    + get_start_time() : Time
+    + get_end_time() : Time
+    + is_owner(user_id: Integer) : Boolean
+  }
+}
+
+package "django.contrib.auth.models" {
+  class User {
+    - id: Integer
+    - username: CharField
+    - email: EmailField
+    - first_name: CharField
+    - last_name: CharField
+    - is_staff: BooleanField
+    - is_superuser: BooleanField
+    - is_active: BooleanField
+    - date_joined: DateTimeField
+  }
+}
+
+class AppointmentRescheduleHistory {
+  - id: Integer
+  - date: DateField
+  - start_time: TimeField
+  - end_time: TimeField
+  - reason_for_rescheduling: TextField
+  - reschedule_status: CharField
+  - id_request: CharField
+  - created_at: DateTimeField
+  - updated_at: DateTimeField
+  + still_valid() : Boolean
+}
+
+' Relations
+User ||--o| StaffMember : "OneToOne"
+User ||--o{ Appointment : "ForeignKey (client)"
+User ||--o{ EmailVerificationCode : "ForeignKey"
+User ||--o{ PasswordResetToken : "ForeignKey"
+
+Service ||--o{ AppointmentRequest : "ForeignKey"
+Service }o--o{ StaffMember : "ManyToMany (services_offered)"
+
+StaffMember ||--o{ AppointmentRequest : "ForeignKey"
+StaffMember ||--o{ DayOff : "ForeignKey"
+StaffMember ||--o{ WorkingHours : "ForeignKey"
+StaffMember }o--|| Config : "uses default values"
+
+AppointmentRequest ||--|| Appointment : "OneToOne"
+AppointmentRequest ||--o{ AppointmentRescheduleHistory : "ForeignKey"
+
+Appointment ||--o{ PaymentInfo : "ForeignKey"
+
+note right of Service
+  Représente un service proposé
+  avec prix, durée, image, etc.
+end note
+
+note right of AppointmentRequest
+  Demande de rendez-vous créée
+  par le client. Contient la date,
+  l'heure, le service, etc.
+end note
+
+note right of Appointment
+  Rendez-vous confirmé créé
+  à partir d'une demande.
+  Contient les infos client.
+end note
+
+note right of StaffMember
+  Membre du personnel lié
+  à un User. Gère ses horaires
+  et services offerts.
+end note
+
+@enduml
+
