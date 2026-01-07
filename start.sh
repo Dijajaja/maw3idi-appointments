@@ -8,10 +8,6 @@ set +e
 echo "🔍 Vérification de la configuration de la base de données..."
 python -c "import os; db_url = os.getenv('DATABASE_URL', ''); print(f'DATABASE_URL: {\"défini (longueur: {len(db_url)})\" if db_url else \"❌ NON DÉFINI\"}'); print(f'SKIP_DB_CONNECTION: {os.getenv(\"SKIP_DB_CONNECTION\", \"non défini\")}')"
 
-echo "🔄 Application des migrations..."
-echo "📋 Liste des migrations à appliquer:"
-python manage.py showmigrations --list || echo "⚠️  Impossible de lister les migrations"
-
 echo "🔄 Vérification de la base de données utilisée AVANT les migrations..."
 python -c "
 import os
@@ -22,33 +18,39 @@ django.setup()
 from django.db import connection
 engine = connection.settings_dict['ENGINE']
 db_name = connection.settings_dict.get('NAME', 'N/A')
-print(f'📊 Base de données: {engine}', file=sys.stderr)
-print(f'📊 Nom de la base: {db_name}', file=sys.stderr)
+print(f'📊 Base de données: {engine}')
+print(f'📊 Nom de la base: {db_name}')
 if 'sqlite' in engine.lower():
-    print('❌ ERREUR: Django utilise SQLite au lieu de PostgreSQL!', file=sys.stderr)
-    print(f'❌ DATABASE_URL: {os.getenv(\"DATABASE_URL\", \"NON DÉFINI\")[:50]}...', file=sys.stderr)
+    print('❌ ERREUR: Django utilise SQLite au lieu de PostgreSQL!')
+    print(f'❌ DATABASE_URL: {os.getenv(\"DATABASE_URL\", \"NON DÉFINI\")[:100]}...')
     sys.exit(1)
 else:
-    print('✅ Django utilise PostgreSQL', file=sys.stderr)
-"
+    print('✅ Django utilise PostgreSQL')
+" || {
+    echo "❌ ERREUR CRITIQUE: Django utilise SQLite au lieu de PostgreSQL!"
+    echo "❌ Le script s'arrête pour éviter d'appliquer les migrations sur SQLite"
+    exit 1
+}
+
+# Si on arrive ici, PostgreSQL est utilisé
+set -e  # Maintenant, arrêter le script en cas d'erreur
+
+echo "🔄 Application des migrations..."
+echo "📋 Liste des migrations à appliquer:"
+python manage.py showmigrations --list || echo "⚠️  Impossible de lister les migrations"
 
 echo "🔄 Application de toutes les migrations (y compris appointment)..."
-python manage.py migrate appointment --noinput --verbosity 2 || echo "⚠️  Erreur lors de l'application des migrations appointment"
+python manage.py migrate appointment --noinput --verbosity 2
 python manage.py migrate --noinput --verbosity 2
-MIGRATE_EXIT=$?
 
-if [ $MIGRATE_EXIT -ne 0 ]; then
-    echo "⚠️  Erreur lors de l'application des migrations (code: $MIGRATE_EXIT)"
-    echo "ℹ️  Tentative de connexion à la base de données..."
-    python -c "import django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appointments.settings'); django.setup(); from django.db import connection; connection.ensure_connection(); print(f'✅ Connexion réussie à: {connection.settings_dict[\"ENGINE\"]}')" || echo "❌ Impossible de se connecter à la base de données"
-else
-    echo "✅ Migrations appliquées avec succès"
-    echo "📋 Vérification des migrations appliquées:"
-    python manage.py showmigrations --list | grep -E "appointment|\[X\]|\[ \]" || echo "⚠️  Impossible de vérifier les migrations"
-fi
+echo "✅ Migrations appliquées avec succès"
+echo "📋 Vérification des migrations appliquées:"
+python manage.py showmigrations --list | grep -E "appointment|\[X\]|\[ \]" || echo "⚠️  Impossible de vérifier les migrations"
 
+set +e  # Permettre les erreurs pour le superutilisateur
 echo "👤 Création du superutilisateur (si configuré)..."
 python create_superuser.py || echo "ℹ️  Superutilisateur non créé (variables d'environnement non configurées ou déjà existant)"
+set -e  # Revenir à l'arrêt en cas d'erreur
 
 echo "🚀 Démarrage de Gunicorn..."
 # Utiliser set -e seulement pour gunicorn pour qu'il s'arrête en cas d'erreur
