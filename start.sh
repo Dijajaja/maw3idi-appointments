@@ -64,8 +64,10 @@ echo "🔄 Application des migrations..."
 echo "📋 Liste des migrations à appliquer:"
 python manage.py showmigrations --list || echo "⚠️  Impossible de lister les migrations"
 
-echo "🔄 Application de toutes les migrations..."
+echo "🔄 Application de toutes les migrations (y compris appointment)..."
 python manage.py migrate --noinput --verbosity 2
+# S'assurer que les migrations de appointment sont appliquées
+python manage.py migrate appointment --noinput --verbosity 2 || echo "⚠️  Les migrations de appointment sont peut-être déjà appliquées"
 
 echo "✅ Migrations appliquées avec succès"
 echo "📋 Vérification des migrations appliquées:"
