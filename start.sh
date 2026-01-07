@@ -9,28 +9,49 @@ echo "🔍 Vérification de la configuration de la base de données..."
 python -c "import os; db_url = os.getenv('DATABASE_URL', ''); print(f'DATABASE_URL: {\"défini (longueur: {len(db_url)})\" if db_url else \"❌ NON DÉFINI\"}'); print(f'SKIP_DB_CONNECTION: {os.getenv(\"SKIP_DB_CONNECTION\", \"non défini\")}')"
 
 echo "🔄 Vérification de la base de données utilisée AVANT les migrations..."
-python -c "
+DB_CHECK_OUTPUT=$(python -c "
 import os
 import sys
+print('🔍 Vérification de DATABASE_URL...', file=sys.stderr)
+db_url = os.getenv('DATABASE_URL', '')
+print(f'DATABASE_URL: {\"défini\" if db_url else \"❌ NON DÉFINI\"}', file=sys.stderr)
+print(f'Longueur: {len(db_url)}', file=sys.stderr)
+
+print('🔍 Chargement de Django...', file=sys.stderr)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appointments.settings')
 import django
 django.setup()
+
+print('🔍 Vérification de la configuration de la base de données...', file=sys.stderr)
 from django.db import connection
 engine = connection.settings_dict['ENGINE']
 db_name = connection.settings_dict.get('NAME', 'N/A')
 print(f'📊 Base de données: {engine}')
 print(f'📊 Nom de la base: {db_name}')
 if 'sqlite' in engine.lower():
-    print('❌ ERREUR: Django utilise SQLite au lieu de PostgreSQL!')
-    print(f'❌ DATABASE_URL: {os.getenv(\"DATABASE_URL\", \"NON DÉFINI\")[:100]}...')
+    print('❌ ERREUR: Django utilise SQLite au lieu de PostgreSQL!', file=sys.stderr)
+    print(f'❌ DATABASE_URL: {db_url[:100] if db_url else \"NON DÉFINI\"}...', file=sys.stderr)
+    print('❌ Test d\'import de psycopg2...', file=sys.stderr)
+    try:
+        import psycopg2
+        print('✅ psycopg2 peut être importé!', file=sys.stderr)
+    except Exception as e:
+        print(f'❌ psycopg2 ne peut PAS être importé: {e}', file=sys.stderr)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
     sys.exit(1)
 else:
-    print('✅ Django utilise PostgreSQL')
-" || {
+    print('✅ Django utilise PostgreSQL', file=sys.stderr)
+" 2>&1)
+
+DB_CHECK_EXIT=$?
+echo "$DB_CHECK_OUTPUT"
+
+if [ $DB_CHECK_EXIT -ne 0 ]; then
     echo "❌ ERREUR CRITIQUE: Django utilise SQLite au lieu de PostgreSQL!"
     echo "❌ Le script s'arrête pour éviter d'appliquer les migrations sur SQLite"
     exit 1
-}
+fi
 
 # Si on arrive ici, PostgreSQL est utilisé
 set -e  # Maintenant, arrêter le script en cas d'erreur
