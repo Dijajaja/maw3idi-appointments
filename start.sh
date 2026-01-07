@@ -31,14 +31,18 @@ print(f'📊 Nom de la base: {db_name}')
 if 'sqlite' in engine.lower():
     print('❌ ERREUR: Django utilise SQLite au lieu de PostgreSQL!', file=sys.stderr)
     print(f'❌ DATABASE_URL: {db_url[:100] if db_url else \"NON DÉFINI\"}...', file=sys.stderr)
-    print('❌ Test d\'import de psycopg2...', file=sys.stderr)
+    print('❌ Test d\'import de psycopg (psycopg 3) ou psycopg2...', file=sys.stderr)
     try:
-        import psycopg2
-        print('✅ psycopg2 peut être importé!', file=sys.stderr)
-    except Exception as e:
-        print(f'❌ psycopg2 ne peut PAS être importé: {e}', file=sys.stderr)
-        import traceback
-        traceback.print_exc(file=sys.stderr)
+        import psycopg
+        print('✅ psycopg 3 peut être importé!', file=sys.stderr)
+    except ImportError:
+        try:
+            import psycopg2
+            print('✅ psycopg2 peut être importé!', file=sys.stderr)
+        except Exception as e:
+            print(f'❌ psycopg (psycopg 3) et psycopg2 ne peuvent PAS être importés: {e}', file=sys.stderr)
+            import traceback
+            traceback.print_exc(file=sys.stderr)
     sys.exit(1)
 else:
     print('✅ Django utilise PostgreSQL', file=sys.stderr)

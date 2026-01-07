@@ -94,41 +94,42 @@ SKIP_DB = os.getenv('SKIP_DB_CONNECTION')
 if DATABASE_URL and not SKIP_DB:
     try:
         import dj_database_url
-        # Vérifier que psycopg2 est disponible avant d'utiliser PostgreSQL
+        # Vérifier que psycopg (psycopg 3) ou psycopg2 est disponible avant d'utiliser PostgreSQL
         try:
-            # Essayer d'importer psycopg2 de différentes façons
+            # Essayer d'importer psycopg 3 (moderne, supporte Python 3.13)
             try:
-                import psycopg2
+                import psycopg
+                psycopg_available = True
             except ImportError:
+                psycopg_available = False
+                # Essayer d'importer psycopg2 de différentes façons
                 try:
-                    import psycopg2_binary as psycopg2
+                    import psycopg2
                 except ImportError:
-                    raise ImportError("Neither psycopg2 nor psycopg2_binary can be imported")
+                    try:
+                        import psycopg2_binary as psycopg2
+                    except ImportError:
+                        raise ImportError("Neither psycopg (psycopg 3), psycopg2 nor psycopg2_binary can be imported")
             
-            # Si psycopg2 est disponible, utiliser PostgreSQL
+            # Si psycopg (psycopg 3) ou psycopg2 est disponible, utiliser PostgreSQL
             db_config = dj_database_url.config(
                 default=DATABASE_URL,
                 conn_max_age=600,
                 conn_health_checks=True,
             )
+            # Forcer l'engine PostgreSQL (Django 5.2 supporte psycopg 3 et psycopg2)
+            db_config['ENGINE'] = 'django.db.backends.postgresql'
             DATABASES = {
                 'default': db_config
             }
             # Vérifier que c'est bien PostgreSQL
             engine = DATABASES['default'].get('ENGINE', '')
-            if 'postgresql' not in engine.lower():
-                # FORCER PostgreSQL si ce n'est pas le cas
-                import sys
-                print(f"❌ ERREUR: Engine inattendu: {engine}", file=sys.stderr)
-                print(f"❌ DATABASE_URL: {DATABASE_URL[:50]}...", file=sys.stderr)
-                # Forcer PostgreSQL
-                DATABASES = {
-                    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-                }
-                print(f"✅ PostgreSQL forcé: {DATABASES['default'].get('ENGINE')}", file=sys.stderr)
+            import sys
+            if psycopg_available:
+                print(f"✅ Configuration PostgreSQL avec psycopg 3 (compatible Python 3.13): {engine}", file=sys.stderr)
             else:
-                print(f"✅ Configuration PostgreSQL: {engine}", file=sys.stderr)
-                print(f"✅ Base de données: {DATABASES['default'].get('NAME')}", file=sys.stderr)
+                print(f"✅ Configuration PostgreSQL avec psycopg2: {engine}", file=sys.stderr)
+            print(f"✅ Base de données: {DATABASES['default'].get('NAME')}", file=sys.stderr)
         except ImportError as e:
             # Si psycopg2 n'est pas disponible, vérifier pourquoi
             import sys
