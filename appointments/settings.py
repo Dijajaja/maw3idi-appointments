@@ -89,6 +89,7 @@ WSGI_APPLICATION = "appointments.wsgi.application"
 DATABASE_URL = os.getenv('DATABASE_URL')
 SKIP_DB = os.getenv('SKIP_DB_CONNECTION')
 
+# En production (Render), forcer PostgreSQL si DATABASE_URL est défini
 if DATABASE_URL and not SKIP_DB:
     try:
         import dj_database_url
@@ -96,15 +97,20 @@ if DATABASE_URL and not SKIP_DB:
         try:
             import psycopg2
             # Si psycopg2 est disponible, utiliser PostgreSQL
+            db_config = dj_database_url.config(
+                default=DATABASE_URL,
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
             DATABASES = {
-                'default': dj_database_url.config(
-                    default=DATABASE_URL,
-                    conn_max_age=600,
-                    conn_health_checks=True,
-                )
+                'default': db_config
             }
-            # Vérifier la connexion
-            print(f"✅ Configuration PostgreSQL: {DATABASES['default'].get('ENGINE', 'Unknown')}")
+            # Vérifier que c'est bien PostgreSQL
+            if 'postgresql' not in DATABASES['default'].get('ENGINE', '').lower():
+                print(f"⚠️  ATTENTION: Engine inattendu: {DATABASES['default'].get('ENGINE')}")
+            else:
+                print(f"✅ Configuration PostgreSQL: {DATABASES['default'].get('ENGINE')}")
+                print(f"✅ Base de données: {DATABASES['default'].get('NAME')}")
         except ImportError:
             # Si psycopg2 n'est pas disponible (pendant le build), utiliser SQLite temporairement
             print("⚠️  psycopg2 non disponible, utilisation de SQLite (build uniquement)")
