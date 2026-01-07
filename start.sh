@@ -12,8 +12,25 @@ echo "🔄 Application des migrations..."
 echo "📋 Liste des migrations à appliquer:"
 python manage.py showmigrations --list || echo "⚠️  Impossible de lister les migrations"
 
-echo "🔄 Vérification de la base de données utilisée..."
-python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appointments.settings'); import django; django.setup(); from django.db import connection; print(f'📊 Base de données: {connection.settings_dict[\"ENGINE\"]}'); print(f'📊 Nom de la base: {connection.settings_dict.get(\"NAME\", \"N/A\")}')"
+echo "🔄 Vérification de la base de données utilisée AVANT les migrations..."
+python -c "
+import os
+import sys
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appointments.settings')
+import django
+django.setup()
+from django.db import connection
+engine = connection.settings_dict['ENGINE']
+db_name = connection.settings_dict.get('NAME', 'N/A')
+print(f'📊 Base de données: {engine}', file=sys.stderr)
+print(f'📊 Nom de la base: {db_name}', file=sys.stderr)
+if 'sqlite' in engine.lower():
+    print('❌ ERREUR: Django utilise SQLite au lieu de PostgreSQL!', file=sys.stderr)
+    print(f'❌ DATABASE_URL: {os.getenv(\"DATABASE_URL\", \"NON DÉFINI\")[:50]}...', file=sys.stderr)
+    sys.exit(1)
+else:
+    print('✅ Django utilise PostgreSQL', file=sys.stderr)
+"
 
 echo "🔄 Application de toutes les migrations (y compris appointment)..."
 python manage.py migrate appointment --noinput --verbosity 2 || echo "⚠️  Erreur lors de l'application des migrations appointment"
