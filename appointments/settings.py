@@ -144,11 +144,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "appointment/static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Configuration WhiteNoise pour servir les fichiers statiques en production
-# Utilise CompressedStaticFilesStorage si ManifestStaticFilesStorage cause des problèmes
-try:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-except:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Utilise CompressedStaticFilesStorage (plus simple et plus fiable que Manifest)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
