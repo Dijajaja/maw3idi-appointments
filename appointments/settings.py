@@ -86,7 +86,10 @@ WSGI_APPLICATION = "appointments.wsgi.application"
 # Configuration de la base de données
 # Utilise PostgreSQL en production si DATABASE_URL est défini, sinon SQLite pour le développement
 # Pendant le build (collectstatic), on utilise SQLite pour éviter les erreurs de connexion
-if os.getenv('DATABASE_URL') and not os.getenv('SKIP_DB_CONNECTION'):
+DATABASE_URL = os.getenv('DATABASE_URL')
+SKIP_DB = os.getenv('SKIP_DB_CONNECTION')
+
+if DATABASE_URL and not SKIP_DB:
     try:
         import dj_database_url
         # Vérifier que psycopg2 est disponible avant d'utiliser PostgreSQL
@@ -95,13 +98,16 @@ if os.getenv('DATABASE_URL') and not os.getenv('SKIP_DB_CONNECTION'):
             # Si psycopg2 est disponible, utiliser PostgreSQL
             DATABASES = {
                 'default': dj_database_url.config(
-                    default=os.getenv('DATABASE_URL'),
+                    default=DATABASE_URL,
                     conn_max_age=600,
                     conn_health_checks=True,
                 )
             }
+            # Vérifier la connexion
+            print(f"✅ Configuration PostgreSQL: {DATABASES['default'].get('ENGINE', 'Unknown')}")
         except ImportError:
             # Si psycopg2 n'est pas disponible (pendant le build), utiliser SQLite temporairement
+            print("⚠️  psycopg2 non disponible, utilisation de SQLite (build uniquement)")
             DATABASES = {
                 "default": {
                     "ENGINE": "django.db.backends.sqlite3",
@@ -110,6 +116,7 @@ if os.getenv('DATABASE_URL') and not os.getenv('SKIP_DB_CONNECTION'):
             }
     except ImportError:
         # Fallback si dj_database_url n'est pas installé (développement local)
+        print("⚠️  dj_database_url non disponible, utilisation de SQLite")
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",
@@ -118,6 +125,7 @@ if os.getenv('DATABASE_URL') and not os.getenv('SKIP_DB_CONNECTION'):
         }
     except Exception as e:
         # Si erreur de connexion, utiliser SQLite temporairement (pour le build)
+        print(f"⚠️  Erreur de configuration DB: {e}, utilisation de SQLite (build uniquement)")
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",
@@ -125,6 +133,10 @@ if os.getenv('DATABASE_URL') and not os.getenv('SKIP_DB_CONNECTION'):
             }
         }
 else:
+    if not DATABASE_URL:
+        print("ℹ️  DATABASE_URL non défini, utilisation de SQLite")
+    if SKIP_DB:
+        print("ℹ️  SKIP_DB_CONNECTION activé, utilisation de SQLite (build)")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
