@@ -6,11 +6,14 @@
 set +e
 
 echo "🔍 Vérification de la configuration de la base de données..."
-python -c "import os; print(f'DATABASE_URL: {\"défini\" if os.getenv(\"DATABASE_URL\") else \"NON DÉFINI\"}')"
+python -c "import os; db_url = os.getenv('DATABASE_URL', ''); print(f'DATABASE_URL: {\"défini (longueur: {len(db_url)})\" if db_url else \"❌ NON DÉFINI\"}'); print(f'SKIP_DB_CONNECTION: {os.getenv(\"SKIP_DB_CONNECTION\", \"non défini\")}')"
 
 echo "🔄 Application des migrations..."
 echo "📋 Liste des migrations à appliquer:"
 python manage.py showmigrations --list || echo "⚠️  Impossible de lister les migrations"
+
+echo "🔄 Vérification de la base de données utilisée..."
+python -c "import os; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appointments.settings'); import django; django.setup(); from django.db import connection; print(f'📊 Base de données: {connection.settings_dict[\"ENGINE\"]}'); print(f'📊 Nom de la base: {connection.settings_dict.get(\"NAME\", \"N/A\")}')"
 
 echo "🔄 Application de toutes les migrations (y compris appointment)..."
 python manage.py migrate appointment --noinput --verbosity 2 || echo "⚠️  Erreur lors de l'application des migrations appointment"
