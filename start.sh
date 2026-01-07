@@ -64,8 +64,7 @@ echo "🔄 Application des migrations..."
 echo "📋 Liste des migrations à appliquer:"
 python manage.py showmigrations --list || echo "⚠️  Impossible de lister les migrations"
 
-echo "🔄 Application de toutes les migrations (y compris appointment)..."
-python manage.py migrate appointment --noinput --verbosity 2
+echo "🔄 Application de toutes les migrations..."
 python manage.py migrate --noinput --verbosity 2
 
 echo "✅ Migrations appliquées avec succès"
