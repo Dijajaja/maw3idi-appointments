@@ -2512,8 +2512,8 @@
       <p>{% trans "Découvrez nos services et réservez votre rendez-vous" %}</p>
     </div>
     <div class="no-services">
-      <h2>{% trans "No services available" %}</h2>
-      <p>{% trans "Please check back later or contact us for more information." %}</p>
+      <h2>Aucun service disponible.</h2>
+      <p>Veuillez revenir plus tard ou nous contacter pour plus d'informations.</p>
       {% if user.is_superuser %}
       <div class="no-services-actions">
         <a href="{% url 'appointment:get_service_list' %}" class="btn-create-service">
