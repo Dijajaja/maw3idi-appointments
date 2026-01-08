@@ -452,13 +452,6 @@
     color: rgba(255, 255, 255, 0.8);
   }
   
-  /* Thème clair - Titres de section */
-  body.white-content .section-title h2 {
-    color: rgba(0, 0, 0, 0.9);
-  }
-  body.white-content .section-title p {
-    color: rgba(0, 0, 0, 0.7);
-  }
   /* Conteneur de défilement horizontal automatique */
   .services-grid-home {
     display: flex;
@@ -524,14 +517,6 @@
     background: linear-gradient(to left, rgba(11, 8, 22, 1), rgba(11, 8, 22, 0));
   }
   
-  /* Mode clair - ajuster les gradients */
-  body.white-content .services-grid-home::before {
-    background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-  }
-  
-  body.white-content .services-grid-home::after {
-    background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-  }
   
   .service-card-home {
     background: rgba(255, 255, 255, 0.05);
@@ -569,40 +554,6 @@
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(160, 70, 255, 0.8);
     border-width: 2px;
-  }
-  
-  /* Thème clair - Cartes de services */
-  body.white-content .service-card-home {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(160, 70, 255, 0.2);
-    color: rgba(0, 0, 0, 0.85);
-    box-shadow: 
-      0 4px 20px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(160, 70, 255, 0.1);
-  }
-  body.white-content .service-card-home * {
-    color: rgba(0, 0, 0, 0.85);
-  }
-  body.white-content .service-card-home:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: rgba(160, 70, 255, 0.5);
-    box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.15),
-      0 0 30px rgba(160, 70, 255, 0.3),
-      0 0 60px rgba(160, 70, 255, 0.15);
-  }
-  body.white-content .service-card-home h3 {
-    color: rgba(0, 0, 0, 0.9);
-  }
-  body.white-content .service-card-home .service-description {
-    color: rgba(0, 0, 0, 0.7);
-  }
-  body.white-content .service-card-home .service-details {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  body.white-content .service-card-home .service-detail-item strong,
-  body.white-content .service-card-home .service-detail-item span {
-    color: rgba(0, 0, 0, 0.8);
   }
   
   /* Indicateur visuel de clic */
@@ -726,20 +677,6 @@
     color: white;
   }
   
-  /* Thème clair - Message "Aucun service disponible" */
-  body.white-content .no-services {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(160, 70, 255, 0.2);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  body.white-content .no-services h2 {
-    color: rgba(0, 0, 0, 0.9);
-  }
-  
-  body.white-content .no-services p {
-    color: rgba(0, 0, 0, 0.7);
-  }
 
   /* How it works Section - Taille réduite */
   .how-it-works {
@@ -1218,31 +1155,6 @@
       transform: scale(0.98) !important;
     }
     
-    /* Bouton thème sur mobile */
-    .navbar-nav .nav-item button#theme-toggle {
-      width: 100% !important;
-      padding: 18px 25px !important;
-      margin: 5px 0 !important;
-      font-size: 1.15rem !important;
-      font-weight: 500 !important;
-      color: rgba(255, 255, 255, 0.9) !important;
-      text-align: center !important;
-      background: rgba(255, 255, 255, 0.05) !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
-      border-radius: 15px !important;
-      cursor: pointer !important;
-      transition: all 0.3s ease !important;
-    }
-    
-    .navbar-nav .nav-item button#theme-toggle:hover {
-      background: linear-gradient(135deg, rgba(255, 200, 50, 0.3), rgba(255, 150, 50, 0.3)) !important;
-      border-color: rgba(255, 200, 50, 0.5) !important;
-      color: white !important;
-    }
-    
-    .navbar-nav .nav-item button#theme-toggle i {
-      margin-right: 10px !important;
-    }
     
     /* Menu déroulant utilisateur sur mobile */
     .navbar-nav .dropdown-menu {
@@ -1280,37 +1192,6 @@
       padding: 18px 25px !important;
     }
     
-    /* ========== BOUTON DE FERMETURE ========== */
-    .mobile-menu-close {
-      position: fixed !important;
-      top: 25px !important;
-      right: 25px !important;
-      width: 50px !important;
-      height: 50px !important;
-      background: linear-gradient(135deg, rgba(255, 80, 80, 0.3), rgba(200, 50, 50, 0.3)) !important;
-      border: 2px solid rgba(255, 100, 100, 0.5) !important;
-      border-radius: 50% !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      font-size: 1.5rem !important;
-      color: white !important;
-      cursor: pointer !important;
-      z-index: 10002 !important;
-      transition: all 0.3s ease !important;
-      font-weight: bold !important;
-      box-shadow: 0 4px 15px rgba(255, 80, 80, 0.3) !important;
-    }
-    
-    .mobile-menu-close:hover {
-      background: linear-gradient(135deg, rgba(255, 100, 100, 0.5), rgba(220, 70, 70, 0.5)) !important;
-      transform: scale(1.1) rotate(90deg) !important;
-      border-color: rgba(255, 120, 120, 0.8) !important;
-    }
-    
-    .mobile-menu-close:active {
-      transform: scale(0.95) !important;
-    }
     
     .hero-section {
       padding: 40px 20px !important;
@@ -1867,111 +1748,6 @@
     z-index: 1;
   }
   
-  /* Styles pour le mode clair (white-content) */
-  body.white-content .hero-section {
-    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #f0f0f0 100%) !important;
-    color: #333 !important;
-  }
-  
-  body.white-content .hero-section h1 {
-    background: linear-gradient(135deg, #333 0%, #555 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-  }
-  
-  body.white-content .hero-section p {
-    color: #555 !important;
-    opacity: 0.9 !important;
-  }
-  
-  body.white-content .hero-title-icon {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.9) 0%, rgba(0, 191, 255, 0.9) 50%, rgba(255, 20, 147, 0.9) 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-  }
-  
-  body.white-content .hero-graphic-icon {
-    background: linear-gradient(135deg, rgba(255, 20, 147, 0.8) 0%, rgba(0, 191, 255, 0.8) 50%, rgba(138, 43, 226, 0.8) 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    background-clip: text !important;
-  }
-  
-  body.white-content .service-card-home {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    color: #333 !important;
-  }
-  body.white-content .service-card-home * {
-    color: inherit !important;
-  }
-  
-  body.white-content .service-card-home:hover {
-    background: rgba(255, 255, 255, 1) !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
-  }
-  
-  body.white-content .service-card-home h3 {
-    color: #333 !important;
-  }
-  
-  body.white-content .service-card-home .service-description {
-    color: #666 !important;
-  }
-  
-  body.white-content .service-card-home .service-detail-item {
-    color: #555 !important;
-  }
-  
-  body.white-content .service-card-home .service-detail-item strong {
-    color: #333 !important;
-  }
-  
-  body.white-content .section-title h2 {
-    color: #333 !important;
-  }
-  
-  body.white-content .section-title p {
-    color: #666 !important;
-  }
-  
-  body.white-content .how-it-works-section,
-  body.white-content .testimonials-section,
-  body.white-content .contact-section {
-    background: #f8f9fa !important;
-    color: #333 !important;
-  }
-  
-  body.white-content .step-card {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    color: #333 !important;
-  }
-  
-  body.white-content .testimonial-card {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    color: #333 !important;
-  }
-  
-  body.white-content .contact-form {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  }
-  
-  body.white-content .contact-form input,
-  body.white-content .contact-form textarea {
-    background: rgba(255, 255, 255, 1) !important;
-    border: 1px solid rgba(0, 0, 0, 0.2) !important;
-    color: #333 !important;
-  }
-  
-  body.white-content .contact-form input::placeholder,
-  body.white-content .contact-form textarea::placeholder {
-    color: #999 !important;
-  }
   
   /* Navbar professionnel avec glassmorphism */
   .navbar {
@@ -2323,81 +2099,6 @@
     transform: scale(1.1) !important;
   }
   
-  body.white-content .navbar {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-  }
-  
-  body.white-content .navbar-brand,
-  body.white-content .navbar-nav .nav-link {
-    color: #333 !important;
-  }
-  
-  body.white-content .navbar-brand:hover,
-  body.white-content .navbar-nav .nav-link:hover {
-    color: #667eea !important;
-  }
-  
-  body.white-content .floating-cta {
-    background: linear-gradient(135deg, #667eea, #764ba2) !important;
-    color: white !important;
-  }
-  
-  body.white-content .how-it-works {
-    background: #f8f9fa !important;
-  }
-  
-  body.white-content .step-card h3,
-  body.white-content .step-card p {
-    color: #333 !important;
-  }
-  
-  body.white-content .testimonial-text,
-  body.white-content .testimonial-author {
-    color: #333 !important;
-  }
-  
-  body.white-content .contact-form-wrapper,
-  body.white-content .contact-info-wrapper {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  }
-  
-  body.white-content .contact-form-wrapper h3,
-  body.white-content .contact-info-wrapper h3 {
-    color: #333 !important;
-  }
-  
-  body.white-content .contact-item {
-    border-bottom-color: rgba(0, 0, 0, 0.1) !important;
-  }
-  
-  body.white-content .contact-info-item,
-  body.white-content .contact-item strong,
-  body.white-content .contact-item p {
-    color: #555 !important;
-  }
-  
-  body.white-content .contact-item i {
-    color: #667eea !important;
-  }
-  
-  body.white-content .social-link {
-    color: #667eea !important;
-  }
-  
-  body.white-content .social-link:hover {
-    color: #764ba2 !important;
-  }
-  
-  body.white-content footer {
-    background: #f8f9fa !important;
-    border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
-  }
-  
-  body.white-content .copyright {
-    color: #666 !important;
-  }
   
   /* Footer centré - règles très fortes pour toutes les pages */
   .footer {
@@ -2566,41 +2267,15 @@
       }
       
       if (navbarCollapse && navbarToggler) {
-        // Créer et ajouter le bouton de fermeture
-        function createCloseButton() {
-          // Supprimer l'ancien bouton s'il existe
-          const existingBtn = navbarCollapse.querySelector('.mobile-menu-close');
-          if (existingBtn) existingBtn.remove();
-          
-          const closeBtn = document.createElement('button');
-          closeBtn.className = 'mobile-menu-close';
-          closeBtn.innerHTML = '✕';
-          closeBtn.setAttribute('aria-label', 'Fermer le menu');
-          closeBtn.type = 'button';
-          
-          closeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            closeMenu();
-          });
-          
-          navbarCollapse.insertBefore(closeBtn, navbarCollapse.firstChild);
-          return closeBtn;
-        }
-        
         // Observer les changements d'état du menu
         const observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
             if (mutation.attributeName === 'class') {
-              const closeBtn = navbarCollapse.querySelector('.mobile-menu-close');
               if (navbarCollapse.classList.contains('show')) {
                 // Menu ouvert
-                if (!closeBtn) createCloseButton();
-                else closeBtn.style.display = 'flex';
                 openMenu();
               } else {
                 // Menu fermé
-                if (closeBtn) closeBtn.style.display = 'none';
                 document.body.style.overflow = '';
               }
             }

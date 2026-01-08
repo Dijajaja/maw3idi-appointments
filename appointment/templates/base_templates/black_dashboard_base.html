@@ -705,13 +705,6 @@
                 <a href="{% url 'appointment:index' %}#contact" class="nav-link">{% trans "Contact" %}</a>
               </li>
               {% endif %}
-              <!-- Dark Mode Toggle -->
-              <li class="nav-item">
-                <button class="btn btn-link nav-link" id="theme-toggle" title="{% trans 'Basculer le thème' %}">
-                  <i class="tim-icons icon-bulb-63" id="theme-icon"></i>
-                  <span class="d-lg-none d-md-block">{% trans "Thème" %}</span>
-                </button>
-              </li>
               {% if user.is_authenticated %}
               <li class="dropdown nav-item">
                 <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
@@ -964,71 +957,10 @@
       
       // Restaurer le thème sauvegardé au chargement de la page (synchroniser avec le script précédent)
       var savedTheme = localStorage.getItem('theme');
-      var $body = $('body');
-      var $icon = $('#theme-icon');
-      
-      if (savedTheme === 'light') {
-        $body.addClass('white-content');
-        if ($icon.length) {
-          $icon.removeClass('icon-bulb-63').addClass('icon-sun-fog-29');
-        }
-        white_color = true;
-      } else {
-        // Par défaut, thème sombre
-        $body.removeClass('white-content');
-        if ($icon.length) {
-          $icon.removeClass('icon-sun-fog-29').addClass('icon-bulb-63');
-        }
-        if (!savedTheme) {
-          localStorage.setItem('theme', 'dark');
-        }
-        white_color = false;
-      }
-      
-      // Fonction pour basculer le thème - Accessible globalement
-      window.toggleTheme = function() {
-        var $body = $('body');
-        var $icon = $('#theme-icon');
-        var $button = $('#theme-toggle');
-        
-        if ($body.hasClass('white-content')) {
-          // Passer en mode sombre
-          $body.removeClass('white-content');
-          $icon.removeClass('icon-sun-fog-29').addClass('icon-bulb-63');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          // Passer en mode clair
-          $body.addClass('white-content');
-          $icon.removeClass('icon-bulb-63').addClass('icon-sun-fog-29');
-          localStorage.setItem('theme', 'light');
-        }
-        
-        // Effet visuel
-        $button.addClass('active');
-        setTimeout(function() {
-          $button.removeClass('active');
-        }, 200);
-      };
-      
-      // Attacher l'événement au bouton de thème
-      $('#theme-toggle').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (typeof window.toggleTheme === 'function') {
-          window.toggleTheme();
-        }
-        return false;
-      });
-      
-      // Également avec délégation d'événements
-      $(document).on('click', '#theme-toggle', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (typeof window.toggleTheme === 'function') {
-          window.toggleTheme();
-        }
-        return false;
-      });
+      // Sélecteur de thème supprimé - toujours en mode sombre
+      // S'assurer que white-content n'est jamais appliqué
+      $('body').removeClass('white-content');
+      localStorage.removeItem('theme');
     });
   </script>
   
