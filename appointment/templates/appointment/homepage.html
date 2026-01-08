@@ -1079,15 +1079,15 @@
       color: rgba(255, 255, 255, 1) !important;
     }
     
-    /* Bouton de fermeture du menu mobile */
-    .navbar-collapse::before {
-      content: '✕' !important;
+    /* Bouton de fermeture du menu mobile (créé via JavaScript) */
+    .mobile-menu-close {
       position: fixed !important;
       top: 20px !important;
       right: 20px !important;
-      width: 40px !important;
-      height: 40px !important;
+      width: 45px !important;
+      height: 45px !important;
       background: rgba(160, 70, 255, 0.3) !important;
+      border: 2px solid rgba(160, 70, 255, 0.5) !important;
       border-radius: 50% !important;
       display: flex !important;
       align-items: center !important;
@@ -1095,13 +1095,19 @@
       font-size: 1.5rem !important;
       color: white !important;
       cursor: pointer !important;
-      z-index: 10000 !important;
+      z-index: 10001 !important;
       transition: all 0.3s ease !important;
+      font-weight: bold !important;
     }
     
-    .navbar-collapse::before:hover {
+    .mobile-menu-close:hover {
       background: rgba(160, 70, 255, 0.5) !important;
       transform: scale(1.1) !important;
+      border-color: rgba(160, 70, 255, 0.8) !important;
+    }
+    
+    .mobile-menu-close:active {
+      transform: scale(0.95) !important;
     }
     
     /* Animation d'entrée du menu */
@@ -2378,6 +2384,104 @@
     setTimeout(removeSidebarSpace, 100);
     setTimeout(removeSidebarSpace, 300);
     setTimeout(removeSidebarSpace, 500);
+  })();
+  
+  // Amélioration du menu mobile - Fermeture automatique et meilleure UX
+  (function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      const navbarCollapse = document.getElementById('navigation');
+      const navbarToggler = document.querySelector('.navbar-toggler[data-toggle="collapse"]');
+      
+      if (navbarCollapse && navbarToggler) {
+        // Fermer le menu en cliquant sur le fond (overlay)
+        navbarCollapse.addEventListener('click', function(e) {
+          if (e.target === this || e.target.classList.contains('navbar-collapse')) {
+            // Clic sur le fond, fermer le menu
+            if (typeof $ !== 'undefined' && $.fn.collapse) {
+              $(navbarCollapse).collapse('hide');
+            } else {
+              navbarCollapse.classList.remove('show');
+            }
+          }
+        });
+        
+        // Fermer le menu après avoir cliqué sur un lien
+        const navLinks = navbarCollapse.querySelectorAll('.nav-link:not(.dropdown-toggle)');
+        navLinks.forEach(function(link) {
+          link.addEventListener('click', function(e) {
+            // Si c'est un lien d'ancrage, laisser le temps à la navigation
+            if (link.getAttribute('href') && link.getAttribute('href').startsWith('#')) {
+              setTimeout(function() {
+                if (navbarCollapse.classList.contains('show')) {
+                  if (typeof $ !== 'undefined' && $.fn.collapse) {
+                    $(navbarCollapse).collapse('hide');
+                  } else {
+                    navbarCollapse.classList.remove('show');
+                  }
+                }
+              }, 500);
+            } else {
+              // Pour les autres liens, fermer immédiatement
+              setTimeout(function() {
+                if (navbarCollapse.classList.contains('show')) {
+                  if (typeof $ !== 'undefined' && $.fn.collapse) {
+                    $(navbarCollapse).collapse('hide');
+                  } else {
+                    navbarCollapse.classList.remove('show');
+                  }
+                }
+              }, 300);
+            }
+          });
+        });
+        
+        // Ajouter un bouton de fermeture visible
+        if (!navbarCollapse.querySelector('.mobile-menu-close')) {
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'mobile-menu-close';
+          closeBtn.innerHTML = '✕';
+          closeBtn.style.cssText = 'position: fixed; top: 20px; right: 20px; width: 45px; height: 45px; background: rgba(160, 70, 255, 0.3); border: 2px solid rgba(160, 70, 255, 0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; cursor: pointer; z-index: 10001; transition: all 0.3s ease;';
+          closeBtn.addEventListener('click', function() {
+            if (typeof $ !== 'undefined' && $.fn.collapse) {
+              $(navbarCollapse).collapse('hide');
+            } else {
+              navbarCollapse.classList.remove('show');
+            }
+          });
+          closeBtn.addEventListener('mouseenter', function() {
+            this.style.background = 'rgba(160, 70, 255, 0.5)';
+            this.style.transform = 'scale(1.1)';
+          });
+          closeBtn.addEventListener('mouseleave', function() {
+            this.style.background = 'rgba(160, 70, 255, 0.3)';
+            this.style.transform = 'scale(1)';
+          });
+          navbarCollapse.appendChild(closeBtn);
+        }
+        
+        // Afficher/masquer le bouton de fermeture selon l'état du menu
+        const closeBtn = navbarCollapse.querySelector('.mobile-menu-close');
+        if (closeBtn) {
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.attributeName === 'class') {
+                if (navbarCollapse.classList.contains('show')) {
+                  closeBtn.style.display = 'flex';
+                } else {
+                  closeBtn.style.display = 'none';
+                }
+              }
+            });
+          });
+          observer.observe(navbarCollapse, { attributes: true });
+          
+          // État initial
+          if (!navbarCollapse.classList.contains('show')) {
+            closeBtn.style.display = 'none';
+          }
+        }
+      }
+    });
   })();
   
   // Animation au scroll avec Intersection Observer
