@@ -172,7 +172,9 @@ cython_debug/
 .idea/
 .DS_Store
 **/.DS_Store/**
+# Ignorer les migrations sauf celles de appointment
 **/migrations/**
+!appointment/migrations/**
 /services/
 data
 
