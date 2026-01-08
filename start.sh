@@ -78,6 +78,35 @@ echo "👤 Création du superutilisateur (si configuré)..."
 python create_superuser.py || echo "ℹ️  Superutilisateur non créé (variables d'environnement non configurées ou déjà existant)"
 set -e  # Revenir à l'arrêt en cas d'erreur
 
+# Import automatique des services locaux (une seule fois)
+set +e  # Permettre les erreurs pour l'import
+if [ -f "services_local.json" ] && [ ! -f ".services_imported" ]; then
+    echo "📦 Vérification des services existants..."
+    SERVICE_COUNT=$(python -c "
+    import os
+    import django
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'appointments.settings')
+    django.setup()
+    from appointment.models import Service
+    print(Service.objects.count())
+    " 2>/dev/null || echo "0")
+    
+    if [ "$SERVICE_COUNT" = "0" ] || [ -z "$SERVICE_COUNT" ]; then
+        echo "📦 Import automatique des services locaux..."
+        python manage.py import_services_to_postgres services_local.json --skip-existing 2>&1
+        if [ $? -eq 0 ]; then
+            touch .services_imported
+            echo "✅ Services importés avec succès!"
+        else
+            echo "⚠️  Erreur lors de l'import des services (non bloquant)"
+        fi
+    else
+        echo "ℹ️  Services déjà présents dans la base de données ($SERVICE_COUNT services), import ignoré"
+        touch .services_imported  # Marquer comme fait pour éviter les tentatives futures
+    fi
+fi
+set -e  # Revenir à l'arrêt en cas d'erreur
+
 echo "🚀 Démarrage de Gunicorn..."
 # Utiliser set -e seulement pour gunicorn pour qu'il s'arrête en cas d'erreur
 set -e
