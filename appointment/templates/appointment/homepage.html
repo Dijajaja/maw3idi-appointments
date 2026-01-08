@@ -444,10 +444,20 @@
     font-size: 2.2rem;
     font-weight: 600;
     margin-bottom: 12px;
+    color: rgba(255, 255, 255, 0.95);
   }
   .section-title p {
     font-size: 1rem;
     opacity: 0.8;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Thème clair - Titres de section */
+  body.white-content .section-title h2 {
+    color: rgba(0, 0, 0, 0.9);
+  }
+  body.white-content .section-title p {
+    color: rgba(0, 0, 0, 0.7);
   }
   /* Conteneur de défilement horizontal automatique */
   .services-grid-home {
@@ -561,6 +571,40 @@
     border-width: 2px;
   }
   
+  /* Thème clair - Cartes de services */
+  body.white-content .service-card-home {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(160, 70, 255, 0.2);
+    color: rgba(0, 0, 0, 0.85);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(160, 70, 255, 0.1);
+  }
+  body.white-content .service-card-home * {
+    color: rgba(0, 0, 0, 0.85);
+  }
+  body.white-content .service-card-home:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(160, 70, 255, 0.5);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      0 0 30px rgba(160, 70, 255, 0.3),
+      0 0 60px rgba(160, 70, 255, 0.15);
+  }
+  body.white-content .service-card-home h3 {
+    color: rgba(0, 0, 0, 0.9);
+  }
+  body.white-content .service-card-home .service-description {
+    color: rgba(0, 0, 0, 0.7);
+  }
+  body.white-content .service-card-home .service-details {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  body.white-content .service-card-home .service-detail-item strong,
+  body.white-content .service-card-home .service-detail-item span {
+    color: rgba(0, 0, 0, 0.8);
+  }
+  
   /* Indicateur visuel de clic */
   .service-card-home::after {
     content: '👆 Cliquez pour réserver';
@@ -632,6 +676,69 @@
   .service-card-home .btn-book-home:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(255, 167, 38, 0.5);
+  }
+  
+  /* Message "Aucun service disponible" */
+  .no-services {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    border: 2px solid rgba(160, 70, 255, 0.3);
+    margin-top: 30px;
+    transition: all 0.3s ease;
+  }
+  
+  .no-services h2 {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  
+  .no-services p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+  
+  .no-services-actions {
+    margin-top: 30px;
+  }
+  
+  .btn-create-service {
+    padding: 12px 30px;
+    background: linear-gradient(60deg, #ffa726, #fb8c00);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-create-service:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 167, 38, 0.5);
+    text-decoration: none;
+    color: white;
+  }
+  
+  /* Thème clair - Message "Aucun service disponible" */
+  body.white-content .no-services {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(160, 70, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  body.white-content .no-services h2 {
+    color: rgba(0, 0, 0, 0.9);
+  }
+  
+  body.white-content .no-services p {
+    color: rgba(0, 0, 0, 0.7);
   }
 
   /* How it works Section - Taille réduite */
@@ -2729,12 +2836,12 @@
       <h2>{% trans "Nos Services" %}</h2>
       <p>{% trans "Découvrez nos services et réservez votre rendez-vous" %}</p>
     </div>
-    <div class="no-services" style="text-align: center; padding: 60px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; border: 2px solid rgba(160, 70, 255, 0.3); margin-top: 30px;">
-      <h2 style="color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;">{% trans "No services available" %}</h2>
-      <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem; line-height: 1.6;">{% trans "Please check back later or contact us for more information." %}</p>
+    <div class="no-services">
+      <h2>{% trans "No services available" %}</h2>
+      <p>{% trans "Please check back later or contact us for more information." %}</p>
       {% if user.is_superuser %}
-      <div style="margin-top: 30px;">
-        <a href="{% url 'appointment:get_service_list' %}" style="padding: 12px 30px; background: linear-gradient(60deg, #ffa726, #fb8c00); color: white; border: none; border-radius: 25px; text-decoration: none; font-weight: 600; display: inline-block; transition: all 0.3s ease;">
+      <div class="no-services-actions">
+        <a href="{% url 'appointment:get_service_list' %}" class="btn-create-service">
           {% trans "Créer un service" %}
         </a>
       </div>
