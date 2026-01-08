@@ -113,6 +113,123 @@
             color: white;
             text-decoration: none;
         }
+        
+        /* Media queries pour mobile */
+        @media (max-width: 768px) {
+            .services-container {
+                padding: 30px 15px !important;
+            }
+            
+            .services-header {
+                margin-bottom: 30px !important;
+            }
+            
+            .services-header h1 {
+                font-size: 2rem !important;
+            }
+            
+            .services-header p {
+                font-size: 1rem !important;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+                margin-top: 20px !important;
+            }
+            
+            .service-card {
+                padding: 20px 15px !important;
+            }
+            
+            .service-card h3 {
+                font-size: 1.3rem !important;
+            }
+            
+            .service-card .service-description {
+                font-size: 0.9rem !important;
+            }
+            
+            .service-card .btn-book {
+                padding: 10px !important;
+                font-size: 0.95rem !important;
+            }
+            
+            .admin-links {
+                padding: 15px !important;
+                margin-top: 20px !important;
+            }
+            
+            .admin-links a {
+                display: block !important;
+                margin: 8px 0 !important;
+                padding: 12px 15px !important;
+                font-size: 0.9rem !important;
+                text-align: center !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .services-container {
+                padding: 20px 10px !important;
+            }
+            
+            .services-header h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .services-header p {
+                font-size: 0.9rem !important;
+            }
+            
+            .services-grid {
+                gap: 15px !important;
+            }
+            
+            .service-card {
+                padding: 15px 12px !important;
+            }
+            
+            .service-card h3 {
+                font-size: 1.1rem !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .service-card .service-description {
+                font-size: 0.85rem !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .service-card .service-details {
+                margin-bottom: 15px !important;
+                padding-top: 12px !important;
+            }
+            
+            .service-card .service-detail-item {
+                font-size: 0.85rem !important;
+            }
+            
+            .service-card .btn-book {
+                padding: 10px !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .admin-links {
+                padding: 12px !important;
+            }
+            
+            .admin-links a {
+                padding: 10px 12px !important;
+                font-size: 0.85rem !important;
+            }
+            
+            /* S'assurer qu'il n'y a pas de débordement */
+            body, html {
+                overflow-x: hidden !important;
+                width: 100% !important;
+            }
+        }
     </style>
 {% endblock %}
 {% block title %}

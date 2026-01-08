@@ -427,6 +427,105 @@
       .floating-cta span {
         display: none;
       }
+      
+      /* Amélioration navigation mobile */
+      .navbar {
+        padding: 10px 15px !important;
+      }
+      
+      .navbar-brand {
+        font-size: 1.2rem !important;
+      }
+      
+      /* Menu mobile amélioré */
+      .navbar-toggler {
+        padding: 8px 12px !important;
+        font-size: 1.2rem !important;
+      }
+      
+      .navbar-collapse {
+        margin-top: 15px !important;
+      }
+      
+      .navbar-nav {
+        gap: 10px !important;
+      }
+      
+      .navbar-nav .nav-link {
+        padding: 10px 15px !important;
+        font-size: 0.95rem !important;
+      }
+      
+      /* Contenu principal */
+      .main-panel {
+        padding: 10px !important;
+      }
+      
+      .content {
+        padding: 15px !important;
+      }
+    }
+    
+    /* Media query pour très petits écrans */
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 8px 10px !important;
+      }
+      
+      .navbar-brand {
+        font-size: 1rem !important;
+      }
+      
+      .navbar-toggler {
+        padding: 6px 10px !important;
+        font-size: 1rem !important;
+      }
+      
+      .navbar-nav .nav-link {
+        padding: 8px 12px !important;
+        font-size: 0.9rem !important;
+      }
+      
+      .main-panel {
+        padding: 5px !important;
+      }
+      
+      .content {
+        padding: 10px !important;
+      }
+      
+      .floating-cta {
+        bottom: 15px !important;
+        right: 15px !important;
+        padding: 10px 15px !important;
+        font-size: 0.85rem !important;
+        width: auto !important;
+        min-width: 50px !important;
+      }
+      
+      /* S'assurer qu'il n'y a pas de débordement horizontal */
+      body, html {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+      }
+      
+      * {
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+      }
+      
+      img, video, iframe {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      
+      table {
+        display: block !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+      }
+    }
       .floating-cta i {
         font-size: 1.5rem;
       }
