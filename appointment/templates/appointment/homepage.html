@@ -952,111 +952,189 @@
       font-size: 1.1rem;
     }
     
-    /* Amélioration mobile pour la navigation */
-    .navbar {
-      padding: 10px 15px !important;
+    /* ========== NAVIGATION MOBILE ========== */
+    
+    /* Masquer le bouton sidebar (3 barres horizontales à gauche) - on garde seulement le kebab */
+    .navbar-toggle.d-inline,
+    .navbar .navbar-toggle {
+      display: none !important;
     }
     
-    /* Menu mobile - Menu déroulant vertical élégant */
-    /* S'assurer que le menu collapse fonctionne avec Bootstrap */
+    /* Style de la navbar mobile */
+    .navbar {
+      padding: 10px 15px !important;
+      background: rgba(10, 10, 30, 0.95) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+    
+    /* Style du bouton menu (kebab - 3 points verticaux) */
+    .navbar-toggler[data-toggle="collapse"] {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 44px !important;
+      height: 44px !important;
+      padding: 8px !important;
+      background: linear-gradient(135deg, rgba(160, 70, 255, 0.3), rgba(100, 50, 200, 0.3)) !important;
+      border: 2px solid rgba(160, 70, 255, 0.5) !important;
+      border-radius: 12px !important;
+      z-index: 10001 !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+    }
+    
+    .navbar-toggler[data-toggle="collapse"]:hover,
+    .navbar-toggler[data-toggle="collapse"]:focus {
+      background: linear-gradient(135deg, rgba(160, 70, 255, 0.5), rgba(100, 50, 200, 0.5)) !important;
+      border-color: rgba(160, 70, 255, 0.8) !important;
+      transform: scale(1.05) !important;
+      outline: none !important;
+      box-shadow: 0 0 15px rgba(160, 70, 255, 0.4) !important;
+    }
+    
+    /* Les 3 points du bouton kebab */
+    .navbar-toggler[data-toggle="collapse"] .navbar-toggler-bar.navbar-kebab {
+      width: 5px !important;
+      height: 5px !important;
+      background: white !important;
+      border-radius: 50% !important;
+      margin: 2px 0 !important;
+      transition: all 0.3s ease !important;
+    }
+    
+    /* ========== MENU MOBILE PLEIN ÉCRAN ========== */
+    
+    /* Menu fermé */
     .navbar-collapse.collapse:not(.show) {
       display: none !important;
     }
     
-    .navbar-collapse.collapse.show {
+    /* Menu ouvert - plein écran élégant */
+    .navbar-collapse.collapse.show,
+    .navbar-collapse.collapsing {
       display: block !important;
-    }
-    
-    .navbar-collapse {
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
       right: 0 !important;
       bottom: 0 !important;
-      background: rgba(0, 0, 0, 0.85) !important;
-      backdrop-filter: blur(10px) !important;
-      -webkit-backdrop-filter: blur(10px) !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: linear-gradient(135deg, 
+        rgba(15, 10, 40, 0.98) 0%, 
+        rgba(30, 20, 60, 0.98) 50%,
+        rgba(20, 15, 50, 0.98) 100%) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
       z-index: 9999 !important;
       padding: 0 !important;
       margin: 0 !important;
       overflow-y: auto !important;
+      animation: fadeIn 0.3s ease-out !important;
     }
     
-    /* Contenu du menu mobile */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Container des liens de navigation */
     .navbar-collapse .navbar-nav {
+      display: flex !important;
       flex-direction: column !important;
-      align-items: stretch !important;
+      align-items: center !important;
+      justify-content: center !important;
       width: 100% !important;
-      padding: 80px 20px 20px 20px !important;
+      min-height: 100vh !important;
+      padding: 60px 30px !important;
       margin: 0 !important;
       gap: 0 !important;
-      background: linear-gradient(135deg, rgba(10, 10, 25, 0.98), rgba(15, 15, 35, 0.98)) !important;
-      min-height: 100vh !important;
     }
     
+    /* Chaque item du menu */
     .navbar-nav .nav-item {
       width: 100% !important;
+      max-width: 350px !important;
       margin: 0 !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      opacity: 0;
+      animation: slideUp 0.4s ease forwards;
     }
     
-    .navbar-nav .nav-item:last-child {
-      border-bottom: none !important;
+    /* Animation décalée pour chaque item */
+    .navbar-nav .nav-item:nth-child(1) { animation-delay: 0.05s; }
+    .navbar-nav .nav-item:nth-child(2) { animation-delay: 0.1s; }
+    .navbar-nav .nav-item:nth-child(3) { animation-delay: 0.15s; }
+    .navbar-nav .nav-item:nth-child(4) { animation-delay: 0.2s; }
+    .navbar-nav .nav-item:nth-child(5) { animation-delay: 0.25s; }
+    .navbar-nav .nav-item:nth-child(6) { animation-delay: 0.3s; }
+    .navbar-nav .nav-item:nth-child(7) { animation-delay: 0.35s; }
+    .navbar-nav .nav-item:nth-child(8) { animation-delay: 0.4s; }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
+    /* Style des liens */
     .navbar-nav .nav-link {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
-      padding: 18px 20px !important;
-      font-size: 1.1rem !important;
+      display: block !important;
+      padding: 18px 25px !important;
+      margin: 5px 0 !important;
+      font-size: 1.15rem !important;
       font-weight: 500 !important;
       color: rgba(255, 255, 255, 0.9) !important;
-      white-space: normal !important;
-      border-radius: 0 !important;
-      background: transparent !important;
-      border: none !important;
+      text-align: center !important;
+      text-decoration: none !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 15px !important;
       transition: all 0.3s ease !important;
-      width: 100% !important;
-      text-align: left !important;
     }
     
     .navbar-nav .nav-link:hover,
     .navbar-nav .nav-link:focus {
-      background: rgba(160, 70, 255, 0.2) !important;
-      color: rgba(255, 255, 255, 1) !important;
-      transform: translateX(5px) !important;
-      border-left: 4px solid rgba(160, 70, 255, 0.8) !important;
+      background: linear-gradient(135deg, rgba(160, 70, 255, 0.3), rgba(100, 50, 200, 0.3)) !important;
+      border-color: rgba(160, 70, 255, 0.5) !important;
+      color: white !important;
+      transform: scale(1.02) !important;
+      box-shadow: 0 5px 20px rgba(160, 70, 255, 0.3) !important;
     }
     
     .navbar-nav .nav-link:active {
-      background: rgba(160, 70, 255, 0.3) !important;
+      transform: scale(0.98) !important;
     }
     
     /* Bouton thème sur mobile */
     .navbar-nav .nav-item button#theme-toggle {
       width: 100% !important;
-      padding: 18px 20px !important;
-      font-size: 1.1rem !important;
-      text-align: left !important;
-      background: transparent !important;
-      border: none !important;
+      padding: 18px 25px !important;
+      margin: 5px 0 !important;
+      font-size: 1.15rem !important;
+      font-weight: 500 !important;
       color: rgba(255, 255, 255, 0.9) !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
+      text-align: center !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 15px !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
     }
     
     .navbar-nav .nav-item button#theme-toggle:hover {
-      background: rgba(160, 70, 255, 0.2) !important;
-      color: rgba(255, 255, 255, 1) !important;
-      transform: translateX(5px) !important;
-      border-left: 4px solid rgba(160, 70, 255, 0.8) !important;
+      background: linear-gradient(135deg, rgba(255, 200, 50, 0.3), rgba(255, 150, 50, 0.3)) !important;
+      border-color: rgba(255, 200, 50, 0.5) !important;
+      color: white !important;
     }
     
     .navbar-nav .nav-item button#theme-toggle i {
       margin-right: 10px !important;
-      font-size: 1.2rem !important;
     }
     
     /* Menu déroulant utilisateur sur mobile */
@@ -1064,34 +1142,46 @@
       position: static !important;
       float: none !important;
       width: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
+      max-width: 350px !important;
+      margin: 5px auto !important;
+      padding: 10px !important;
       background: rgba(0, 0, 0, 0.3) !important;
-      border: none !important;
-      border-radius: 0 !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 15px !important;
       box-shadow: none !important;
     }
     
     .navbar-nav .dropdown-item {
-      padding: 15px 40px !important;
+      padding: 12px 20px !important;
       color: rgba(255, 255, 255, 0.8) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      text-align: center !important;
+      border-radius: 10px !important;
+      margin: 3px 0 !important;
     }
     
     .navbar-nav .dropdown-item:hover {
       background: rgba(160, 70, 255, 0.2) !important;
-      color: rgba(255, 255, 255, 1) !important;
+      color: white !important;
     }
     
-    /* Bouton de fermeture du menu mobile (créé via JavaScript) */
+    /* Photo de profil sur mobile */
+    .navbar-nav .dropdown .photo {
+      display: none !important;
+    }
+    
+    .navbar-nav .dropdown .nav-link {
+      padding: 18px 25px !important;
+    }
+    
+    /* ========== BOUTON DE FERMETURE ========== */
     .mobile-menu-close {
       position: fixed !important;
-      top: 20px !important;
-      right: 20px !important;
-      width: 45px !important;
-      height: 45px !important;
-      background: rgba(160, 70, 255, 0.3) !important;
-      border: 2px solid rgba(160, 70, 255, 0.5) !important;
+      top: 25px !important;
+      right: 25px !important;
+      width: 50px !important;
+      height: 50px !important;
+      background: linear-gradient(135deg, rgba(255, 80, 80, 0.3), rgba(200, 50, 50, 0.3)) !important;
+      border: 2px solid rgba(255, 100, 100, 0.5) !important;
       border-radius: 50% !important;
       display: flex !important;
       align-items: center !important;
@@ -1099,68 +1189,20 @@
       font-size: 1.5rem !important;
       color: white !important;
       cursor: pointer !important;
-      z-index: 10001 !important;
+      z-index: 10002 !important;
       transition: all 0.3s ease !important;
       font-weight: bold !important;
+      box-shadow: 0 4px 15px rgba(255, 80, 80, 0.3) !important;
     }
     
     .mobile-menu-close:hover {
-      background: rgba(160, 70, 255, 0.5) !important;
-      transform: scale(1.1) !important;
-      border-color: rgba(160, 70, 255, 0.8) !important;
+      background: linear-gradient(135deg, rgba(255, 100, 100, 0.5), rgba(220, 70, 70, 0.5)) !important;
+      transform: scale(1.1) rotate(90deg) !important;
+      border-color: rgba(255, 120, 120, 0.8) !important;
     }
     
     .mobile-menu-close:active {
       transform: scale(0.95) !important;
-    }
-    
-    /* Animation d'entrée du menu */
-    @keyframes slideInFromLeft {
-      from {
-        transform: translateX(-100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-    
-    .navbar-collapse.show .navbar-nav {
-      animation: slideInFromLeft 0.3s ease-out !important;
-    }
-    
-    /* Amélioration du bouton hamburger */
-    .navbar-toggler {
-      z-index: 10001 !important;
-      position: relative !important;
-      border: 2px solid rgba(255, 255, 255, 0.3) !important;
-      border-radius: 8px !important;
-      padding: 8px 10px !important;
-      background: rgba(160, 70, 255, 0.2) !important;
-      transition: all 0.3s ease !important;
-    }
-    
-    .navbar-toggler:hover {
-      background: rgba(160, 70, 255, 0.4) !important;
-      border-color: rgba(160, 70, 255, 0.6) !important;
-    }
-    
-    .navbar-toggler:focus {
-      outline: none !important;
-      box-shadow: 0 0 0 3px rgba(160, 70, 255, 0.3) !important;
-    }
-    
-    /* Fermer le menu en cliquant sur le fond */
-    .navbar-collapse.show::after {
-      content: '' !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      background: transparent !important;
-      z-index: -1 !important;
     }
     
     .hero-section {
@@ -2390,116 +2432,114 @@
     setTimeout(removeSidebarSpace, 500);
   })();
   
-  // Amélioration du menu mobile - Fermeture automatique et meilleure UX
+  // ========== MENU MOBILE - Gestion complète ==========
   (function() {
     document.addEventListener('DOMContentLoaded', function() {
       const navbarCollapse = document.getElementById('navigation');
       const navbarToggler = document.querySelector('.navbar-toggler[data-toggle="collapse"]');
       
+      // Fonction pour fermer le menu
+      function closeMenu() {
+        if (navbarCollapse) {
+          if (typeof $ !== 'undefined' && $.fn.collapse) {
+            $(navbarCollapse).collapse('hide');
+          } else {
+            navbarCollapse.classList.remove('show');
+            navbarCollapse.classList.add('collapse');
+          }
+          document.body.style.overflow = ''; // Réactiver le scroll
+        }
+      }
+      
+      // Fonction pour ouvrir le menu
+      function openMenu() {
+        if (navbarCollapse) {
+          document.body.style.overflow = 'hidden'; // Bloquer le scroll du body
+        }
+      }
+      
       if (navbarCollapse && navbarToggler) {
-        // Ajouter un bouton de fermeture visible uniquement quand le menu est ouvert
-        function addCloseButton() {
-          if (!navbarCollapse.querySelector('.mobile-menu-close')) {
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'mobile-menu-close';
-            closeBtn.innerHTML = '✕';
-            closeBtn.setAttribute('aria-label', 'Fermer le menu');
-            closeBtn.type = 'button';
-            closeBtn.style.display = 'none'; // Masqué par défaut
-            
-            closeBtn.addEventListener('click', function(e) {
-              e.preventDefault();
-              e.stopPropagation();
-              // Utiliser Bootstrap collapse pour fermer proprement
-              if (typeof $ !== 'undefined' && $.fn.collapse) {
-                $(navbarCollapse).collapse('hide');
-              } else {
-                // Fallback sans jQuery
-                navbarCollapse.classList.remove('show');
-                navbarCollapse.classList.add('collapse');
-              }
-            });
-            
-            closeBtn.addEventListener('mouseenter', function() {
-              this.style.background = 'rgba(160, 70, 255, 0.5)';
-              this.style.transform = 'scale(1.1)';
-            });
-            
-            closeBtn.addEventListener('mouseleave', function() {
-              this.style.background = 'rgba(160, 70, 255, 0.3)';
-              this.style.transform = 'scale(1)';
-            });
-            
-            navbarCollapse.appendChild(closeBtn);
-            return closeBtn;
-          }
-          return navbarCollapse.querySelector('.mobile-menu-close');
-        }
-        
-        const closeBtn = addCloseButton();
-        
-        // Observer les changements d'état du menu
-        function updateCloseButton() {
-          if (closeBtn) {
-            if (navbarCollapse.classList.contains('show')) {
-              closeBtn.style.display = 'flex';
-            } else {
-              closeBtn.style.display = 'none';
-            }
-          }
-        }
-        
-        // Observer avec MutationObserver
-        if (closeBtn) {
-          const observer = new MutationObserver(updateCloseButton);
-          observer.observe(navbarCollapse, { 
-            attributes: true, 
-            attributeFilter: ['class'] 
+        // Créer et ajouter le bouton de fermeture
+        function createCloseButton() {
+          // Supprimer l'ancien bouton s'il existe
+          const existingBtn = navbarCollapse.querySelector('.mobile-menu-close');
+          if (existingBtn) existingBtn.remove();
+          
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'mobile-menu-close';
+          closeBtn.innerHTML = '✕';
+          closeBtn.setAttribute('aria-label', 'Fermer le menu');
+          closeBtn.type = 'button';
+          
+          closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMenu();
           });
           
-          // État initial
-          updateCloseButton();
+          navbarCollapse.insertBefore(closeBtn, navbarCollapse.firstChild);
+          return closeBtn;
         }
         
-        // Fermer le menu en cliquant sur le fond (overlay) - seulement sur mobile
-        if (window.innerWidth <= 768) {
-          navbarCollapse.addEventListener('click', function(e) {
-            // Si on clique directement sur navbar-collapse (le fond)
-            if (e.target === this) {
-              e.preventDefault();
-              if (typeof $ !== 'undefined' && $.fn.collapse) {
-                $(this).collapse('hide');
+        // Observer les changements d'état du menu
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class') {
+              const closeBtn = navbarCollapse.querySelector('.mobile-menu-close');
+              if (navbarCollapse.classList.contains('show')) {
+                // Menu ouvert
+                if (!closeBtn) createCloseButton();
+                else closeBtn.style.display = 'flex';
+                openMenu();
+              } else {
+                // Menu fermé
+                if (closeBtn) closeBtn.style.display = 'none';
+                document.body.style.overflow = '';
               }
-            }
-          });
-        }
-        
-        // Fermer le menu après avoir cliqué sur un lien (sauf dropdown)
-        const navLinks = navbarCollapse.querySelectorAll('.nav-link:not(.dropdown-toggle)');
-        navLinks.forEach(function(link) {
-          link.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            // Si c'est un lien d'ancrage (#section), attendre un peu pour laisser le scroll se faire
-            if (href && href.startsWith('#')) {
-              setTimeout(function() {
-                if (navbarCollapse.classList.contains('show')) {
-                  if (typeof $ !== 'undefined' && $.fn.collapse) {
-                    $(navbarCollapse).collapse('hide');
-                  }
-                }
-              }, 600);
-            } else {
-              // Pour les autres liens, fermer immédiatement
-              setTimeout(function() {
-                if (navbarCollapse.classList.contains('show')) {
-                  if (typeof $ !== 'undefined' && $.fn.collapse) {
-                    $(navbarCollapse).collapse('hide');
-                  }
-                }
-              }, 200);
             }
           });
         });
+        
+        observer.observe(navbarCollapse, { 
+          attributes: true, 
+          attributeFilter: ['class'] 
+        });
+        
+        // Fermer le menu en cliquant sur le fond (overlay)
+        navbarCollapse.addEventListener('click', function(e) {
+          // Si on clique directement sur navbar-collapse ou navbar-nav (pas sur un lien)
+          if (e.target === this || e.target.classList.contains('navbar-nav')) {
+            e.preventDefault();
+            closeMenu();
+          }
+        });
+        
+        // Fermer le menu après avoir cliqué sur un lien
+        navbarCollapse.addEventListener('click', function(e) {
+          const link = e.target.closest('.nav-link:not(.dropdown-toggle)');
+          if (link) {
+            const href = link.getAttribute('href');
+            // Si c'est un lien d'ancrage (#section), attendre un peu
+            if (href && (href.startsWith('#') || href.includes('#'))) {
+              setTimeout(closeMenu, 400);
+            } else {
+              // Pour les autres liens, fermer après un court délai
+              setTimeout(closeMenu, 150);
+            }
+          }
+        });
+        
+        // Fermer avec la touche Escape
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && navbarCollapse.classList.contains('show')) {
+            closeMenu();
+          }
+        });
+        
+        // Créer le bouton de fermeture au chargement si le menu est ouvert
+        if (navbarCollapse.classList.contains('show')) {
+          createCloseButton();
+        }
       }
     });
   })();
