@@ -1,0 +1,92 @@
+[
+{
+  "model": "appointment.service",
+  "pk": 3,
+  "fields": {
+    "name": "Assistance Informatique Express",
+    "description": "Aide rapide pour un problème téléphone/ordinateur. En ligne.",
+    "duration": "00:35:00",
+    "price": "300.00",
+    "down_payment": "0.02",
+    "image": "",
+    "currency": "MRU",
+    "background_color": "rgb(36, 22, 229)",
+    "reschedule_limit": 4,
+    "allow_rescheduling": true,
+    "created_at": "2025-11-15T18:15:36.864Z",
+    "updated_at": "2025-11-15T18:29:49.643Z"
+  }
+},
+{
+  "model": "appointment.service",
+  "pk": 4,
+  "fields": {
+    "name": "Aide au Remplissage de Formulaires",
+    "description": "Vérification et explication de l’état de votre dossier. Rendez-vous en ligne.",
+    "duration": "00:50:00",
+    "price": "750.00",
+    "down_payment": "0.03",
+    "image": "",
+    "currency": "MRU",
+    "background_color": "#000000",
+    "reschedule_limit": 1,
+    "allow_rescheduling": true,
+    "created_at": "2025-11-15T18:19:42.020Z",
+    "updated_at": "2025-11-17T00:28:04.885Z"
+  }
+},
+{
+  "model": "appointment.service",
+  "pk": 5,
+  "fields": {
+    "name": "Assistance Numérique Complète",
+    "description": "Accompagnement premium pour réaliser plusieurs tâches en une seule séance.",
+    "duration": "01:00:00",
+    "price": "900.00",
+    "down_payment": "0.02",
+    "image": "",
+    "currency": "MRU",
+    "background_color": "rgb(229, 116, 22)",
+    "reschedule_limit": 1,
+    "allow_rescheduling": true,
+    "created_at": "2025-11-15T18:26:46.732Z",
+    "updated_at": "2025-11-15T18:29:23.154Z"
+  }
+},
+{
+  "model": "appointment.service",
+  "pk": 7,
+  "fields": {
+    "name": "Création ou Correction de CV",
+    "description": "Création d’un CV simple ou correction. Envoi PDF en ligne.",
+    "duration": "00:33:00",
+    "price": "250.00",
+    "down_payment": "0.01",
+    "image": "",
+    "currency": "MRU",
+    "background_color": "#000000",
+    "reschedule_limit": 1,
+    "allow_rescheduling": true,
+    "created_at": "2025-11-16T12:44:29.274Z",
+    "updated_at": "2025-11-17T00:29:06.564Z"
+  }
+},
+{
+  "model": "appointment.service",
+  "pk": 8,
+  "fields": {
+    "name": "Fast Booking (Prioritaire)",
+    "description": "Rendez-vous traité en priorité. Service en ligne.",
+    "duration": "00:00:30",
+    "price": "350.00",
+    "down_payment": "0.02",
+    "image": "",
+    "currency": "MRU",
+    "background_color": "rgb(229, 73, 22)",
+    "reschedule_limit": 0,
+    "allow_rescheduling": false,
+    "created_at": "2025-11-16T12:48:00.007Z",
+    "updated_at": "2025-11-16T12:48:00.007Z"
+  }
+}
+]
