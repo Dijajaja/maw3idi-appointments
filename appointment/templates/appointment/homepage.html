@@ -957,6 +957,71 @@
       padding: 10px 15px !important;
     }
     
+    /* Menu mobile - liens horizontaux dans un menu déroulant */
+    .navbar-collapse {
+      position: absolute !important;
+      top: 100% !important;
+      left: 0 !important;
+      right: 0 !important;
+      background: linear-gradient(135deg, rgba(10, 10, 25, 0.95), rgba(15, 15, 35, 0.98)) !important;
+      backdrop-filter: blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+      border-top: 2px solid rgba(160, 70, 255, 0.3) !important;
+      border-bottom: 2px solid rgba(160, 70, 255, 0.3) !important;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+      padding: 15px 20px !important;
+      margin-top: 0 !important;
+      z-index: 1040 !important;
+    }
+    
+    .navbar-nav {
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
+    }
+    
+    .navbar-nav .nav-item {
+      flex: 0 0 auto !important;
+      margin: 0 !important;
+    }
+    
+    .navbar-nav .nav-link {
+      padding: 8px 12px !important;
+      font-size: 0.85rem !important;
+      white-space: nowrap !important;
+      border-radius: 8px !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(160, 70, 255, 0.2) !important;
+      transition: all 0.3s ease !important;
+    }
+    
+    .navbar-nav .nav-link:hover {
+      background: rgba(160, 70, 255, 0.2) !important;
+      border-color: rgba(160, 70, 255, 0.5) !important;
+      transform: translateY(-2px) !important;
+    }
+    
+    /* Bouton thème sur mobile */
+    .navbar-nav .nav-item button#theme-toggle {
+      padding: 8px 12px !important;
+      font-size: 0.85rem !important;
+    }
+    
+    /* Menu déroulant utilisateur sur mobile */
+    .navbar-nav .dropdown-menu {
+      position: absolute !important;
+      right: 0 !important;
+      left: auto !important;
+      margin-top: 5px !important;
+      background: rgba(10, 10, 25, 0.98) !important;
+      border: 1px solid rgba(160, 70, 255, 0.3) !important;
+      border-radius: 12px !important;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+    }
+    
     .hero-section {
       padding: 40px 20px !important;
     }
@@ -1025,6 +1090,49 @@
     
     .hero-graphic-icon {
       font-size: 5rem !important;
+    }
+    
+    /* Navigation mobile - très petits écrans */
+    .navbar {
+      padding: 8px 10px !important;
+    }
+    
+    .navbar-brand {
+      padding: 6px 12px !important;
+      font-size: 1rem !important;
+    }
+    
+    .navbar-brand-text {
+      font-size: 1.1rem !important;
+    }
+    
+    .navbar-logo-icon {
+      font-size: 1.3rem !important;
+    }
+    
+    .navbar-collapse {
+      padding: 12px 15px !important;
+    }
+    
+    .navbar-nav {
+      gap: 6px !important;
+    }
+    
+    .navbar-nav .nav-link {
+      padding: 6px 10px !important;
+      font-size: 0.8rem !important;
+    }
+    
+    /* Sur très petits écrans, permettre le scroll horizontal si nécessaire */
+    .navbar-nav {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    
+    .navbar-nav::-webkit-scrollbar {
+      display: none !important;
     }
     
     .services-section,
@@ -2317,6 +2425,25 @@
         </a>
         {% endfor %}
       </div>
+    </div>
+  </div>
+  {% else %}
+  <!-- Message si aucun service n'est disponible -->
+  <div id="services" class="services-section animate-on-scroll animate-fade-up">
+    <div class="section-title">
+      <h2>{% trans "Nos Services" %}</h2>
+      <p>{% trans "Découvrez nos services et réservez votre rendez-vous" %}</p>
+    </div>
+    <div class="no-services" style="text-align: center; padding: 60px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; border: 2px solid rgba(160, 70, 255, 0.3); margin-top: 30px;">
+      <h2 style="color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;">{% trans "No services available" %}</h2>
+      <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem; line-height: 1.6;">{% trans "Please check back later or contact us for more information." %}</p>
+      {% if user.is_superuser %}
+      <div style="margin-top: 30px;">
+        <a href="{% url 'appointment:get_service_list' %}" style="padding: 12px 30px; background: linear-gradient(60deg, #ffa726, #fb8c00); color: white; border: none; border-radius: 25px; text-decoration: none; font-weight: 600; display: inline-block; transition: all 0.3s ease;">
+          {% trans "Créer un service" %}
+        </a>
+      </div>
+      {% endif %}
     </div>
   </div>
   {% endif %}

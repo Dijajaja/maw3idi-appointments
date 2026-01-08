@@ -2220,6 +2220,16 @@ msgstr "Anglais"
 msgid "French"
 msgstr "Français"
 
+#: appointment/templates/appointment/index.html:272
+#: appointment/templates/appointment/index_black_dashboard.html:373
+msgid "No services available"
+msgstr "Aucun service disponible"
+
+#: appointment/templates/appointment/index.html:273
+#: appointment/templates/appointment/index_black_dashboard.html:374
+msgid "Please check back later or contact us for more information."
+msgstr "Veuillez revenir plus tard ou nous contacter pour plus d'informations."
+
 #~ msgid "Is paid"
 #~ msgstr "Est payé"
 
